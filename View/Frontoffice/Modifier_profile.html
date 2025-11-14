@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ImpactAble — Plateforme Inclusive</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="assets\css\style.css">
+  <link rel="stylesheet" href="assets/css/style_mariem.css">
+</head>
+<body>
+
+
+  <div class="container"> 
+
+    <!-- Header -->
+    <header class="site-header" role="banner">
+      <div class="brand">
+        <button class="nav-toggle" id="navToggle" aria-label="Ouvrir le menu">
+          <i class="fas fa-bars"></i>
+        </button>
+         <div class="logo">
+      <img src="assets\images\logo.png" alt="Inclusive Opportunities" class="logo-image">
+    </div>
+      </div>
+
+      <div class="header-actions">
+        <button class="btn ghost" id="loginBtn">Se connecter</button>
+        <button class="btn primary" id="signupBtn">S'inscrire</button>
+      </div>
+    </header>
+
+    <!-- Side Panel Navigation -->
+    <div class="side-panel" id="sidePanel">
+      <div class="panel-header">
+         <div class="logo">
+      <img src="assets\images\logo.png" alt="Inclusive Opportunities" class="logo-image">
+    </div>
+        <button class="panel-close" id="panelClose">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      
+      <nav class="panel-nav">
+        <div class="nav-section">
+          <div class="nav-title">Navigation</div>
+          <a href="#home" class="nav-link active">
+            <i class="fas fa-home"></i>
+            <span>Accueil</span>
+          </a>
+          <a href="#opportunities" class="nav-link">
+            <i class="fas fa-briefcase"></i>
+            <span>Opportunités</span>
+          </a>
+          <a href="#events" class="nav-link">
+            <i class="fas fa-calendar-alt"></i>
+            <span>Événements</span>
+          </a>
+          <a href="#donations" class="nav-link">
+            <i class="fas fa-hand-holding-heart"></i>
+            <span>Campagnes</span>
+          </a>
+          <a href="#resources" class="nav-link">
+            <i class="fas fa-book"></i>
+            <span>Ressources</span>
+          </a>
+          <a href="#forum" class="nav-link">
+            <i class="fas fa-comments"></i>
+            <span>Forum</span>
+          </a>
+          <a href="#reclamations" class="nav-link">
+            <i class="fas fa-comment-alt"></i>
+            <span>Réclamations</span>
+          </a>
+        </div> 
+  
+      </nav>
+      
+      <div class="panel-footer">
+        <div class="user-profile">
+          <div class="user-avatar">VS</div>
+          <div class="user-info">
+            <h4>Visiteur</h4>
+            <p>Connectez-vous pour plus de fonctionnalités</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="panel-overlay" id="panelOverlay"></div>
+
+    <!-- Your code here -->
+
+
+<!-- Profile Edit Form -->
+    <div class="form-container">
+      <div class="form-card">
+        <div class="form-header">
+          <h2>Modifier mon profil</h2>
+          <p>Mettez à jour vos informations personnelles et professionnelles</p>
+        </div>
+
+        <div class="profile-header">
+          <div class="profile-avatar">
+            <div class="avatar-edit">
+              <i class="fas fa-camera"></i> Modifier
+            </div>
+          </div>
+          <div class="profile-info">
+            <h1>Nom Prénom</h1>
+            <p>Membre depuis Janvier 2024</p>
+          </div>
+        </div>
+
+        <form id="profileForm">
+          <!-- Informations personnelles -->
+          <div class="form-section">
+            <h3 class="form-section-title">Informations personnelles</h3>
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="nom">
+                  <i class="fas fa-user"></i>
+                  Nom
+                </label>
+                <input id="nom" class="input" type="text" placeholder="Votre nom">
+              </div>
+              
+              <div class="form-group">
+                <label for="prenom">
+                  <i class="fas fa-user"></i>
+                  Prénom
+                </label>
+                <input id="prenom" class="input" type="text" placeholder="Votre prénom">
+              </div>
+              
+              <div class="form-group">
+                <label for="genre">
+                  <i class="fas fa-venus-mars"></i>
+                  Genre
+                </label>
+                <select id="genre" class="select">
+                  <option value="">Sélectionnez</option>
+                  <option value="femme">Femme</option>
+                  <option value="homme">Homme</option>
+                </select>
+              </div>
+              
+              <div class="form-group">
+                <label for="date_naissance">
+                  <i class="fas fa-birthday-cake"></i>
+                  Date de naissance
+                </label>
+                <input id="date_naissance" class="input" type="date">
+              </div>
+              
+              <div class="form-group">
+                <label for="email">
+                  <i class="fas fa-envelope"></i>
+                  E-mail
+                </label>
+                <input id="email" class="input" type="email" placeholder="votre@email.tld">
+              </div>
+              
+              <div class="form-group">
+                <label for="numero_tel">
+                  <i class="fas fa-phone"></i>
+                  Téléphone
+                </label>
+                <input id="numero_tel" class="input" type="tel" placeholder="+216 XX XXX XXX">
+              </div>
+            </div>
+          </div>
+
+          <!-- Informations de profil -->
+          <div class="form-section">
+            <h3 class="form-section-title">Informations de profil</h3>
+            
+            <div class="form-group">
+              <label for="bio">
+                <i class="fas fa-edit"></i>
+                Bio
+              </label>
+              <textarea id="bio" class="textarea" placeholder="Parlez-nous de vous..."></textarea>
+            </div>
+            
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="ville">
+                  <i class="fas fa-city"></i>
+                  Ville
+                </label>
+                <input id="ville" class="input" type="text" placeholder="Votre ville">
+              </div>
+              
+              <div class="form-group">
+                <label for="pays">
+                  <i class="fas fa-globe"></i>
+                  Pays
+                </label>
+                <input id="pays" class="input" type="text" placeholder="Votre pays">
+              </div>
+              
+              <div class="form-group">
+                <label for="profession">
+                  <i class="fas fa-briefcase"></i>
+                  Profession
+                </label>
+                <input id="profession" class="input" type="text" placeholder="Votre profession">
+              </div>
+              
+              <div class="form-group">
+                <label for="competences">
+                  <i class="fas fa-tools"></i>
+                  Compétences
+                </label>
+                <input id="competences" class="input" type="text" placeholder="Vos compétences">
+              </div>
+              
+              <div class="form-group">
+                <label for="linkedin">
+                  <i class="fab fa-linkedin"></i>
+                  LinkedIn
+                </label>
+                <input id="linkedin" class="input" type="url" placeholder="Lien vers votre profil LinkedIn">
+              </div>
+            </div>
+          </div>
+
+          <!-- Accessibilité -->
+          <div class="form-section">
+            <h3 class="form-section-title">Informations d'accessibilité</h3>
+            
+            <div class="accessibility-options">
+              <div class="accessibility-title">
+                <i class="fas fa-universal-access"></i>
+                Type de handicap
+              </div>
+              <div class="checkbox-group">
+                <label class="checkbox-label">
+                  <input type="checkbox" name="type_handicap" value="aucun">
+                  Aucun
+                </label>
+                <label class="checkbox-label">
+                  <input type="checkbox" name="type_handicap" value="moteur">
+                  Moteur
+                </label>
+                <label class="checkbox-label">
+                  <input type="checkbox" name="type_handicap" value="visuel">
+                  Visuel
+                </label>
+                <label class="checkbox-label">
+                  <input type="checkbox" name="type_handicap" value="auditif">
+                  Auditif
+                </label>
+                <label class="checkbox-label">
+                  <input type="checkbox" name="type_handicap" value="cognitif">
+                  Cognitif
+                </label>
+                <label class="checkbox-label">
+                  <input type="checkbox" name="type_handicap" value="prefer-not">
+                  Préfère ne pas répondre
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sécurité -->
+          <div class="form-section">
+            <h3 class="form-section-title">Sécurité</h3>
+            
+            <div class="form-group">
+              <label for="mot_de_passe">
+                <i class="fas fa-lock"></i>
+                Mot de passe actuel
+              </label>
+              <input id="mot_de_passe" class="input" type="password" placeholder="Votre mot de passe actuel">
+            </div>
+            
+            <div class="form-group">
+              <label for="nouveau_mot_de_passe">
+                <i class="fas fa-lock"></i>
+                Nouveau mot de passe
+              </label>
+              <input id="nouveau_mot_de_passe" class="input" type="password" placeholder="Nouveau mot de passe">
+            </div>
+            
+            <div class="form-group">
+              <label for="confirmer_mot_de_passe">
+                <i class="fas fa-lock"></i>
+                Confirmer le nouveau mot de passe
+              </label>
+              <input id="confirmer_mot_de_passe" class="input" type="password" placeholder="Confirmer le nouveau mot de passe">
+            </div>
+          </div>
+
+          <div class="form-footer">
+            <a href="#" class="btn secondary">Annuler</a>
+            <button class="btn primary" type="submit">Enregistrer les modifications</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+
+
+    
+    <!-- Footer-->
+    <footer class="site-footer">
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-column">
+            <h3>ImpactAble</h3>
+            <p class="text-muted">Plateforme dédiée à l'inclusion et à l'impact social.</p>
+            <div class="social-links">
+              <a href="#"><i class="fab fa-facebook-f"></i></a>
+              <a href="#"><i class="fab fa-twitter"></i></a>
+              <a href="#"><i class="fab fa-linkedin-in"></i></a>
+              <a href="#"><i class="fab fa-instagram"></i></a>
+            </div>
+          </div>
+          <div class="footer-column">
+            <h3>Navigation</h3>
+            <div class="footer-links">
+              <a href="#home">Accueil</a>
+              <a href="#opportunities">Opportunités</a>
+              <a href="#events">Événements</a>
+              <a href="#donations">Campagnes</a>
+              <a href="#resources">Ressources</a>
+              <a href="#forum">Forum</a>
+            </div>
+          </div>
+          <div class="footer-column">
+            <h3>Légal</h3>
+            <div class="footer-links">
+              <a href="#">Mentions légales</a>
+              <a href="#">Politique de confidentialité</a>
+              <a href="#">Conditions d'utilisation</a>
+              <a href="#">Accessibilité</a>
+            </div>
+          </div>
+          <div class="footer-column">
+            <h3>Contact</h3>
+            <div class="footer-links">
+              <a href="mailto:contact@impactable.org">contact@impactable.org</a>
+              <a href="tel:+21612345678">+216 12 345 678</a>
+              <a href="#">Tunis, Tunisia</a>
+            </div>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>© <span id="year"></span> ImpactAble — Tous droits réservés.</p>
+        </div>
+      </div>
+    </footer>
+  </div> <!-- /.container -->
+    
+  
+  </div>
+
+
+
+  <script src="assets\js\script.js"></script>
+</body>
+</html>
