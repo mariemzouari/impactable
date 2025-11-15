@@ -6,6 +6,7 @@
   <title>ImpactAble — Plateforme Inclusive</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="assets\css\style.css">
+  <link rel="stylesheet" href="assets/css/style_mariem.css">
 </head>
 <body>
 
@@ -102,13 +103,16 @@
         <h2 class="auth-title">Inscription</h2>
         <p class="auth-subtitle">Rejoignez la communauté ImpactAble</p>
         
+
+
+
         <form id="signupForm">
           <div class="form-group">
             <label for="signup-name">
               <i class="fas fa-user"></i>
-              Nom complet
+              Nom complet *
             </label>
-            <input id="signup-name" class="input" type="text" placeholder="Nom ">
+            <input id="signup-last-name" class="input" type="text" placeholder="Nom ">
             <input id="signup-name" class="input" type="text" placeholder="Prénom  ">
           </div>
             
@@ -128,18 +132,18 @@
              
 
           <div class="form-group">
-            <label for="date-naissance">
+            <label for="birthday">
               <i class="fa-solid fa-calendar-alt"></i>
-              Date de Naissance 
+              Date de Naissance *
             </label>
-             <input type="date" id="date-naissance" class="input">
+             <input type="date" id="birthday" class="input">
           </div>
            
 
           <div class="form-group">
             <label for="signup-email">
               <i class="fas fa-envelope"></i>
-              E‑mail
+              E‑mail *
             </label>
             <input id="signup-email" class="input" type="text" placeholder="vous@email.com">
           </div>
@@ -148,7 +152,7 @@
            <div class="form-group">
             <label for="phone-number">
               <i class="fas fa-phone"></i>
-              Numéro
+              Numéro *
             </label>
             <input id="phone-number" class="input" type="text" placeholder=" +216 00 000 000">
           </div>
@@ -157,14 +161,14 @@
           <div class="form-group">
             <label for="signup-password">
               <i class="fas fa-lock"></i>
-              Mot de passe
+              Mot de passe *
             </label>
             <input id="signup-password" class="input" type="text" placeholder="Créez un mot de passe">
           </div>
           <div class="form-group">
             <label for="signup-confirm">
               <i class="fas fa-lock"></i>
-              Confirmer le mot de passe
+              Confirmer le mot de passe *
             </label>
             <input id="signup-confirm" class="input" type="text" placeholder="Confirmez votre mot de passe">
           </div>
@@ -210,13 +214,18 @@
             </div>
           </div>
           
+
+          
+          <span id="signup-control" class="controle-saisie">   </span>
+
           <div class="form-footer">
             <button class="btn primary" type="submit">S'inscrire</button>
+            <div class="text-center mt-24">
+          <p class="text-muted">Déjà un compte? <a href="login.html" id="switchToLogin">Se connecter</a></p>
+        </div>
           </div>
         </form>
-        <div class="text-center mt-24">
-          <p class="text-muted">Déjà un compte? <a href="#" id="switchToLogin">Se connecter</a></p>
-        </div>
+        
       </div>
     </div>
   </div>
@@ -280,5 +289,6 @@
 
 
   <script src="assets\js\script.js"></script>
+  <script src="assets/js/controle_saisie_mariem.js"></script>
 </body>
 </html>

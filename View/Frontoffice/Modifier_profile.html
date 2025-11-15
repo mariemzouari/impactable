@@ -101,11 +101,16 @@
         </div>
 
         <div class="profile-header">
+          <!--fix for picture-->
           <div class="profile-avatar">
-            <div class="avatar-edit">
-              <i class="fas fa-camera"></i> Modifier
-            </div>
+          <img id="avatarPreview" src="" alt="Photo de profil" style="display: none;">
+          <div id="avatarPlaceholder" class="avatar-placeholder">VS</div>
+          <input type="file" id="avatarInput" style="display: none;">
+          <div class="avatar-edit" id="avatarEditBtn">
+          <i class="fas fa-camera"></i> Modifier
           </div>
+          </div>
+
           <div class="profile-info">
             <h1>Nom Prénom</h1>
             <p>Membre depuis Janvier 2024</p>
@@ -118,27 +123,27 @@
             <h3 class="form-section-title">Informations personnelles</h3>
             <div class="form-grid">
               <div class="form-group">
-                <label for="nom">
+                <label for="last-name-profile">
                   <i class="fas fa-user"></i>
                   Nom
                 </label>
-                <input id="nom" class="input" type="text" placeholder="Votre nom">
+                <input id="last-name-profile" class="input" type="text" placeholder="Votre nom">
               </div>
               
               <div class="form-group">
-                <label for="prenom">
+                <label for="name-profile">
                   <i class="fas fa-user"></i>
                   Prénom
                 </label>
-                <input id="prenom" class="input" type="text" placeholder="Votre prénom">
+                <input id="name-profile" class="input" type="text" placeholder="Votre prénom">
               </div>
               
               <div class="form-group">
-                <label for="genre">
+                <label for="gender-profile">
                   <i class="fas fa-venus-mars"></i>
                   Genre
                 </label>
-                <select id="genre" class="select">
+                <select id="gender-profile" class="select">
                   <option value="">Sélectionnez</option>
                   <option value="femme">Femme</option>
                   <option value="homme">Homme</option>
@@ -146,27 +151,27 @@
               </div>
               
               <div class="form-group">
-                <label for="date_naissance">
+                <label for="birthday-profile">
                   <i class="fas fa-birthday-cake"></i>
                   Date de naissance
                 </label>
-                <input id="date_naissance" class="input" type="date">
+                <input id="birthday-profile" class="input" type="date">
               </div>
               
               <div class="form-group">
-                <label for="email">
+                <label for="email-profile">
                   <i class="fas fa-envelope"></i>
                   E-mail
                 </label>
-                <input id="email" class="input" type="email" placeholder="votre@email.tld">
+                <input id="email-profile" class="input" type="text" placeholder="votre@email.tld">
               </div>
               
               <div class="form-group">
-                <label for="numero_tel">
+                <label for="phone-number-profile">
                   <i class="fas fa-phone"></i>
                   Téléphone
                 </label>
-                <input id="numero_tel" class="input" type="tel" placeholder="+216 XX XXX XXX">
+                <input id="phone-number-profile" class="input" type="tel" placeholder="+216 XX XXX XXX">
               </div>
             </div>
           </div>
@@ -176,52 +181,52 @@
             <h3 class="form-section-title">Informations de profil</h3>
             
             <div class="form-group">
-              <label for="bio">
+              <label for="bio-profile">
                 <i class="fas fa-edit"></i>
                 Bio
               </label>
-              <textarea id="bio" class="textarea" placeholder="Parlez-nous de vous..."></textarea>
+              <textarea id="bio-profile" class="textarea" placeholder="Parlez-nous de vous..."></textarea>
             </div>
             
             <div class="form-grid">
               <div class="form-group">
-                <label for="ville">
+                <label for="city-profile">
                   <i class="fas fa-city"></i>
                   Ville
                 </label>
-                <input id="ville" class="input" type="text" placeholder="Votre ville">
+                <input id="city-profile" class="input" type="text" placeholder="Votre ville">
               </div>
               
               <div class="form-group">
-                <label for="pays">
+                <label for="country-profile">
                   <i class="fas fa-globe"></i>
                   Pays
                 </label>
-                <input id="pays" class="input" type="text" placeholder="Votre pays">
+                <input id="country-profile" class="input" type="text" placeholder="Votre pays">
               </div>
               
               <div class="form-group">
-                <label for="profession">
+                <label for="job-profile">
                   <i class="fas fa-briefcase"></i>
                   Profession
                 </label>
-                <input id="profession" class="input" type="text" placeholder="Votre profession">
+                <input id="job-profile" class="input" type="text" placeholder="Votre profession">
               </div>
               
               <div class="form-group">
-                <label for="competences">
+                <label for="skills-profile">
                   <i class="fas fa-tools"></i>
                   Compétences
                 </label>
-                <input id="competences" class="input" type="text" placeholder="Vos compétences">
+                <input id="skills-profile" class="input" type="text" placeholder="Vos compétences">
               </div>
               
               <div class="form-group">
-                <label for="linkedin">
+                <label for="linkedin-profile">
                   <i class="fab fa-linkedin"></i>
                   LinkedIn
                 </label>
-                <input id="linkedin" class="input" type="url" placeholder="Lien vers votre profil LinkedIn">
+                <input id="linkedin-profile" class="input" type="url" placeholder="Lien vers votre profil LinkedIn">
               </div>
             </div>
           </div>
@@ -274,29 +279,34 @@
             <h3 class="form-section-title">Sécurité</h3>
             
             <div class="form-group">
-              <label for="mot_de_passe">
+              <label for="password-profile">
                 <i class="fas fa-lock"></i>
                 Mot de passe actuel
               </label>
-              <input id="mot_de_passe" class="input" type="password" placeholder="Votre mot de passe actuel">
+              <input id="password-profile" class="input" type="password" placeholder="Votre mot de passe actuel">
             </div>
             
             <div class="form-group">
-              <label for="nouveau_mot_de_passe">
+              <label for="new-password-profile">
                 <i class="fas fa-lock"></i>
                 Nouveau mot de passe
               </label>
-              <input id="nouveau_mot_de_passe" class="input" type="password" placeholder="Nouveau mot de passe">
+              <input id="new-password-profile" class="input" type="password" placeholder="Nouveau mot de passe">
             </div>
             
             <div class="form-group">
-              <label for="confirmer_mot_de_passe">
+              <label for="confirm-profile">
                 <i class="fas fa-lock"></i>
                 Confirmer le nouveau mot de passe
               </label>
-              <input id="confirmer_mot_de_passe" class="input" type="password" placeholder="Confirmer le nouveau mot de passe">
+              <input id="confirm-profile" class="input" type="password" placeholder="Confirmer le nouveau mot de passe">
             </div>
+
+            
           </div>
+
+           <span id="profile-control" class="controle-saisie"> </span>
+            
 
           <div class="form-footer">
             <a href="#" class="btn secondary">Annuler</a>
@@ -305,7 +315,7 @@
         </form>
       </div>
     </div>
-
+  </div>
 
 
     
@@ -365,5 +375,8 @@
 
 
   <script src="assets\js\script.js"></script>
+  <script src="assets/js/controle_saisie_mariem.js"></script>
+  <script src="assets/js/profile_picture_mariem.js"></script>
+  
 </body>
 </html>
