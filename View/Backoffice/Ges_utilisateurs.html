@@ -20,7 +20,7 @@
       <nav class="sidebar-nav">
         <div class="nav-section">
           <div class="nav-title">Principal</div>
-          <a href="#dashboard" class="sidebar-link active">
+          <a href="index.html" class="sidebar-link ">
             <i class="fas fa-tachometer-alt"></i>
             <span>Tableau de bord</span>
           </a>
@@ -32,7 +32,7 @@
         
         <div class="nav-section">
           <div class="nav-title">Gestion de contenu</div>
-          <a href="#users" class="sidebar-link">
+          <a href="Ges_utilisateurs.html" class="sidebar-link active">
             <i class="fas fa-users"></i>
             <span>Utilisateurs</span>
           </a>
@@ -115,45 +115,10 @@
 <div id="users-content" class="tab-content">
   <div class="content-header">
     <h1>Gestion des Utilisateurs</h1>
-    <button class="btn primary">
-      <i class="fas fa-user-plus"></i>
-      <span>Ajouter Utilisateur</span>
-    </button>
+    
   </div>
   
-  <div class="stats-grid">
-    <div class="stat-card">
-      <div class="stat-icon">
-        <i class="fas fa-users"></i>
-      </div>
-      <div class="stat-number">4,827</div>
-      <div class="stat-label">Total Utilisateurs</div>
-    </div>
-    
-    <div class="stat-card">
-      <div class="stat-icon">
-        <i class="fas fa-user-check"></i>
-      </div>
-      <div class="stat-number">3,942</div>
-      <div class="stat-label">Comptes Actifs</div>
-    </div>
-    
-    <div class="stat-card">
-      <div class="stat-icon">
-        <i class="fas fa-user-clock"></i>
-      </div>
-      <div class="stat-number">562</div>
-      <div class="stat-label">En Attente</div>
-    </div>
-    
-    <div class="stat-card">
-      <div class="stat-icon">
-        <i class="fas fa-chart-line"></i>
-      </div>
-      <div class="stat-number">+12%</div>
-      <div class="stat-label">Croissance Mensuelle</div>
-    </div>
-  </div>
+
 
   <div class="content-grid" style="display: grid; grid-template-columns: 2fr 1fr; gap: 32px;">
     <!-- Users List -->
@@ -179,9 +144,9 @@
             <div class="activity-time">
             
               <div class="table-actions">
-                <button class="btn ghost small">
-                  <i class="fas fa-edit"></i>
-                </button>
+                <a href="Modifier_profile.html" class="btn ghost small">
+                  <i class="fas fa-edit"> </i>
+                </a>
                 <button class="btn ghost small">
                   <i class="fas fa-eye"></i>
                 </button>
@@ -206,10 +171,10 @@
       </div>
       <div class="card-body">
         <div style="display: flex; flex-direction: column; gap: 12px;">
-          <button class="btn primary">
+          <a href="Ajouter_utilisateur.html" class="btn primary">
             <i class="fas fa-user-plus"></i>
             <span>Nouvel Utilisateur</span>
-          </button>
+          </a>
           <button class="btn secondary">
             <i class="fas fa-download"></i>
             <span>Exporter la liste</span>
