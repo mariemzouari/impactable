@@ -21,10 +21,7 @@
             <div class="header-actions">
                 <?php if (Utils::isAuthenticated()): ?>
                     <span class="user-welcome">Bonjour, <?php echo Utils::escape($_SESSION['user_prenom']); ?></span>
-                    <a href="index.php?action=offres" class="btn ghost">
-                        <i class="fas fa-briefcase"></i>
-                        Voir les offres
-                    </a>
+
                             <a href="index.php?action=mes-candidatures" class="btn ghost">
             <i class="fas fa-briefcase"></i>
             Mes candidatures
