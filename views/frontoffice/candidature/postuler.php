@@ -2,7 +2,8 @@
 $title = "Postuler - " . Utils::escape($offre['titre']) . " | " . Config::SITE_NAME;
 require_once __DIR__ . '/../templates/header.php'; 
 ?>
-<script src="C:\xampp\htdocs\offre2\public\js\candidature-validation.js"></script>
+
+<script src="<?php echo Config::SITE_URL; ?>/public/js/candidature-validation.js"></script>
 
 <div class="postuler-container">
     <!-- Aperçu de l'offre -->
