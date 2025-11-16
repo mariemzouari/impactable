@@ -2,7 +2,7 @@
 $title = "Poster une Offre | " . Config::SITE_NAME;
 require_once __DIR__ . '/../templates/header.php'; 
 ?>
-<script src="C:\xampp\htdocs\offre2\public\form-accessibility.js"></script>
+<script src="C:\xampp\htdocs\offre2\public\js\form-accessibility.js"></script>
 <div class="poster-offre-container">
     <div class="section-header">
         <h1><i class="fas fa-plus-circle"></i> Poster une Offre</h1>
