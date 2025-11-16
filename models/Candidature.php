@@ -78,18 +78,33 @@ class Candidature {
         }
     }
     
+    // MÉTHODE CORRIGÉE - getByOffre
     public function getByOffre($offreId, $userId) {
         try {
+            // Vérifier d'abord que l'utilisateur est propriétaire de l'offre
+            $checkStmt = $this->db->prepare("
+                SELECT COUNT(*) as count 
+                FROM offre 
+                WHERE Id_offre = ? AND Id_utilisateur = ?
+            ");
+            $checkStmt->execute([$offreId, $userId]);
+            $isOwner = $checkStmt->fetch()['count'] > 0;
+            
+            if (!$isOwner) {
+                return []; // Retourner vide si l'utilisateur n'est pas propriétaire
+            }
+            
+            // Si propriétaire, récupérer les candidatures
             $stmt = $this->db->prepare("
                 SELECT c.*, u.nom, u.prenom, u.email, u.numero_tel, u.type_handicap 
                 FROM candidature c 
                 JOIN utilisateur u ON c.Id_utilisateur = u.Id_utilisateur 
                 WHERE c.Id_offre = ? 
-                AND c.Id_offre IN (SELECT Id_offre FROM offre WHERE Id_utilisateur = ?)
                 ORDER BY c.date_candidature DESC
             ");
-            $stmt->execute([$offreId, $userId]);
+            $stmt->execute([$offreId]);
             return $stmt->fetchAll();
+            
         } catch(PDOException $e) {
             error_log("Erreur récupération candidatures offre: " . $e->getMessage());
             return [];
@@ -98,13 +113,28 @@ class Candidature {
     
     public function updateStatus($candidatureId, $status, $userId) {
         try {
+            // Vérifier d'abord que l'utilisateur est propriétaire de l'offre
+            $checkStmt = $this->db->prepare("
+                SELECT COUNT(*) as count 
+                FROM candidature c 
+                JOIN offre o ON c.Id_offre = o.Id_offre 
+                WHERE c.Id_candidature = ? AND o.Id_utilisateur = ?
+            ");
+            $checkStmt->execute([$candidatureId, $userId]);
+            $canUpdate = $checkStmt->fetch()['count'] > 0;
+            
+            if (!$canUpdate) {
+                return false; // L'utilisateur n'est pas propriétaire de l'offre
+            }
+            
+            // Mettre à jour le statut
             $stmt = $this->db->prepare("
                 UPDATE candidature 
                 SET status = ? 
-                WHERE Id_candidature = ? 
-                AND Id_offre IN (SELECT Id_offre FROM offre WHERE Id_utilisateur = ?)
+                WHERE Id_candidature = ?
             ");
-            return $stmt->execute([$status, $candidatureId, $userId]);
+            return $stmt->execute([$status, $candidatureId]);
+            
         } catch(PDOException $e) {
             error_log("Erreur mise à jour statut candidature: " . $e->getMessage());
             return false;
@@ -178,6 +208,43 @@ class Candidature {
         } catch(PDOException $e) {
             error_log("Erreur récupération stats candidatures: " . $e->getMessage());
             return ['total' => 0, 'en_attente' => 0, 'en_revue' => 0, 'entretien' => 0, 'retenu' => 0, 'refuse' => 0];
+        }
+    }
+
+    // Méthode pour récupérer toutes les candidatures (pour l'admin)
+    public function getAll($filters = []) {
+        try {
+            $sql = "
+                SELECT c.*, u.nom, u.prenom, u.email, o.titre as offre_titre, 
+                       e.nom as entreprise_nom, e.prenom as entreprise_prenom
+                FROM candidature c 
+                JOIN utilisateur u ON c.Id_utilisateur = u.Id_utilisateur 
+                JOIN offre o ON c.Id_offre = o.Id_offre 
+                JOIN utilisateur e ON o.Id_utilisateur = e.Id_utilisateur 
+                WHERE 1=1
+            ";
+            
+            $params = [];
+            
+            if (!empty($filters['status'])) {
+                $sql .= " AND c.status = ?";
+                $params[] = $filters['status'];
+            }
+            
+            if (!empty($filters['type_offre'])) {
+                $sql .= " AND o.type_offre = ?";
+                $params[] = $filters['type_offre'];
+            }
+            
+            $sql .= " ORDER BY c.date_candidature DESC";
+            
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
+            return $stmt->fetchAll();
+            
+        } catch(PDOException $e) {
+            error_log("Erreur récupération toutes les candidatures: " . $e->getMessage());
+            return [];
         }
     }
 }
