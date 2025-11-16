@@ -14,8 +14,8 @@
                 <button class="nav-toggle" id="navToggle" aria-label="Ouvrir le menu">
                     <i class="fas fa-bars"></i>
                 </button>
-                <div class="logo">
-                    <img src="<?php echo Config::getBaseUrl(); ?>/assets/images/logo.png" alt="ImpactAble" class="logo-image">
+                <div class="logo"><a href="index.php?action=offres" >
+                    <img src="<?php echo Config::getBaseUrl(); ?>/assets/images/logo.png" alt="ImpactAble" class="logo-image"></a>
                 </div>
             </div>
             <div class="header-actions">
@@ -31,13 +31,7 @@
             Mes offres
         </a>
 
-                    <?php if (Utils::isAuthenticated() && $_SESSION['user_role'] === 'admin'): ?>
-    <li class="nav-item">
-        <a class="nav-link" href="index.php?action=admin-dashboard">
-            <i class="fas fa-cog"></i> Administration
-        </a>
-    </li>
-<?php endif; ?>
+
                     <a href="index.php?action=deconnexion" class="btn secondary">
                         <i class="fas fa-sign-out-alt"></i>
                         Déconnexion
@@ -45,5 +39,12 @@
                 <?php else: ?>
                     <a href="index.php?action=connexion" class="btn primary">Se connecter</a>
                 <?php endif; ?>
+                                    <?php if (Utils::isAuthenticated() && $_SESSION['user_role'] === 'admin'): ?>
+    <li class="nav-item">
+        <a class="nav-link" href="index.php?action=admin-dashboard">
+            <i class="fas fa-cog"></i> Administration
+        </a>
+    </li>
+<?php endif; ?>
             </div>
         </header>

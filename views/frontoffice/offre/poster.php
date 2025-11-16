@@ -2,7 +2,7 @@
 $title = "Poster une Offre | " . Config::SITE_NAME;
 require_once __DIR__ . '/../templates/header.php'; 
 ?>
-<script src="C:\xampp\htdocs\offre2\public\js\form-accessibility.js"></script>
+<script src="<?php echo Config::SITE_URL; ?>public\js\form-accessibility.js"></script>
 <div class="poster-offre-container">
     <div class="section-header">
         <h1><i class="fas fa-plus-circle"></i> Poster une Offre</h1>
@@ -36,7 +36,7 @@ require_once __DIR__ . '/../templates/header.php';
                     </label>
                     <input type="text" id="titre" name="titre" class="form-control" 
                            placeholder="Ex: Développeur Web Accessibilité" 
-                           value="<?php echo htmlspecialchars($_POST['titre'] ?? ''); ?>" required>
+                           value="<?php echo htmlspecialchars($_POST['titre'] ?? ''); ?>">
                     <div class="form-help">Titre attractif qui décrit le poste</div>
                 </div>
 
@@ -44,7 +44,7 @@ require_once __DIR__ . '/../templates/header.php';
                     <label class="form-label" for="type_offre">
                         Type d'offre *
                     </label>
-                    <select id="type_offre" name="type_offre" class="form-control" required>
+                    <select id="type_offre" name="type_offre" class="form-control">
                         <option value="emploi" <?php echo ($_POST['type_offre'] ?? '') === 'emploi' ? 'selected' : ''; ?>>Emploi</option>
                         <option value="stage" <?php echo ($_POST['type_offre'] ?? '') === 'stage' ? 'selected' : ''; ?>>Stage</option>
                         <option value="volontariat" <?php echo ($_POST['type_offre'] ?? '') === 'volontariat' ? 'selected' : ''; ?>>Volontariat</option>
@@ -59,7 +59,7 @@ require_once __DIR__ . '/../templates/header.php';
                     </label>
                     <textarea id="description" name="description" class="form-control" 
                               placeholder="Décrivez les missions, responsabilités et compétences requises..." 
-                              rows="6" required><?php echo htmlspecialchars($_POST['description'] ?? ''); ?></textarea>
+                              rows="6"><?php echo htmlspecialchars($_POST['description'] ?? ''); ?></textarea>
                     <div class="form-help">Décrivez en détail le poste et les attentes</div>
                 </div>
             </div>
@@ -72,7 +72,7 @@ require_once __DIR__ . '/../templates/header.php';
                     <label class="form-label">Mode de travail *</label>
                     <div class="radio-group">
                         <label class="radio-option">
-                            <input type="radio" name="mode" value="presentiel" <?php echo ($_POST['mode'] ?? 'presentiel') === 'presentiel' ? 'checked' : ''; ?> required>
+                            <input type="radio" name="mode" value="presentiel" <?php echo ($_POST['mode'] ?? 'presentiel') === 'presentiel' ? 'checked' : ''; ?>>
                             <i class="fas fa-building"></i> Présentiel
                         </label>
                         <label class="radio-option">
@@ -90,7 +90,7 @@ require_once __DIR__ . '/../templates/header.php';
                     <label class="form-label">Horaire de travail *</label>
                     <div class="radio-group">
                         <label class="radio-option">
-                            <input type="radio" name="horaire" value="temps_plein" <?php echo ($_POST['horaire'] ?? 'temps_plein') === 'temps_plein' ? 'checked' : ''; ?> required>
+                            <input type="radio" name="horaire" value="temps_plein" <?php echo ($_POST['horaire'] ?? 'temps_plein') === 'temps_plein' ? 'checked' : ''; ?>>
                             <i class="fas fa-clock"></i> Temps plein
                         </label>
                         <label class="radio-option">
@@ -153,7 +153,7 @@ require_once __DIR__ . '/../templates/header.php';
                     </label>
                     <textarea id="impact_sociale" name="impact_sociale" class="form-control" 
                               placeholder="Décrivez comment cette offre contribue à l'inclusion et à l'impact social..." 
-                              rows="4" required><?php echo htmlspecialchars($_POST['impact_sociale'] ?? ''); ?></textarea>
+                              rows="4"><?php echo htmlspecialchars($_POST['impact_sociale'] ?? ''); ?></textarea>
                     <div class="form-help">Expliquez en quoi ce poste favorise l'inclusion et a un impact positif</div>
                 </div>
 
@@ -162,8 +162,7 @@ require_once __DIR__ . '/../templates/header.php';
                         Date d'expiration de l'offre *
                     </label>
                     <input type="date" id="date_expiration" name="date_expiration" class="form-control" 
-                           value="<?php echo htmlspecialchars($_POST['date_expiration'] ?? ''); ?>" 
-                           min="<?php echo date('Y-m-d'); ?>" required>
+                           value="<?php echo htmlspecialchars($_POST['date_expiration'] ?? ''); ?>">
                     <div class="form-help">Date jusqu'à laquelle l'offre sera visible</div>
                 </div>
             </div>
@@ -183,25 +182,6 @@ require_once __DIR__ . '/../templates/header.php';
     <?php endif; ?>
 </div>
 
-<script>
-// Script pour gérer l'affichage des options d'accessibilité
-const disabilityCheckbox = document.querySelector('input[name="disability_friendly"]');
-const accessibilityOptions = document.querySelector('.accessibility-options');
-
-function toggleAccessibilityOptions() {
-    if (disabilityCheckbox.checked) {
-        accessibilityOptions.style.display = 'block';
-    } else {
-        accessibilityOptions.style.display = 'none';
-        document.querySelectorAll('input[name="type_handicap[]"]').forEach(checkbox => {
-            checkbox.checked = false;
-        });
-    }
-}
-
-// Initialiser l'état
-toggleAccessibilityOptions();
-disabilityCheckbox.addEventListener('change', toggleAccessibilityOptions);
-</script>
+<script src="<?php echo Config::SITE_URL; ?>/public/js/form-accessibility.js"></script>
 
 <?php require_once __DIR__ . '/../templates/footer.php'; ?>
