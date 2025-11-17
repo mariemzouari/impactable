@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ImpactAble — Plateforme Inclusive</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="assets\css\style.css">
+</head>
+<body>
+
+
+  <div class="container">  
+    <!-- IMPROVED: Header with better navigation toggle placement -->
+    <header class="site-header" role="banner">
+      <div class="brand">
+        <button class="nav-toggle" id="navToggle" aria-label="Ouvrir le menu">
+          <i class="fas fa-bars"></i>
+        </button>
+        <div class="logo">
+      <img src="assets\images\logo.png" alt="Inclusive Opportunities" class="logo-image">
+    </div>
+      </div>
+
+      <div class="header-actions">
+        <button class="btn ghost" id="loginBtn">Se connecter</button>
+        <button class="btn primary" id="signupBtn">S'inscrire</button>
+      </div>
+    </header>
+
+    <!-- Side Panel Navigation -->
+    <div class="side-panel" id="sidePanel">
+      <div class="panel-header">
+         <div class="logo">
+      <img src="assets\images\logo.png" alt="Inclusive Opportunities" class="logo-image">
+    </div>
+        <button class="panel-close" id="panelClose">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      
+      <nav class="panel-nav">
+        <div class="nav-section">
+          <div class="nav-title">Navigation</div>
+          <a href="#home" class="nav-link active">
+            <i class="fas fa-home"></i>
+            <span>Accueil</span>
+          </a>
+          <a href="#opportunities" class="nav-link">
+            <i class="fas fa-briefcase"></i>
+            <span>Opportunités</span>
+          </a>
+          <a href="#events" class="nav-link">
+            <i class="fas fa-calendar-alt"></i>
+            <span>Événements</span>
+          </a>
+          <a href="#donations" class="nav-link">
+            <i class="fas fa-hand-holding-heart"></i>
+            <span>Campagnes</span>
+          </a>
+          <a href="#resources" class="nav-link">
+            <i class="fas fa-book"></i>
+            <span>Ressources</span>
+          </a>
+          <a href="#forum" class="nav-link">
+            <i class="fas fa-comments"></i>
+            <span>Forum</span>
+          </a>
+          <a href="#reclamations" class="nav-link">
+            <i class="fas fa-comment-alt"></i>
+            <span>Réclamations</span>
+          </a>
+        </div> 
+  
+      </nav>
+      
+      <div class="panel-footer">
+        <div class="user-profile">
+          <div class="user-avatar">VS</div>
+          <div class="user-info">
+            <h4>Visiteur</h4>
+            <p>Connectez-vous pour plus de fonctionnalités</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="panel-overlay" id="panelOverlay"></div>
+
+
+    <!-- Début Forum -->
+
+
+    <!-- Forum Main Content -->
+    <section class="section">
+      <div class="section-header">
+        <h2>Forum Communautaire</h2>
+        <a href="#" class="section-link">
+          Nouveau sujet
+          <i class="fas fa-plus"></i>
+        </a>
+      </div>
+      
+      <div class="forum-container">
+        <div class="forum-main">
+          <!-- Create Post Card -->
+          <div class="forum-card">
+            <div class="forum-body">
+              <div class="create-post">
+                <div class="user-avatar">VS</div>
+                <div class="post-input">
+                  <textarea placeholder="Partagez vos idées, questions ou expériences avec la communauté..."></textarea>
+                  <div class="post-actions">
+                    <div class="post-options">
+                      <button class="post-option">
+                        <i class="fas fa-image"></i>
+                        <span>Image</span>
+                      </button>
+                      <button class="post-option">
+                        <i class="fas fa-video"></i>
+                        <span>Vidéo</span>
+                      </button>
+                      <button class="post-option">
+                        <i class="fas fa-link"></i>
+                        <span>Lien</span>
+                      </button>
+                    </div>
+                    <button class="btn primary">Publier</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Forum Posts -->
+          <div class="forum-posts">
+            <!-- Post 1 - Événements Hybrides -->
+            <div class="post">
+              <div class="post-header">
+                <div class="post-author">
+                  <div class="user-avatar">MZ</div>
+                  <div class="author-info">
+                    <div class="author-name">Mariem Zouari</div>
+                    <div class="post-time">Il y a 2 heures · <span class="badge">Événements</span></div>
+                  </div>
+                </div>
+                <div class="post-actions-menu">
+                  <button class="post-menu-btn">
+                    <i class="fas fa-ellipsis-h"></i>
+                  </button>
+                </div>
+              </div>
+              
+              <div class="post-content">
+                <div class="post-text">
+                  <h3>Organisation d'événements hybrides accessibles</h3>
+                  <p>Je cherche des retours d'expérience sur l'organisation d'événements hybrides (en présentiel et en ligne) accessibles. Quels sont les défis que vous avez rencontrés et comment les avez-vous surmontés ?</p>
+                </div>
+                <div class="post-image">
+                  <img src="https://images.unsplash.com/photo-1591115765373-5207764f72e4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80" alt="Événement hybride">
+                </div>
+              </div>
+              
+              <div class="post-stats">
+                <div class="post-stat">
+                  <i class="fas fa-heart"></i>
+                  <span>24 j'aime</span>
+                </div>
+                <div class="post-stat">
+                  <i class="fas fa-comment"></i>
+                  <span>12 commentaires</span>
+                </div>
+                <div class="post-stat">
+                  <i class="fas fa-share"></i>
+                  <span>5 partages</span>
+                </div>
+              </div>
+              
+              <div class="post-interactions">
+                <button class="interaction-btn">
+                  <i class="far fa-heart"></i>
+                  <span>J'aime</span>
+                </button>
+                <button class="interaction-btn">
+                  <i class="far fa-comment"></i>
+                  <span>Commenter</span>
+                </button>
+                <button class="interaction-btn">
+                  <i class="fas fa-share"></i>
+                  <span>Partager</span>
+                </button>
+              </div>
+              
+              <div class="comments-section">
+                <div class="comments-list">
+                  <!-- Comment 1 -->
+                  <div class="comment">
+                    <div class="user-avatar" style="width: 40px; height: 40px; font-size: 0.9rem;">AD</div>
+                    <div class="comment-content">
+                      <div class="comment-header">
+                        <div class="comment-author">Ahmed Dridi</div>
+                        <div class="comment-time">Il y a 1 heure</div>
+                      </div>
+                      <div class="comment-text">
+                        Nous avons organisé un événement hybride le mois dernier. Le plus grand défi était de garantir une expérience équivalente pour les participants en ligne et en présentiel. Nous avons utilisé des micros ambiants pour capter les questions de la salle.
+                      </div>
+                      <div class="comment-actions">
+                        <button class="comment-action">
+                          <i class="far fa-heart"></i>
+                          <span>5</span>
+                        </button>
+                        <button class="comment-action">
+                          <span>Répondre</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- Comment 2 -->
+                  <div class="comment">
+                    <div class="user-avatar" style="width: 40px; height: 40px; font-size: 0.9rem;">SB</div>
+                    <div class="comment-content">
+                      <div class="comment-header">
+                        <div class="comment-author">Sarah Ben</div>
+                        <div class="comment-time">Il y a 45 minutes</div>
+                      </div>
+                      <div class="comment-text">
+                        N'oubliez pas les sous-titres en direct pour les participants malentendants ! C'est essentiel pour l'accessibilité. Nous avons utilisé Otter.ai qui fonctionne plutôt bien.
+                      </div>
+                      <div class="comment-actions">
+                        <button class="comment-action">
+                          <i class="far fa-heart"></i>
+                          <span>3</span>
+                        </button>
+                        <button class="comment-action">
+                          <span>Répondre</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="add-comment">
+                  <div class="user-avatar" style="width: 40px; height: 40px; font-size: 0.9rem;">VS</div>
+                  <div class="comment-input">
+                    <input type="text" placeholder="Ajouter un commentaire...">
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Post 2 - Ressources Accessibilité -->
+            <div class="post">
+              <div class="post-header">
+                <div class="post-author">
+                  <div class="user-avatar">AD</div>
+                  <div class="author-info">
+                    <div class="author-name">Ahmed Dridi</div>
+                    <div class="post-time">Il y a 5 heures · <span class="badge">Ressources</span></div>
+                  </div>
+                </div>
+                <div class="post-actions-menu">
+                  <button class="post-menu-btn">
+                    <i class="fas fa-ellipsis-h"></i>
+                  </button>
+                </div>
+              </div>
+              
+              <div class="post-content">
+                <div class="post-text">
+                  <h3>Guide complet d'accessibilité numérique</h3>
+                  <p>Je partage cette ressource incroyable que j'ai trouvée : un guide complet sur l'accessibilité numérique avec des checklists pour chaque étape de développement. J'espère que cela vous sera utile !</p>
+                  <a href="#" class="link-muted">https://example.com/guide-accessibilite-numerique</a>
+                </div>
+              </div>
+              
+              <div class="post-stats">
+                <div class="post-stat active">
+                  <i class="fas fa-heart"></i>
+                  <span>42 j'aime</span>
+                </div>
+                <div class="post-stat">
+                  <i class="fas fa-comment"></i>
+                  <span>8 commentaires</span>
+                </div>
+                <div class="post-stat">
+                  <i class="fas fa-share"></i>
+                  <span>15 partages</span>
+                </div>
+              </div>
+              
+              <div class="post-interactions">
+                <button class="interaction-btn active">
+                  <i class="fas fa-heart"></i>
+                  <span>J'aime</span>
+                </button>
+                <button class="interaction-btn">
+                  <i class="far fa-comment"></i>
+                  <span>Commenter</span>
+                </button>
+                <button class="interaction-btn">
+                  <i class="fas fa-share"></i>
+                  <span>Partager</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Post 3 - Opportunité Emploi -->
+            <div class="post">
+              <div class="post-header">
+                <div class="post-author">
+                  <div class="user-avatar">SB</div>
+                  <div class="author-info">
+                    <div class="author-name">Sarah Ben</div>
+                    <div class="post-time">Il y a 1 jour · <span class="badge">Opportunités</span></div>
+                  </div>
+                </div>
+                <div class="post-actions-menu">
+                  <button class="post-menu-btn">
+                    <i class="fas fa-ellipsis-h"></i>
+                  </button>
+                </div>
+              </div>
+              
+              <div class="post-content">
+                <div class="post-text">
+                  <h3>Recherche développeur accessibilité web</h3>
+                  <p>Notre organisation recherche un développeur spécialisé en accessibilité web pour rejoindre notre équipe. Poste en remote, avec une forte composante de conseil et de formation.</p>
+                  <p><strong>Compétences recherchées:</strong> HTML/CSS avancé, ARIA, WCAG, tests avec lecteurs d'écran</p>
+                </div>
+              </div>
+              
+              <div class="post-stats">
+                <div class="post-stat">
+                  <i class="fas fa-heart"></i>
+                  <span>18 j'aime</span>
+                </div>
+                <div class="post-stat">
+                  <i class="fas fa-comment"></i>
+                  <span>6 commentaires</span>
+                </div>
+                <div class="post-stat">
+                  <i class="fas fa-eye"></i>
+                  <span>124 vues</span>
+                </div>
+              </div>
+              
+              <div class="post-interactions">
+                <button class="interaction-btn">
+                  <i class="far fa-heart"></i>
+                  <span>J'aime</span>
+                </button>
+                <button class="interaction-btn">
+                  <i class="far fa-comment"></i>
+                  <span>Commenter</span>
+                </button>
+                <button class="interaction-btn">
+                  <i class="fas fa-share"></i>
+                  <span>Partager</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Forum Sidebar -->
+        <div class="forum-sidebar">
+          <!-- Categories -->
+          <div class="forum-card">
+            <div class="forum-header">
+              <h3>Catégories</h3>
+            </div>
+            <div class="forum-body">
+              <div class="forum-categories">
+                <div class="category">
+                  <div class="category-info">
+                    <div class="category-icon">
+                      <i class="fas fa-briefcase"></i>
+                    </div>
+                    <div class="category-name">Opportunités</div>
+                  </div>
+                  <div class="category-count">128</div>
+                </div>
+                <div class="category">
+                  <div class="category-info">
+                    <div class="category-icon">
+                      <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <div class="category-name">Événements</div>
+                  </div>
+                  <div class="category-count">76</div>
+                </div>
+                <div class="category">
+                  <div class="category-info">
+                    <div class="category-icon">
+                      <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <div class="category-name">Idées & Projets</div>
+                  </div>
+                  <div class="category-count">94</div>
+                </div>
+                <div class="category">
+                  <div class="category-info">
+                    <div class="category-icon">
+                      <i class="fas fa-question-circle"></i>
+                    </div>
+                    <div class="category-name">Questions</div>
+                  </div>
+                  <div class="category-count">63</div>
+                </div>
+                <div class="category">
+                  <div class="category-info">
+                    <div class="category-icon">
+                      <i class="fas fa-hand-holding-heart"></i>
+                    </div>
+                    <div class="category-name">Ressources</div>
+                  </div>
+                  <div class="category-count">45</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Top Contributors -->
+          <div class="forum-card">
+            <div class="forum-header">
+              <h3>Top Contributeurs</h3>
+            </div>
+            <div class="forum-body">
+              <div class="top-contributors">
+                <div class="contributor">
+                  <div class="contributor-avatar">MZ</div>
+                  <div class="contributor-info">
+                    <div class="contributor-name">Mariem Zouari</div>
+                    <div class="contributor-stats">42 posts, 128 likes</div>
+                  </div>
+                  <div class="contributor-points">570</div>
+                </div>
+                <div class="contributor">
+                  <div class="contributor-avatar">AD</div>
+                  <div class="contributor-info">
+                    <div class="contributor-name">Ahmed Dridi</div>
+                    <div class="contributor-stats">38 posts, 96 likes</div>
+                  </div>
+                  <div class="contributor-points">485</div>
+                </div>
+                <div class="contributor">
+                  <div class="contributor-avatar">SB</div>
+                  <div class="contributor-info">
+                    <div class="contributor-name">Sarah Ben</div>
+                    <div class="contributor-stats">29 posts, 142 likes</div>
+                  </div>
+                  <div class="contributor-points">420</div>
+                </div>
+                <div class="contributor">
+                  <div class="contributor-avatar">KM</div>
+                  <div class="contributor-info">
+                    <div class="contributor-name">Khalil Mrad</div>
+                    <div class="contributor-stats">25 posts, 87 likes</div>
+                  </div>
+                  <div class="contributor-points">356</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Trending Topics -->
+          <div class="forum-card">
+            <div class="forum-header">
+              <h3>Sujets Tendances</h3>
+            </div>
+            <div class="forum-body">
+              <div class="forum-categories">
+                <div class="category">
+                  <div class="category-info">
+                    <div class="category-name">Événements hybrides</div>
+                  </div>
+                  <div class="category-count">24</div>
+                </div>
+                <div class="category">
+                  <div class="category-info">
+                    <div class="category-name">Accessibilité mobile</div>
+                  </div>
+                  <div class="category-count">18</div>
+                </div>
+                <div class="category">
+                  <div class="category-info">
+                    <div class="category-name">Formation inclusive</div>
+                  </div>
+                  <div class="category-count">15</div>
+                </div>
+                <div class="category">
+                  <div class="category-info">
+                    <div class="category-name">Télétravail adapté</div>
+                  </div>
+                  <div class="category-count">12</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Forum Rules -->
+          <div class="forum-card">
+            <div class="forum-header">
+              <h3>Règles du Forum</h3>
+            </div>
+            <div class="forum-body">
+              <div style="font-size: 0.9rem; color: var(--muted); line-height: 1.5;">
+                <p>• Respectez tous les membres</p>
+                <p>• Partagez des contenus pertinents</p>
+                <p>• Utilisez un langage inclusif</p>
+                <p>• Citez vos sources</p>
+                <p>• Signalez les contenus inappropriés</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+
+
+
+    <!-- Footer-->
+
+
+    <footer class="site-footer">
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-column">
+            <h3>ImpactAble</h3>
+            <p class="text-muted">Plateforme dédiée à l'inclusion et à l'impact social.</p>
+            <div class="social-links">
+              <a href="#"><i class="fab fa-facebook-f"></i></a>
+              <a href="#"><i class="fab fa-twitter"></i></a>
+              <a href="#"><i class="fab fa-linkedin-in"></i></a>
+              <a href="#"><i class="fab fa-instagram"></i></a>
+            </div>
+          </div>
+          <div class="footer-column">
+            <h3>Navigation</h3>
+            <div class="footer-links">
+              <a href="#home">Accueil</a>
+              <a href="#opportunities">Opportunités</a>
+              <a href="#events">Événements</a>
+              <a href="#donations">Campagnes</a>
+              <a href="#resources">Ressources</a>
+              <a href="#forum">Forum</a>
+            </div>
+          </div>
+          <div class="footer-column">
+            <h3>Légal</h3>
+            <div class="footer-links">
+              <a href="#">Mentions légales</a>
+              <a href="#">Politique de confidentialité</a>
+              <a href="#">Conditions d'utilisation</a>
+              <a href="#">Accessibilité</a>
+            </div>
+          </div>
+          <div class="footer-column">
+            <h3>Contact</h3>
+            <div class="footer-links">
+              <a href="mailto:contact@impactable.org">contact@impactable.org</a>
+              <a href="tel:+21612345678">+216 12 345 678</a>
+              <a href="#">Tunis, Tunisia</a>
+            </div>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>© <span id="year"></span> ImpactAble — Tous droits réservés.</p>
+        </div>
+      </div>
+    </footer>
+
+    </div>
+
+    <script src="assets\js\script.js"></script>
+    </body>
+    </html>

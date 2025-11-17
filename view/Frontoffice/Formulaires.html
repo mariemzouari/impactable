@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ImpactAble — Plateforme Inclusive</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="assets\css\style.css">
+</head>
+<body>
+
+
+  <div class="container"> 
+
+    <!-- Header -->
+    <header class="site-header" role="banner">
+      <div class="brand">
+        <button class="nav-toggle" id="navToggle" aria-label="Ouvrir le menu">
+          <i class="fas fa-bars"></i>
+        </button>
+         <div class="logo">
+      <img src="assets\images\logo.png" alt="Inclusive Opportunities" class="logo-image">
+    </div>
+      </div>
+
+      <div class="header-actions">
+        <button class="btn ghost" id="loginBtn">Se connecter</button>
+        <button class="btn primary" id="signupBtn">S'inscrire</button>
+      </div>
+    </header>
+
+    <!-- Side Panel Navigation -->
+    <div class="side-panel" id="sidePanel">
+      <div class="panel-header">
+         <div class="logo">
+      <img src="assets\images\logo.png" alt="Inclusive Opportunities" class="logo-image">
+    </div>
+        <button class="panel-close" id="panelClose">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      
+      <nav class="panel-nav">
+        <div class="nav-section">
+          <div class="nav-title">Navigation</div>
+          <a href="#home" class="nav-link active">
+            <i class="fas fa-home"></i>
+            <span>Accueil</span>
+          </a>
+          <a href="#opportunities" class="nav-link">
+            <i class="fas fa-briefcase"></i>
+            <span>Opportunités</span>
+          </a>
+          <a href="#events" class="nav-link">
+            <i class="fas fa-calendar-alt"></i>
+            <span>Événements</span>
+          </a>
+          <a href="#donations" class="nav-link">
+            <i class="fas fa-hand-holding-heart"></i>
+            <span>Campagnes</span>
+          </a>
+          <a href="#resources" class="nav-link">
+            <i class="fas fa-book"></i>
+            <span>Ressources</span>
+          </a>
+          <a href="#forum" class="nav-link">
+            <i class="fas fa-comments"></i>
+            <span>Forum</span>
+          </a>
+          <a href="#reclamations" class="nav-link">
+            <i class="fas fa-comment-alt"></i>
+            <span>Réclamations</span>
+          </a>
+        </div> 
+  
+      </nav>
+      
+      <div class="panel-footer">
+        <div class="user-profile">
+          <div class="user-avatar">VS</div>
+          <div class="user-info">
+            <h4>Visiteur</h4>
+            <p>Connectez-vous pour plus de fonctionnalités</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="panel-overlay" id="panelOverlay"></div>
+
+    <!-- Your code here -->
+
+
+<!-- Login Modal -->
+  <div class="modal-backdrop" id="loginModal">
+    <div class="modal">
+      <div class="auth-decoration">
+        <div class="auth-icon">
+          <i class="fas fa-sign-in-alt"></i>
+        </div>
+      </div>
+      <div class="modal-body">
+        <h2 class="auth-title">Connexion</h2>
+        <p class="auth-subtitle">Accédez à votre compte ImpactAble</p>
+        
+        <form id="loginForm">
+          <div class="form-group">
+            <label for="login-email">
+              <i class="fas fa-envelope"></i>
+              E‑mail
+            </label>
+            <input id="login-email" class="input" type="text" placeholder="votre@email.tld">
+          </div>
+          <div class="form-group">
+            <label for="login-password">
+              <i class="fas fa-lock"></i>
+              Mot de passe
+            </label>
+            <input id="login-password" class="input" type="text" placeholder="Votre mot de passe">
+          </div>
+          <div class="form-footer">
+            <div class="form-links">
+              <a href="#">Mot de passe oublié?</a>
+            </div>
+            <button class="btn primary" type="submit">Se connecter</button>
+          </div>
+        </form>
+        <div class="text-center mt-24">
+          <p class="text-muted">Pas encore de compte? <a href="#" id="switchToSignup">S'inscrire</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Signup Modal -->
+  <div class="modal-backdrop" id="signupModal">
+    <div class="modal">
+      <div class="auth-decoration">
+        <div class="auth-icon">
+          <i class="fas fa-user-plus"></i>
+        </div>
+      </div>
+      <div class="modal-body">
+        <h2 class="auth-title">Inscription</h2>
+        <p class="auth-subtitle">Rejoignez la communauté ImpactAble</p>
+        
+        <form id="signupForm">
+          <div class="form-group">
+            <label for="signup-name">
+              <i class="fas fa-user"></i>
+              Nom complet
+            </label>
+            <input id="signup-name" class="input" type="text" placeholder="Votre nom complet">
+          </div>
+          <div class="form-group">
+            <label for="signup-email">
+              <i class="fas fa-envelope"></i>
+              E‑mail
+            </label>
+            <input id="signup-email" class="input" type="text" placeholder="votre@email.tld">
+          </div>
+          <div class="form-group">
+            <label for="signup-password">
+              <i class="fas fa-lock"></i>
+              Mot de passe
+            </label>
+            <input id="signup-password" class="input" type="text" placeholder="Créez un mot de passe">
+          </div>
+          <div class="form-group">
+            <label for="signup-confirm">
+              <i class="fas fa-lock"></i>
+              Confirmer le mot de passe
+            </label>
+            <input id="signup-confirm" class="input" type="text" placeholder="Confirmez votre mot de passe">
+          </div>
+          
+          <div class="accessibility-options">
+            <div class="accessibility-title">
+              <i class="fas fa-universal-access"></i>
+              Informations d'accessibilité (optionnel)
+            </div>
+            <div class="checkbox-group">
+              <label class="checkbox-label">
+                <input type="checkbox" name="accessibility" value="mobility">
+                Mobilité réduite
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" name="accessibility" value="visual">
+                Déficience visuelle
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" name="accessibility" value="hearing">
+                Déficience auditive
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" name="accessibility" value="cognitive">
+                Trouble cognitif
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" name="accessibility" value="none">
+                Aucun handicap
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" name="accessibility" value="prefer-not">
+                Préfère ne pas répondre
+              </label>
+            </div>
+          </div>
+          
+          <div class="form-footer">
+            <button class="btn primary" type="submit">S'inscrire</button>
+          </div>
+        </form>
+        <div class="text-center mt-24">
+          <p class="text-muted">Déjà un compte? <a href="#" id="switchToLogin">Se connecter</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Post Offer Modal -->
+  <div class="modal-backdrop" id="postOfferModal">
+    <div class="modal">
+      <div class="auth-decoration">
+        <div class="auth-icon">
+          <i class="fas fa-briefcase"></i>
+        </div>
+      </div>
+      <div class="modal-body">
+        <h2 class="auth-title">Poster une offre</h2>
+        <p class="auth-subtitle">Partagez une opportunité avec la communauté</p>
+        
+        <form id="postOfferForm">
+          <div class="form-group">
+            <label for="offer-title">
+              <i class="fas fa-heading"></i>
+              Titre de l'offre
+            </label>
+            <input id="offer-title" class="input" type="text" placeholder="Ex: Développeur Accessibilité Web">
+          </div>
+          <div class="form-group">
+            <label for="offer-type">
+              <i class="fas fa-tag"></i>
+              Type d'offre
+            </label>
+            <select id="offer-type" class="select">
+              <option>Emploi</option>
+              <option>Stage</option>
+              <option>Volontariat</option>
+              <option>Mission</option>
+              <option>Formation</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="offer-location">
+              <i class="fas fa-map-marker-alt"></i>
+              Lieu
+            </label>
+            <input id="offer-location" class="input" type="text" placeholder="Ex: Remote, Tunis, Hybride">
+          </div>
+          <div class="form-group">
+            <label for="offer-company">
+              <i class="fas fa-building"></i>
+              Organisation
+            </label>
+            <input id="offer-company" class="input" type="text" placeholder="Nom de votre organisation">
+          </div>
+          <div class="form-group">
+            <label for="offer-description">
+              <i class="fas fa-align-left"></i>
+              Description
+            </label>
+            <textarea id="offer-description" class="textarea" placeholder="Décrivez l'offre en détail..."></textarea>
+          </div>
+          
+          <div class="accessibility-options">
+            <div class="accessibility-title">
+              <i class="fas fa-universal-access"></i>
+              Accessibilité proposée
+            </div>
+            <div class="checkbox-group">
+              <label class="checkbox-label">
+                <input type="checkbox" name="offer-accessibility" value="ramp">
+                Rampe d'accès
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" name="offer-accessibility" value="elevator">
+                Ascenseur
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" name="offer-accessibility" value="parking">
+                Stationnement adapté
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" name="offer-accessibility" value="bathroom">
+                Toilettes adaptées
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" name="offer-accessibility" value="sign-language">
+                Langue des signes
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" name="offer-accessibility" value="subtitles">
+                Sous-titrage
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" name="offer-accessibility" value="remote">
+                Télétravail possible
+              </label>
+            </div>
+          </div>
+          
+          <div class="form-footer">
+            <button class="btn secondary" type="reset">Réinitialiser</button>
+            <button class="btn primary" type="submit">Publier l'offre</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+
+   <!-- Postulation Modal -->
+<div class="modal-backdrop" id="postulationModal">
+  <div class="modal">
+    <div class="auth-decoration">
+      <div class="auth-icon">
+        <i class="fas fa-file-alt"></i>
+      </div>
+    </div>
+    <div class="modal-body">
+      <h2 class="auth-title">Postuler à l'offre</h2>
+      <p class="auth-subtitle">Développeur Accessibilité Web - TechForAll</p>
+      
+      <form id="postulationForm">
+        <div class="form-group">
+          <label for="postulation-name">
+            <i class="fas fa-user"></i>
+            Nom complet
+          </label>
+          <input id="postulation-name" class="input" type="text" placeholder="Votre nom complet">
+        </div>
+        
+        <div class="form-group">
+          <label for="postulation-email">
+            <i class="fas fa-envelope"></i>
+            E‑mail
+          </label>
+          <input id="postulation-email" class="input" type="text" placeholder="votre@email.tld">
+        </div>
+        
+        <div class="form-group">
+          <label for="postulation-phone">
+            <i class="fas fa-phone"></i>
+            Téléphone
+          </label>
+          <input id="postulation-phone" class="input" type="text" placeholder="+216 XX XXX XXX">
+        </div>
+        
+        <div class="form-group">
+          <label for="postulation-linkedin">
+            <i class="fab fa-linkedin"></i>
+            LinkedIn (optionnel)
+          </label>
+          <input id="postulation-linkedin" class="input" type="text" placeholder="Lien vers votre profil">
+        </div>
+        
+        <div class="form-group">
+          <label for="postulation-motivation">
+            <i class="fas fa-comment"></i>
+            Lettre de motivation
+          </label>
+          <textarea id="postulation-motivation" class="textarea" placeholder="Pourquoi êtes-vous intéressé par cette opportunité?..." rows="4"></textarea>
+        </div>
+        
+        <div class="accessibility-options">
+          <div class="accessibility-title">
+            <i class="fas fa-universal-access"></i>
+            Besoins d'accessibilité pour l'entretien
+          </div>
+          <div class="checkbox-group">
+            <label class="checkbox-label">
+              <input type="checkbox" name="interview-accessibility" value="sign-language">
+              Interprète langue des signes
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="interview-accessibility" value="remote">
+              Entretien à distance
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="interview-accessibility" value="documents">
+              Documents en format accessible
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="interview-accessibility" value="none">
+              Aucun besoin spécifique
+            </label>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label>
+            <i class="fas fa-paperclip"></i>
+            CV (PDF recommandé)
+          </label>
+          <input type="file" class="input" accept=".pdf,.doc,.docx">
+        </div>
+        
+        <div class="form-footer">
+          <button class="btn secondary" type="reset">Annuler</button>
+          <button class="btn primary" type="submit">Envoyer ma candidature</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Inscription Event Modal -->
+<div class="modal-backdrop" id="eventInscriptionModal">
+  <div class="modal">
+    <div class="auth-decoration">
+      <div class="auth-icon">
+        <i class="fas fa-calendar-check"></i>
+      </div>
+    </div>
+    <div class="modal-body">
+      <h2 class="auth-title">S'inscrire à l'événement</h2>
+      <p class="auth-subtitle">Atelier Accessibilité Numérique - 15 Déc 2024</p>
+      
+      <form id="eventInscriptionForm">
+        <div class="form-group">
+          <label for="event-name">
+            <i class="fas fa-user"></i>
+            Nom complet
+          </label>
+          <input id="event-name" class="input" type="text" placeholder="Votre nom complet">
+        </div>
+        
+        <div class="form-group">
+          <label for="event-email">
+            <i class="fas fa-envelope"></i>
+            E‑mail
+          </label>
+          <input id="event-email" class="input" type="text" placeholder="votre@email.tld">
+        </div>
+        
+        <div class="form-group">
+          <label for="event-organization">
+            <i class="fas fa-building"></i>
+            Organisation (optionnel)
+          </label>
+          <input id="event-organization" class="input" type="text" placeholder="Votre entreprise ou association">
+        </div>
+        
+        <div class="form-group">
+          <label for="event-participation">
+            <i class="fas fa-video"></i>
+            Mode de participation
+          </label>
+          <select id="event-participation" class="select">
+            <option>En présentiel</option>
+            <option>En ligne</option>
+            <option>Hybride (les deux)</option>
+          </select>
+        </div>
+        
+        <div class="accessibility-options">
+          <div class="accessibility-title">
+            <i class="fas fa-universal-access"></i>
+            Besoins d'accessibilité
+          </div>
+          <div class="checkbox-group">
+            <label class="checkbox-label">
+              <input type="checkbox" name="event-accessibility" value="sign-language">
+              Interprétation LSF
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="event-accessibility" value="subtitles">
+              Sous-titrage
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="event-accessibility" value="documents">
+              Documents en format accessible
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="event-accessibility" value="parking">
+              Stationnement adapté
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="event-accessibility" value="assistance">
+              Assistance personnelle
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="event-accessibility" value="none">
+              Aucun besoin spécifique
+            </label>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="event-diet">
+            <i class="fas fa-utensils"></i>
+            Restrictions alimentaires (optionnel)
+          </label>
+          <input id="event-diet" class="input" type="text" placeholder="Végétarien, allergies...">
+        </div>
+        
+        <div class="form-group">
+          <label for="event-comments">
+            <i class="fas fa-comment"></i>
+            Commentaires (optionnel)
+          </label>
+          <textarea id="event-comments" class="textarea" placeholder="Questions ou remarques supplémentaires..." rows="3"></textarea>
+        </div>
+        
+        <div class="form-footer">
+          <button class="btn secondary" type="reset">Annuler</button>
+          <button class="btn primary" type="submit">Confirmer l'inscription</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+  <!-- Don Modal -->
+<div class="modal-backdrop" id="donationModal">
+  <div class="modal">
+    <div class="auth-decoration">
+      <div class="auth-icon">
+        <i class="fas fa-hand-holding-heart"></i>
+      </div>
+    </div>
+    <div class="modal-body">
+      <h2 class="auth-title">Soutenir la Campagne</h2>
+      <p class="auth-subtitle">Matériel Adapté pour Écoles Inclusives</p>
+      
+      <form id="donationForm">
+        <!-- Montant du don -->
+        <div class="form-group">
+          <label>
+            <i class="fas fa-coins"></i>
+            Choisissez votre montant
+          </label>
+          <div class="checkbox-group" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
+            <label class="checkbox-label" style="text-align: center; padding: 15px; border: 2px solid var(--light-sage); border-radius: var(--radius-sm);">
+              <input type="radio" name="amount" value="20" style="display: none;">
+              <div style="font-weight: bold; color: var(--moss);">20 TND</div>
+              <div class="text-muted small">Aide de base</div>
+            </label>
+            <label class="checkbox-label" style="text-align: center; padding: 15px; border: 2px solid var(--light-sage); border-radius: var(--radius-sm);">
+              <input type="radio" name="amount" value="50" style="display: none;">
+              <div style="font-weight: bold; color: var(--moss);">50 TND</div>
+              <div class="text-muted small">Soutien régulier</div>
+            </label>
+            <label class="checkbox-label" style="text-align: center; padding: 15px; border: 2px solid var(--light-sage); border-radius: var(--radius-sm);">
+              <input type="radio" name="amount" value="100" style="display: none;">
+              <div style="font-weight: bold; color: var(--moss);">100 TND</div>
+              <div class="text-muted small">Contribution significative</div>
+            </label>
+            <label class="checkbox-label" style="text-align: center; padding: 15px; border: 2px solid var(--light-sage); border-radius: var(--radius-sm);">
+              <input type="radio" name="amount" value="custom" style="display: none;">
+              <div style="font-weight: bold; color: var(--moss);">Autre montant</div>
+              <div class="text-muted small">Personnalisé</div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Montant personnalisé -->
+        <div class="form-group">
+          <label for="custom-amount">
+            <i class="fas fa-edit"></i>
+            Votre montant personnalisé (TND)
+          </label>
+          <input id="custom-amount" class="input" type="text" placeholder="Entrez le montant de votre choix">
+        </div>
+
+        <!-- Fréquence du don -->
+        <div class="form-group">
+          <label for="donation-frequency">
+            <i class="fas fa-calendar-alt"></i>
+            Fréquence du don
+          </label>
+          <select id="donation-frequency" class="select">
+            <option>Don unique</option>
+            <option>Mensuel</option>
+            <option>Trimestriel</option>
+            <option>Annuel</option>
+          </select>
+        </div>
+
+        <!-- Informations personnelles -->
+        <div class="form-group">
+          <label for="donor-name">
+            <i class="fas fa-user"></i>
+            Votre nom
+          </label>
+          <input id="donor-name" class="input" type="text" placeholder="Comment souhaitez-vous être nommé">
+        </div>
+
+        <div class="form-group">
+          <label for="donor-email">
+            <i class="fas fa-envelope"></i>
+            Adresse email
+          </label>
+          <input id="donor-email" class="input" type="text" placeholder="Pour la confirmation et le suivi">
+        </div>
+
+        <!-- Type de soutien -->
+        <div class="accessibility-options">
+          <div class="accessibility-title">
+            <i class="fas fa-bullhorn"></i>
+            Votre soutien
+          </div>
+          <div class="checkbox-group">
+            <label class="checkbox-label">
+              <input type="checkbox" name="support-type" value="financial">
+              Soutien financier uniquement
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="support-type" value="volunteer">
+              Je suis aussi intéressé pour du bénévolat
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="support-type" value="share">
+              Je partagerai la campagne autour de moi
+            </label>
+          </div>
+        </div>
+
+        <!-- Message personnel -->
+        <div class="form-group">
+          <label for="personal-message">
+            <i class="fas fa-comment-heart"></i>
+            Un message pour les bénéficiaires (optionnel)
+          </label>
+          <textarea id="personal-message" class="textarea" placeholder="Laissez un message d'encouragement..." rows="3"></textarea>
+        </div>
+
+        <!-- Préférences de communication -->
+        <div class="accessibility-options">
+          <div class="accessibility-title">
+            <i class="fas fa-bell"></i>
+            Préférences de communication
+          </div>
+          <div class="checkbox-group">
+            <label class="checkbox-label">
+              <input type="checkbox" name="communication" value="updates">
+              Recevoir les mises à jour de la campagne
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="communication" value="newsletter">
+              S'inscrire à la newsletter ImpactAble
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="communication" value="anonymity">
+              Rester anonyme sur la page des donateurs
+            </label>
+          </div>
+        </div>
+
+        <!-- Mode de paiement -->
+        <div class="form-group">
+          <label>
+            <i class="fas fa-credit-card"></i>
+            Mode de paiement
+          </label>
+          <div class="checkbox-group" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
+            <label class="checkbox-label" style="text-align: center; padding: 10px; border: 2px solid var(--light-sage); border-radius: var(--radius-sm);">
+              <input type="radio" name="payment" value="card" style="display: none;">
+              <i class="fas fa-credit-card" style="color: var(--moss);"></i>
+              <div class="small">Carte bancaire</div>
+            </label>
+            <label class="checkbox-label" style="text-align: center; padding: 10px; border: 2px solid var(--light-sage); border-radius: var(--radius-sm);">
+              <input type="radio" name="payment" value="mobile" style="display: none;">
+              <i class="fas fa-mobile-alt" style="color: var(--moss);"></i>
+              <div class="small">Paiement mobile</div>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-footer">
+          <div style="text-align: center; margin-bottom: 1rem;">
+            <p class="text-muted small">
+              <i class="fas fa-lock"></i>
+              Paiement sécurisé • Reçu fiscal disponible
+            </p>
+          </div>
+          <button class="btn secondary" type="reset">Annuler</button>
+          <button class="btn primary" type="submit">
+            <i class="fas fa-lock"></i>
+            Confirmer mon soutien
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+    
+    <!-- Footer-->
+    <footer class="site-footer">
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-column">
+            <h3>ImpactAble</h3>
+            <p class="text-muted">Plateforme dédiée à l'inclusion et à l'impact social.</p>
+            <div class="social-links">
+              <a href="#"><i class="fab fa-facebook-f"></i></a>
+              <a href="#"><i class="fab fa-twitter"></i></a>
+              <a href="#"><i class="fab fa-linkedin-in"></i></a>
+              <a href="#"><i class="fab fa-instagram"></i></a>
+            </div>
+          </div>
+          <div class="footer-column">
+            <h3>Navigation</h3>
+            <div class="footer-links">
+              <a href="#home">Accueil</a>
+              <a href="#opportunities">Opportunités</a>
+              <a href="#events">Événements</a>
+              <a href="#donations">Campagnes</a>
+              <a href="#resources">Ressources</a>
+              <a href="#forum">Forum</a>
+            </div>
+          </div>
+          <div class="footer-column">
+            <h3>Légal</h3>
+            <div class="footer-links">
+              <a href="#">Mentions légales</a>
+              <a href="#">Politique de confidentialité</a>
+              <a href="#">Conditions d'utilisation</a>
+              <a href="#">Accessibilité</a>
+            </div>
+          </div>
+          <div class="footer-column">
+            <h3>Contact</h3>
+            <div class="footer-links">
+              <a href="mailto:contact@impactable.org">contact@impactable.org</a>
+              <a href="tel:+21612345678">+216 12 345 678</a>
+              <a href="#">Tunis, Tunisia</a>
+            </div>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>© <span id="year"></span> ImpactAble — Tous droits réservés.</p>
+        </div>
+      </div>
+    </footer>
+  </div> <!-- /.container -->
+    
+  
+  </div>
+
+
+
+  <script src="assets\js\script.js"></script>
+</body>
+</html>
