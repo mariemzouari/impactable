@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Déposer une Réclamation - ImpactAble</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #F4ECDD 0%, #FFF4F5 100%);
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        /* En-tête */
+        header {
+            text-align: center;
+            color: #4B2E16;
+            margin-bottom: 40px;
+            animation: slideDown 0.8s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .logo {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .logo-icon {
+            font-size: 3em;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .logo h1 {
+            font-weight: 700;
+            font-size: 2.5em;
+            color: #5E6D38;
+            margin: 0;
+        }
+
+        header h2 {
+            font-weight: 700;
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            color: #4B2E16;
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            color: #5E6D38;
+        }
+
+        /* Navigation entre formulaire et mes réclamations */
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .tab-btn {
+            padding: 15px 35px;
+            background: white;
+            border: 3px solid #A9B57D;
+            border-radius: 25px;
+            color: #5E6D38;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1.1em;
+        }
+
+        .tab-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(94, 109, 56, 0.3);
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #5E6D38, #4B2E16);
+            color: white;
+            border-color: #5E6D38;
+        }
+
+        /* Sections */
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+            animation: fadeIn 0.6s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Bannière informative */
+        .info-banner {
+            background: white;
+            border: 3px solid #A9B57D;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(75, 46, 22, 0.1);
+        }
+
+        .info-banner h3 {
+            color: #4B2E16;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.3em;
+        }
+
+        .info-banner ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .info-banner li {
+            color: #5E6D38;
+            margin-bottom: 10px;
+            padding-left: 30px;
+            position: relative;
+        }
+
+        .info-banner li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #A9B57D;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        /* Formulaire détaillé */
+        .reclamation-form {
+            background: white;
+            border: 3px solid #F4ECDD;
+            border-radius: 25px;
+            padding: 40px;
+            box-shadow: 0 15px 40px rgba(75, 46, 22, 0.15);
+        }
+
+        .form-section {
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 2px solid #F4ECDD;
+        }
+
+        .form-section:last-of-type {
+            border-bottom: none;
+        }
+
+        .form-section h3 {
+            color: #4B2E16;
+            margin-bottom: 25px;
+            font-size: 1.6em;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .form-section h3 i {
+            color: #5E6D38;
+            font-size: 1.2em;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            color: #4B2E16;
+            font-weight: 600;
+            font-size: 1em;
+        }
+
+        .required {
+            color: #D94839;
+            margin-left: 4px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid #A9B57D;
+            border-radius: 12px;
+            font-family: 'Inter', sans-serif;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #5E6D38;
+            box-shadow: 0 0 0 4px rgba(94, 109, 56, 0.1);
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .char-counter {
+            text-align: right;
+            font-size: 0.85em;
+            color: #B47F47;
+            margin-top: 5px;
+        }
+
+        /* Priorité */
+        .priorite-options {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        .priorite-option {
+            position: relative;
+        }
+
+        .priorite-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .priorite-label {
+            display: block;
+            padding: 14px;
+            border: 2px solid #A9B57D;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            color: #5E6D38;
+        }
+
+        .priorite-option input[type="radio"]:checked + .priorite-label {
+            background: #5E6D38;
+            color: white;
+            border-color: #5E6D38;
+            transform: scale(1.05);
+        }
+
+        /* Case à cocher */
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            background: #FFF4F5;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        /* Bouton de soumission */
+        .submit-section {
+            text-align: center;
+            margin-top: 35px;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #5E6D38, #4B2E16);
+            color: white;
+            border: none;
+            padding: 18px 60px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(94, 109, 56, 0.3);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(94, 109, 56, 0.4);
+        }
+
+        .submit-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Message de succès */
+        .success-message {
+            display: none;
+            background: #5E6D38;
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-top: 25px;
+            text-align: center;
+            animation: slideDown 0.5s;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        .success-message i {
+            font-size: 3em;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        /* Section Mes Réclamations */
+        .mes-reclamations {
+            background: white;
+            border: 3px solid #F4ECDD;
+            border-radius: 25px;
+            padding: 40px;
+            box-shadow: 0 15px 40px rgba(75, 46, 22, 0.15);
+        }
+
+        .search-section {
+            margin-bottom: 30px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #A9B57D;
+            border-radius: 50px;
+            font-size: 1em;
+        }
+
+        .reclamations-list {
+            display: grid;
+            gap: 20px;
+        }
+
+        .reclamation-card {
+            background: #FFF4F5;
+            border: 2px solid #F4ECDD;
+            border-radius: 18px;
+            padding: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .reclamation-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(94, 109, 56, 0.2);
+            border-color: #A9B57D;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .card-id {
+            font-weight: 700;
+            color: #4B2E16;
+            font-size: 1.1em;
+        }
+
+        .card-date {
+            color: #B47F47;
+            font-size: 0.9em;
+        }
+
+        .card-title {
+            color: #4B2E16;
+            font-size: 1.3em;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .card-description {
+            color: #5E6D38;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .status-badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+
+        .status-badge.en_attente {
+            background: #FFF3CD;
+            color: #856404;
+        }
+
+        .status-badge.en_cours {
+            background: #CCE5FF;
+            color: #004085;
+        }
+
+        .status-badge.resolu {
+            background: #D4EDDA;
+            color: #155724;
+        }
+
+        .status-badge.rejete {
+            background: #F8D7DA;
+            color: #721C24;
+        }
+
+        .voir-details-btn {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #5E6D38, #4B2E16);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .voir-details-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(94, 109, 56, 0.4);
+        }
+
+        /* Loader */
+        .loader {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .loader.active {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid #F4ECDD;
+            border-top: 4px solid #5E6D38;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #5E6D38;
+        }
+
+        .empty-state i {
+            font-size: 4em;
+            margin-bottom: 20px;
+            color: #A9B57D;
+        }
+
+        .empty-state h3 {
+            color: #4B2E16;
+            margin-bottom: 10px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .priorite-options {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            header h2 {
+                font-size: 2em;
+            }
+
+            .reclamation-form, .mes-reclamations {
+                padding: 25px;
+            }
+
+            .nav-tabs {
+                flex-direction: column;
+            }
+
+            .tab-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <div class="logo-icon">🎯</div>
+                <h1>Impactable</h1>
+            </div>
+            <h2>Système de Réclamations</h2>
+            <p class="subtitle">Votre voix compte. Nous sommes là pour vous écouter.</p>
+        </header>
+
+        <!-- Navigation entre sections -->
+        <div class="nav-tabs">
+            <button class="tab-btn active" onclick="switchTab('nouvelle')">
+                <i class="fas fa-plus-circle"></i> Nouvelle Réclamation
+            </button>
+            <button class="tab-btn" onclick="switchTab('mes-reclamations')">
+                <i class="fas fa-list"></i> Mes Réclamations
+            </button>
+        </div>
+
+        <!-- Section: Nouvelle Réclamation -->
+        <div class="section active" id="nouvelle-section">
+            <div class="info-banner">
+                <h3><i class="fas fa-info-circle"></i> Comment ça marche ?</h3>
+                <ul>
+                    <li>Remplissez tous les champs du formulaire ci-dessous</li>
+                    <li>Notre équipe traitera votre réclamation dans les 48h ouvrables</li>
+                    <li>Vous recevrez une notification par email et SMS</li>
+                    <li>Vous pouvez suivre l'état de votre réclamation dans "Mes Réclamations"</li>
+                    <li>Toutes vos données sont confidentielles et sécurisées</li>
+                </ul>
+            </div>
+
+            <form class="reclamation-form" id="reclamationForm">
+                <!-- Section 1: Informations personnelles -->
+                <div class="form-section">
+                    <h3><i class="fas fa-user"></i> 1. Vos Informations Personnelles</h3>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="nom">Nom complet <span class="required">*</span></label>
+                            <input type="text" id="nom" name="nom" required minlength="2" placeholder="Ex: Marie Dupont">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="prenom">Prénom <span class="required">*</span></label>
+                            <input type="text" id="prenom" name="prenom" required minlength="2" placeholder="Ex: Marie">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="email">Email <span class="required">*</span></label>
+                            <input type="email" id="email" name="email" required placeholder="votre.email@exemple.com">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="telephone">Téléphone <span class="required">*</span></label>
+                            <input type="tel" id="telephone" name="telephone" required placeholder="+216 XX XXX XXX">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="cin">Numéro CIN</label>
+                            <input type="text" id="cin" name="cin" placeholder="XXXXXXXX">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="dateNaissance">Date de naissance</label>
+                            <input type="date" id="dateNaissance" name="dateNaissance">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="adresse">Adresse complète <span class="required">*</span></label>
+                        <input type="text" id="adresse" name="adresse" required placeholder="Rue, Ville, Code postal">
+                    </div>
+                </div>
+
+                <!-- Section 2: Type de handicap -->
+                <div class="form-section">
+                    <h3><i class="fas fa-wheelchair"></i> 2. Type de Handicap</h3>
+                    
+                    <div class="form-group">
+                        <label for="typeHandicap">Sélectionnez votre type de handicap <span class="required">*</span></label>
+                        <select id="typeHandicap" name="typeHandicap" required>
+                            <option value="">-- Choisissez --</option>
+                            <option value="physique">♿ Handicap physique / moteur</option>
+                            <option value="mental">🧠 Handicap mental / intellectuel</option>
+                            <option value="sensoriel">👁️ Handicap sensoriel (visuel/auditif)</option>
+                            <option value="psychique">💭 Handicap psychique</option>
+                            <option value="invisible">🔍 Handicap invisible</option>
+                            <option value="social">👥 Handicap social</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="descriptionHandicap">Décrivez brièvement votre handicap</label>
+                        <textarea id="descriptionHandicap" name="descriptionHandicap" placeholder="Cette information nous aidera à mieux comprendre votre situation..."></textarea>
+                    </div>
+                </div>
+
+                <!-- Section 3: Détails de la réclamation -->
+                <div class="form-section">
+                    <h3><i class="fas fa-file-alt"></i> 3. Détails de Votre Réclamation</h3>
+                    
+                    <div class="form-group">
+                        <label for="categorie">Catégorie de réclamation <span class="required">*</span></label>
+                        <select id="categorie" name="categorie" required>
+                            <option value="">-- Choisissez une catégorie --</option>
+                            <option value="accessibilite">♿ Problème d'accessibilité</option>
+                            <option value="discrimination">⚖️ Discrimination</option>
+                            <option value="service">💼 Qualité de service</option>
+                            <option value="transport">🚌 Transport</option>
+                            <option value="education">📚 Éducation</option>
+                            <option value="emploi">💼 Emploi</option>
+                            <option value="sante">🏥 Santé</option>
+                            <option value="administration">🏛️ Administration</option>
+                            <option value="autre">📋 Autre</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="lieu">Lieu de l'incident <span class="required">*</span></label>
+                        <input type="text" id="lieu" name="lieu" required placeholder="Ex: Hôpital Charles Nicolle, Tunis">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="dateIncident">Date de l'incident <span class="required">*</span></label>
+                        <input type="date" id="dateIncident" name="dateIncident" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="sujet">Sujet de la réclamation <span class="required">*</span></label>
+                        <input type="text" id="sujet" name="sujet" required minlength="10" placeholder="Résumez votre réclamation en une phrase">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">Description détaillée de l'incident <span class="required">*</span></label>
+                        <textarea id="description" name="description" required minlength="50" maxlength="2000" placeholder="Décrivez en détail ce qui s'est passé : quand, où, qui était impliqué, ce qui a été dit/fait, les conséquences..."></textarea>
+                        <div class="char-counter"><span id="charCount">0</span> / 2000 caractères</div>
+                    </div>
+                </div>
+
+                <!-- Section 4: Personnes impliquées -->
+                <div class="form-section">
+                    <h3><i class="fas fa-users"></i> 4. Personnes Impliquées</h3>
+                    
+                    <div class="form-group">
+                        <label for="personnesImpliquees">Noms des personnes ou services impliqués</label>
+                        <input type="text" id="personnesImpliquees" name="personnesImpliquees" placeholder="Ex: M. Dupont, Service Accueil">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="temoins">Y avait-il des témoins ?</label>
+                        <input type="text" id="temoins" name="temoins" placeholder="Noms et contacts si possible">
+                    </div>
+                </div>
+
+                <!-- Section 5: Actions déjà entreprises -->
+                <div class="form-section">
+                    <h3><i class="fas fa-tasks"></i> 5. Actions Déjà Entreprises</h3>
+                    
+                    <div class="form-group">
+                        <label for="actionsPrecedentes">Avez-vous déjà signalé ce problème ? Si oui, comment ?</label>
+                        <textarea id="actionsPrecedentes" name="actionsPrecedentes" placeholder="Ex: J'ai contacté le service client le XX/XX, j'ai envoyé un email, etc."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="reponseRecue">Quelle réponse avez-vous reçue ?</label>
+                        <textarea id="reponseRecue" name="reponseRecue" placeholder="Décrivez la réponse ou indiquez 'Aucune réponse'"></textarea>
+                    </div>
+                </div>
+
+                <!-- Section 6: Attentes et priorité -->
+                <div class="form-section">
+                    <h3><i class="fas fa-bullseye"></i> 6. Vos Attentes</h3>
+                    
+                    <div class="form-group">
+                        <label for="solutionSouhaitee">Quelle solution souhaitez-vous ? <span class="required">*</span></label>
+                        <textarea id="solutionSouhaitee" name="solutionSouhaitee" required placeholder="Ex: Remboursement, excuses, amélioration de l'accessibilité, formation du personnel..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Niveau d'urgence <span class="required">*</span></label>
+                        <div class="priorite-options">
+                            <div class="priorite-option">
+                                <input type="radio" id="basse" name="priorite" value="basse" required>
+                                <label for="basse" class="priorite-label">Basse</label>
+                            </div>
+                            <div class="priorite-option">
+                                <input type="radio" id="moyenne" name="priorite" value="moyenne" checked>
+                                <label for="moyenne" class="priorite-label">Moyenne</label>
+                            </div>
+                            <div class="priorite-option">
+                                <input type="radio" id="haute" name="priorite" value="haute">
+                                <label for="haute" class="priorite-label">Haute</label>
+                            </div>
+                            <div class="priorite-option">
+                                <input type="radio" id="urgente" name="priorite" value="urgente">
+                                <label for="urgente" class="priorite-label">Urgente</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="checkbox-group">
+                            <input type="checkbox" id="accepteContact" name="accepteContact" checked>
+                            <span>J'accepte d'être contacté(e) pour plus d'informations</span>
+                        </label>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="checkbox-group">
+                            <input type="checkbox" id="acceptePublic" name="acceptePublic">
+                            <span>J'accepte que mon témoignage soit partagé anonymement pour sensibiliser</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="submit-section">
+                    <button type="submit" class="submit-btn">
+                        <i class="fas fa-paper-plane"></i> Envoyer ma réclamation
+                    </button>
+                    <div class="loader" id="loader">
+                        <div class="spinner"></div>
+                        <p>Envoi en cours...</p>
+                    </div>
+                </div>
+
+                <div class="success-message" id="successMessage">
+                    <i class="fas fa-check-circle"></i>
+                    <h3>Réclamation envoyée avec succès !</h3>
+                    <p>Nous avons bien reçu votre réclamation. Un email de confirmation vous a été envoyé.</p>
+                    <p><strong>Numéro de suivi: <span id="trackingNumber"></span></strong></p>
+                </div>
+            </form>
+        </div>
+
+        <!-- Section: Mes Réclamations -->
+        <div class="section" id="mes-reclamations-section">
+            <div class="mes-reclamations">
+                <h3 style="color: #4B2E16; margin-bottom: 25px; font-size: 1.8em;">
+                    <i class="fas fa-list"></i> Mes Réclamations
+                </h3>
+
+                <div class="search-section">
+                    <input type="text" class="search-input" id="searchReclamation" placeholder="🔍 Rechercher par numéro de suivi ou sujet...">
+                </div>
+
+                <div class="loader" id="loaderMes">
+                    <div class="spinner"></div>
+                    <p>Chargement de vos réclamations...</p>
+                </div>
+
+                <div class="reclamations-list" id="reclamationsList">
+                    <!-- Données chargées dynamiquement -->
+                </div>
+
+                <div class="empty-state" id="emptyState" style="display: none;">
+                    <i class="fas fa-inbox"></i>
+                    <h3>Aucune réclamation</h3>
+                    <p>Vous n'avez pas encore déposé de réclamation.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Données simulées des réclamations utilisateur
+        let mesReclamations = [
+            {
+                id: 'REC-12A4B5C',
+                sujet: 'Problème d\'accessibilité rampe d\'accès',
+                description:

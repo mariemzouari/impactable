@@ -1,0 +1,482 @@
+/* ========================================
+RÉINITIALISATION ET BASE
+======================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(135deg, #F4ECDD 0%, #FFF4F5 100%);
+    min-height: 100vh;
+    padding: 20px;
+    overflow-x: hidden;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* ========================================
+EN-TÊTE
+======================================== */
+header {
+    text-align: center;
+    color: #4B2E16;
+    margin-bottom: 50px;
+    animation: slideDown 0.8s ease-out;
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.logo {
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+}
+
+.logo-icon {
+    font-size: 3em;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.logo h1 {
+    font-weight: 700;
+    font-size: 2.5em;
+    color: #5E6D38;
+    margin: 0;
+}
+
+.logo p {
+    font-size: 1em;
+    color: #B47F47;
+    font-style: italic;
+}
+
+header h2 {
+    font-weight: 700;
+    font-size: 2.8em;
+    margin-bottom: 15px;
+    color: #4B2E16;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.subtitle {
+    font-size: 1.3em;
+    color: #5E6D38;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+/* ========================================
+DÉFILEMENT DES IMAGES PHARES
+======================================== */
+.hero-images {
+    margin: 40px 0;
+    position: relative;
+    overflow: hidden;
+    border-radius: 20px;
+    box-shadow: 0 8px 25px rgba(75, 46, 22, 0.1);
+}   
+
+.images-scroll {
+    display: flex;
+    gap: 15px;
+    overflow-x: auto;
+    padding: 15px 0;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.images-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+.hero-img {
+    width: 300px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 15px;
+    flex-shrink: 0;
+    border: 3px solid #F4ECDD;
+    box-shadow: 0 4px 15px rgba(75, 46, 22, 0.15);
+    transition: all 0.4s ease;
+}
+
+.hero-img:hover {
+    transform: scale(1.05);
+    border-color: #A9B57D;
+    box-shadow: 0 12px 30px rgba(94, 109, 56, 0.3);
+    z-index: 2;
+}
+
+.scroll-hint {
+    position: absolute;
+    bottom: 10px;
+    right: 15px;
+    background: rgba(94, 109, 56, 0.8);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.8em;
+    font-weight: 600;
+    pointer-events: none;
+    animation: pulseHint 2s infinite;
+}
+
+@keyframes pulseHint {
+    0%, 100% { opacity: 0.7; }
+    50% { opacity: 1; }
+}
+
+/* ========================================
+RECHERCHE ET FILTRES
+======================================== */
+.search-container {
+    max-width: 600px;
+    margin: 0 auto 40px;
+    animation: fadeIn 1s;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.search-box {
+    width: 100%;
+    padding: 15px 20px;
+    border: 2px solid #A9B57D;
+    border-radius: 50px;
+    font-size: 1em;
+    background: white;
+    transition: all 0.3s ease;
+}
+
+.search-box:focus {
+    outline: none;
+    border-color: #5E6D38;
+    box-shadow: 0 0 0 4px rgba(94, 109, 56, 0.1);
+}
+
+.filters {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+}
+
+.filter-btn {
+    padding: 10px 20px;
+    border: 2px solid #A9B57D;
+    background: white;
+    color: #5E6D38;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.filter-btn:hover,
+.filter-btn.active {
+    background: #5E6D38;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(94, 109, 56, 0.3);
+}
+
+/* ========================================
+GRILLE DE HANDICAPS
+======================================== */
+.handicaps-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+    max-width: 1000px;
+    margin: 0 auto 40px;
+}
+
+.handicap-card {
+    background: white;
+    border: 3px solid #F4ECDD;
+    border-radius: 20px;
+    padding: 35px;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 4px 15px rgba(75, 46, 22, 0.08);
+    position: relative;
+    overflow: hidden;
+}
+
+.handicap-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 12px 30px rgba(94, 109, 56, 0.25);
+    border-color: #A9B57D;
+}
+
+.handicap-icon i {
+    font-size: 3em;
+    color: #5E6D38;
+    margin-bottom: 15px;
+    display: block;
+}
+
+.handicap-card h3 {
+    font-weight: 700;
+    color: #4B2E16;
+    margin-bottom: 12px;
+    font-size: 1.5em;
+}
+
+.handicap-card p {
+    color: #5E6D38;
+    font-size: 1em;
+}
+
+.card-badge {
+    position: absolute;
+    top: 15px; right: 15px;
+    background: #5E6D38;
+    color: white;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.75em;
+    font-weight: 600;
+}
+
+/* ========================================
+VUE PAR CATÉGORIE (Articles)
+======================================== */
+.category-view {
+    display: none;
+    background: white;
+    border: 3px solid #A9B57D;
+    border-radius: 25px;
+    padding: 40px;
+    box-shadow: 0 15px 40px rgba(75, 46, 22, 0.2);
+}
+
+.category-view.active { display: block; }
+
+.category-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.back-button, .add-article-btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 50px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.back-button {
+    background: linear-gradient(135deg, #5E6D38 0%, #4B2E16 100%);
+    color: white;
+}
+
+.add-article-btn {
+    background: linear-gradient(135deg, #5E6D38, #4B2E16);
+    color: white;
+}
+
+.back-button:hover, .add-article-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(94, 109, 56, 0.4);
+}
+
+.category-title {
+    font-size: 2.3em;
+    color: #4B2E16;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.articles-list {
+    display: grid;
+    gap: 25px;
+}
+
+.article-card {
+    display: flex;
+    gap: 20px;
+    background: #FFF4F5;
+    border: 2px solid #F4ECDD;
+    border-radius: 18px;
+    padding: 20px;
+    transition: all 0.3s ease;
+}
+
+.article-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(94, 109, 56, 0.2);
+    border-color: #A9B57D;
+}
+
+.article-img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 12px;
+    flex-shrink: 0;
+    border: 2px solid #F4ECDD;
+}
+
+.article-content h4 {
+    color: #4B2E16;
+    margin-bottom: 8px;
+    font-size: 1.4em;
+}
+
+.author {
+    font-size: 0.9em;
+    color: #B47F47;
+    font-style: italic;
+    margin-bottom: 12px;
+}
+
+.preview {
+    color: #5E6D38;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.read-more-btn {
+    display: inline-block;
+    margin-top: auto;
+    padding: 10px 20px;
+    background: linear-gradient(135deg, #5E6D38, #4B2E16);
+    color: white;
+    text-decoration: none;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 0.9em;
+    align-self: flex-start;
+}
+
+.read-more-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(94, 109, 56, 0.4);
+}
+
+/* ========================================
+MODAL & CHARGEUR
+======================================== */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0; top: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+    align-items: center;
+    justify-content: center;
+}
+
+.modal.active { display: flex; }
+
+.modal-content {
+    background: white;
+    border-radius: 25px;
+    padding: 30px;
+    width: 90%;
+    max-width: 600px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+    position: relative;
+}
+
+.close-modal {
+    position: absolute;
+    top: 15px; right: 20px;
+    font-size: 1.8em;
+    cursor: pointer;
+    color: #999;
+}
+
+.close-modal:hover { color: #4B2E16; }
+
+.form-group { margin-bottom: 20px; }
+.form-group label { display: block; margin-bottom: 8px; color: #4B2E16; font-weight: 600; }
+.form-group input, .form-group textarea {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #A9B57D;
+    border-radius: 12px;
+    font-family: 'Inter', sans-serif;
+    font-size: 1em;
+}
+
+.submit-btn {
+    background: linear-gradient(135deg, #5E6D38, #4B2E16);
+    color: white;
+    border: none;
+    padding: 14px 28px;
+    border-radius: 50px;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+    font-size: 1.1em;
+}
+
+.loader {
+    display: none;
+    text-align: center;
+    padding: 40px;
+}
+
+.loader.active { display: block; }
+
+.spinner {
+    border: 4px solid #F4ECDD;
+    border-top: 4px solid #5E6D38;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 15px;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ========================================
+RESPONSIVE
+======================================== */
+@media (max-width: 768px) {
+    .handicaps-grid { grid-template-columns: 1fr; }
+    .images-scroll { flex-direction: column; max-height: 70vh; }
+    .hero-img { width: 100%; height: 180px; }
+    .scroll-hint { display: none; }
+    header h2 { font-size: 2em; }
+    .category-title { font-size: 1.9em; }
+    .category-header { flex-direction: column; gap: 15px; }
+    .back-button, .add-article-btn { width: 100%; }
+}
+
+@media (max-width: 600px) {
+    .article-card { flex-direction: column; }
+    .article-img { width: 100%; height: 150px; }
+}

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Guide des Handicaps - ImpactAble</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        
+        <header>
+            <div class="logo">
+                <div class="logo-icon">Cible</div>
+                <div>
+                    <h1>Impactable</h1>
+                    <p>Là où la compétence rencontre l'impact</p>
+                </div>
+            </div>
+            <h2>Guide des Handicaps</h2>
+            <p class="subtitle">Comprendre, sensibiliser, inclure – pour une société plus juste.</p>
+        </header>
+
+        
+        <div class="hero-images">
+            <div class="images-scroll">
+                <img src="https://images.unsplash.com/photo-1607619056574-7b8d3ee536b2?w=800" alt="Physique handicapé" class="hero-img">
+                <img src="https://images.unsplash.com/photo-1559757175-0eb30cd8c063?w=800" alt="Handicap mental" class="hero-img">
+                <img src="https://images.unsplash.com/photo-1516627145497-ae6968895b74?w=800" alt="Handicap sensoriel" class="hero-img">
+                <img src="https://images.unsplash.com/photo-1529390079861-591de354faf5?w=800" alt="Handicap psychique" class="hero-img">
+                <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800" alt="Handicap invisible" class="hero-img">
+                <img src="https://images.unsplash.com/photo-1529390079861-591de354faf5?w=800" alt="Handicap social" class="hero-img">
+            </div>
+            <p class="scroll-hint">Défilement horizontal</p>
+        </div>
+
+       
+        <div class="search-container">
+            <input type="text" id="search-input" class="search-box" placeholder="Rechercher un handicap..." />
+        </div>
+
+        
+        <div class="filters">
+            <button class="filter-btn active" data-filter="all">Tous</button>
+            <button class="filter-btn" data-filter="physique">Physique</button>
+            <button class="filter-btn" data-filter="mental">Mental</button>
+            <button class="filter-btn" data-filter="sensoriel">Sensoriel</button>
+            <button class="filter-btn" data-filter="psychique">Psychique</button>
+            <button class="filter-btn" data-filter="invisible">Invisible</button>
+            <button class="filter-btn" data-filter="social">Social</button>
+        </div>
+
+        
+        <div id="loader" class="loader">
+            <div class="spinner"></div>
+            <p>Chargement des données...</p>
+        </div>
+
+        
+        <div id="main-view" class="handicaps-grid"></div>
+
+        
+        <div id="category-view" class="category-view"></div>
+
+        
+        <div id="add-article-modal" class="modal">
+            <div class="modal-content">
+                <span class="close-modal">x</span>
+                <h3>Contributeur : Ajouter un article</h3>
+                <form id="add-article-form">
+                    <input type="hidden" id="article-category" />
+                    <div class="form-group">
+                        <label>Titre de l'article</label>
+                        <input type="text" id="article-title" required placeholder="Ex: Vivre avec la sclérose en plaques" />
+                    </div>
+                    <div class="form-group">
+                        <label>Contenu (votre expérience, conseil...)</label>
+                        <textarea id="article-content" rows="6" required placeholder="Partagez votre témoignage ou vos conseils..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Votre nom (ou pseudo)</label>
+                        <input type="text" id="article-author" required placeholder="Ex: Marie D." />
+                    </div>
+                    <button type="submit" class="submit-btn">Publier l'article</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js?v=1.0.1"></script>
+</body>
+</html>

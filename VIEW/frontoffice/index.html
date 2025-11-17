@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Déposer une Réclamation - ImpactAble</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- CSS EXTERNE -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <div class="logo-icon">🎯</div>
+                <h1>Impactable</h1>
+            </div>
+            <h2>Système de Réclamations</h2>
+            <p class="subtitle">Votre voix compte. Nous sommes là pour vous écouter.</p>
+        </header>
+
+        <!-- Navigation -->
+        <div class="nav-tabs">
+            <button class="tab-btn active" onclick="switchTab('nouvelle')">
+                <i class="fas fa-plus-circle"></i> Nouvelle Réclamation
+            </button>
+            <button class="tab-btn" onclick="switchTab('mes-reclamations')">
+                <i class="fas fa-list"></i> Mes Réclamations
+            </button>
+        </div>
+
+        <!-- FORMULAIRE -->
+        <div class="section active" id="nouvelle-section">
+
+            <div class="info-banner">
+                <h3><i class="fas fa-info-circle"></i> Comment ça marche ?</h3>
+                <ul>
+                    <li>Remplissez tous les champs du formulaire ci-dessous</li>
+                    <li>Notre équipe traitera votre réclamation sous 48h</li>
+                    <li>Vous recevrez une notification par email</li>
+                    <li>Vous pouvez suivre vos réclamations dans l’onglet dédié</li>
+                    <li>Toutes vos données sont sécurisées</li>
+                </ul>
+            </div>
+
+            <form class="reclamation-form" id="reclamationForm">
+
+                <!-- SECTION 1 -->
+                <div class="form-section">
+                    <h3><i class="fas fa-user"></i> 1. Informations Personnelles</h3>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="nom">Nom complet <span class="required">*</span></label>
+                            <input type="text" id="nom" name="nom" required minlength="2">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="prenom">Prénom <span class="required">*</span></label>
+                            <input type="text" id="prenom" name="prenom" required minlength="2">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="email">Email <span class="required">*</span></label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="telephone">Téléphone <span class="required">*</span></label>
+                            <input type="tel" id="telephone" name="telephone" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="cin">CIN</label>
+                            <input type="text" id="cin">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="dateNaissance">Date de naissance</label>
+                            <input type="date" id="dateNaissance">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="adresse">Adresse complète <span class="required">*</span></label>
+                        <input type="text" id="adresse" required>
+                    </div>
+                </div>
+
+                <!-- SECTION 2 -->
+                <div class="form-section">
+                    <h3><i class="fas fa-wheelchair"></i> 2. Type de Handicap</h3>
+
+                    <div class="form-group">
+                        <label for="typeHandicap">Sélectionnez votre type de handicap <span class="required">*</span></label>
+                        <select id="typeHandicap" required>
+                            <option value="">-- Choisir --</option>
+                            <option value="physique">Handicap physique</option>
+                            <option value="mental">Handicap mental</option>
+                            <option value="sensoriel">Handicap sensoriel</option>
+                            <option value="psychique">Handicap psychique</option>
+                            <option value="invisible">Handicap invisible</option>
+                            <option value="social">Handicap social</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="descriptionHandicap">Décrivez brièvement</label>
+                        <textarea id="descriptionHandicap"></textarea>
+                    </div>
+                </div>
+
+                <!-- SECTION 3 -->
+                <div class="form-section">
+                    <h3><i class="fas fa-file-alt"></i> 3. Détails de la Réclamation</h3>
+
+                    <div class="form-group">
+                        <label for="categorie">Catégorie <span class="required">*</span></label>
+                        <select id="categorie" required>
+                            <option value="">-- Choisir --</option>
+                            <option value="accessibilite">Accessibilité</option>
+                            <option value="discrimination">Discrimination</option>
+                            <option value="service">Service</option>
+                            <option value="transport">Transport</option>
+                            <option value="education">Éducation</option>
+                            <option value="emploi">Emploi</option>
+                            <option value="sante">Santé</option>
+                            <option value="administration">Administration</option>
+                            <option value="autre">Autre</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="lieu">Lieu <span class="required">*</span></label>
+                        <input type="text" id="lieu" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="dateIncident">Date de l'incident <span class="required">*</span></label>
+                        <input type="date" id="dateIncident" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="sujet">Sujet <span class="required">*</span></label>
+                        <input type="text" id="sujet" required minlength="10">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">Description détaillée <span class="required">*</span></label>
+                        <textarea id="description" minlength="50" maxlength="2000" required></textarea>
+                        <div class="char-counter"><span id="charCount">0</span> / 2000 caractères</div>
+                    </div>
+                </div>
+
+                <!-- SECTION 4 -->
+                <div class="form-section">
+                    <h3><i class="fas fa-users"></i> 4. Personnes Impliquées</h3>
+
+                    <div class="form-group">
+                        <label for="personnesImpliquees">Personnes impliquées</label>
+                        <input type="text" id="personnesImpliquees">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="temoins">Témoins</label>
+                        <input type="text" id="temoins">
+                    </div>
+                </div>
+
+                <!-- SECTION 5 -->
+                <div class="form-section">
+                    <h3><i class="fas fa-tasks"></i> 5. Actions Déjà Entreprises</h3>
+
+                    <div class="form-group">
+                        <label for="actionsPrecedentes">Actions précédentes</label>
+                        <textarea id="actionsPrecedentes"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="reponseRecue">Réponse reçue</label>
+                        <textarea id="reponseRecue"></textarea>
+                    </div>
+                </div>
+
+                <!-- SECTION 6 -->
+                <div class="form-section">
+                    <h3><i class="fas fa-bullseye"></i> 6. Vos Attentes</h3>
+
+                    <div class="form-group">
+                        <label for="solutionSouhaitee">Solution souhaitée <span class="required">*</span></label>
+                        <textarea id="solutionSouhaitee" required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Niveau d'urgence <span class="required">*</span></label>
+                        <div class="priorite-options">
+                            <div class="priorite-option">
+                                <input type="radio" id="basse" name="priorite" value="basse">
+                                <label for="basse" class="priorite-label">Basse</label>
+                            </div>
+                            <div class="priorite-option">
+                                <input type="radio" id="moyenne" name="priorite" value="moyenne" checked>
+                                <label for="moyenne" class="priorite-label">Moyenne</label>
+                            </div>
+                            <div class="priorite-option">
+                                <input type="radio" id="haute" name="priorite" value="haute">
+                                <label for="haute" class="priorite-label">Haute</label>
+                            </div>
+                            <div class="priorite-option">
+                                <input type="radio" id="urgente" name="priorite" value="urgente">
+                                <label for="urgente" class="priorite-label">Urgente</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ENVOI -->
+                <div class="submit-section">
+                    <button type="submit" class="submit-btn">
+                        <i class="fas fa-paper-plane"></i> Envoyer ma réclamation
+                    </button>
+                    <div class="loader" id="loader">
+                        <div class="spinner"></div>
+                        <p>Envoi en cours...</p>
+                    </div>
+                </div>
+
+                <!-- MESSAGE SUCCESS -->
+                <div class="success-message" id="successMessage">
+                    <i class="fas fa-check-circle"></i>
+                    <h3>Réclamation envoyée avec succès !</h3>
+                    <p>Nous avons bien reçu votre réclamation.</p>
+                    <p><strong>Numéro de suivi : <span id="trackingNumber"></span></strong></p>
+                </div>
+
+            </form>
+        </div>
+
+        <!-- MES RÉCLAMATIONS -->
+        <div class="section" id="mes-reclamations-section">
+            <div class="mes-reclamations">
+
+                <h3><i class="fas fa-list"></i> Mes Réclamations</h3>
+
+                <div class="search-section">
+                    <input type="text" class="search-input" id="searchReclamation" placeholder="🔍 Rechercher par numéro ou sujet...">
+                </div>
+
+                <div class="loader" id="loaderMes">
+                    <div class="spinner"></div>
+                    <p>Chargement des réclamations...</p>
+                </div>
+
+                <div class="reclamations-list" id="reclamationsList"></div>
+
+                <div class="empty-state" id="emptyState" style="display:none;">
+                    <i class="fas fa-inbox"></i>
+                    <h3>Aucune réclamation trouvée</h3>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- JS EXTERNE -->
+    <script src="script.js"></script>
+
+</body>
+</html>
