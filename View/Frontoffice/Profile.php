@@ -1,9 +1,50 @@
+<?php
+session_start();
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+
+// verifier si utilisateur connecté 
+if (!isset($_SESSION['user_id'])) {
+    header('Location: login.php');
+    exit;
+}
+
+require_once __DIR__ . '/../../Controller/UtilisateurController.php';
+
+$userC = new UtilisateurController();
+
+// recuperer l'utilisateur de la session
+$user_id = $_SESSION['user_id'];
+$user = $userC->showUser($user_id);
+
+if (!$user) {
+    echo "UTILISATEUR NON TROUVÉ EN BASE";
+    echo "</div>";
+    exit;
+}
+
+// suppression
+if (isset($_GET['delete_account']) && $_GET['delete_account'] == $user_id) {
+   
+    $userC->deleteUser($user_id);
+    session_destroy();
+
+    header('Location: login.php');
+    exit;
+}
+
+
+?>
+
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ImpactAble — Plateforme Inclusive</title>
+  <title>Profile</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="assets\css\style.css">
 </head>
@@ -24,7 +65,7 @@
       </div>
 
       <div class="header-actions">
-        <span> <b> Bienvenue Dans Votre Espace Personnel </b></span>
+        <a href="logout.php" class="btn secondary">Déconnexion</a>
       </div>
     </header>
 
@@ -95,7 +136,11 @@
 <section class="section">
   <div class="section-header">
     <h2>Mon Espace Personnel</h2>
+     <a href="?delete_account=<?php echo $user['Id_utilisateur']; ?>" class="btn secondary">Supprimer mon compte</a>
+     
   </div>
+
+
 
   <div class="auth-layout">
     <div>
@@ -105,17 +150,17 @@
           <div class="profile" style="align-items: center; text-align: center;">
 
              <!--changer en image !!!!!-->
-            <div class="avatar" style="width: 100px; height: 100px; font-size: 2rem; margin-bottom: 1rem;">MZ</div>
+            <div class="avatar" style="width: 100px; height: 100px; font-size: 2rem; margin-bottom: 1rem;"><?php echo strtoupper(substr($user['prenom'], 0, 1) . substr($user['nom'], 0, 1));?></div>
             
             
             <div>
-              <h2 style="margin-bottom: 0.5rem; color: var(--brown);">Mariem Zouari</h2>
+              <h2 style="margin-bottom: 0.5rem; color: var(--brown);"> <?php echo $user["prenom"] . " " . $user["nom"] ?></h2>
               <p class="text-muted" style="margin-bottom: 1.5rem;">
-                <i class="fas fa-map-marker-alt"></i> Tunisia • 
-                <i class="fas fa-calendar"></i> Membre depuis 2025
+                <i class="fas fa-map-marker-alt"></i> <?php echo $user["email"]  ?> • 
+                <i class="fas fa-calendar"></i> Membre depuis <?php echo $user["date_inscription"]?>
               </p>
               <div class="field-row" style="justify-content: center;">
-                <a class="btn primary" href="Modifier_profile.php">
+                <a class="btn primary" href="Modifier_profile.php?id=<?php echo $user['Id_utilisateur']; ?>">
                   <i class="fas fa-edit"></i>
                   Modifier le profil
                 </a>

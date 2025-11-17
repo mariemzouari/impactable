@@ -75,8 +75,7 @@ const usereditForm = document.getElementById("usereditForm");
 if (usereditForm) {
 
     usereditForm.addEventListener("submit", function(event) {
-    event.preventDefault();
-
+     event.preventDefault();
     let erreur = "";
 
     //user infos

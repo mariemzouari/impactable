@@ -291,3 +291,346 @@
   width: 50%;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
+
+/* Styles pour la page de visualisation de profil utilisateur */
+
+.profile-field-value {
+  padding: 12px 16px;
+  background: var(--sand);
+  border-radius: var(--radius-sm);
+  color: var(--brown);
+  font-weight: 500;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  border: 1px solid rgba(75,46,22,0.08);
+}
+
+.header-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.user-summary-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 32px;
+  margin-bottom: 32px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.user-avatar-large {
+  position: relative;
+  width: 100px;
+  height: 100px;
+}
+
+.avatar-placeholder {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: var(--light-sage);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  color: var(--moss);
+  border: 4px solid var(--white);
+  box-shadow: var(--shadow);
+}
+
+.user-summary-info h1 {
+  font-size: 2rem;
+  color: var(--brown);
+  margin-bottom: 8px;
+}
+
+.user-email {
+  color: var(--muted);
+  font-size: 1.1rem;
+  margin-bottom: 16px;
+}
+
+.user-meta {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.user-badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.user-badge.active {
+  background: rgba(46, 204, 113, 0.1);
+  color: #27ae60;
+}
+
+.user-badge.inactive {
+  background: rgba(189, 195, 199, 0.1);
+  color: #7f8c8d;
+}
+
+.user-role {
+  padding: 6px 12px;
+  border-radius: 20px;
+  background: rgba(169, 185, 125, 0.1);
+  color: var(--moss);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.user-join-date {
+  color: var(--muted);
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .user-summary-card {
+    flex-direction: column;
+    text-align: center;
+    padding: 24px;
+  }
+  
+  .user-meta {
+    justify-content: center;
+  }
+  
+  .header-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .header-actions .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Styles pour la page de modification de profil utilisateur */
+
+.user-edit-form .form-section-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+
+.user-edit-form .section-header {
+  padding: 20px 24px;
+  background: rgba(169, 185, 125, 0.05);
+  border-bottom: 1px solid rgba(75, 46, 22, 0.08);
+}
+
+.user-edit-form .section-header h3 {
+  color: var(--brown);
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-edit-form .section-header h3 i {
+  color: var(--copper);
+  width: 20px;
+}
+
+.user-edit-form .form-grid {
+  padding: 24px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.user-edit-form .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.user-edit-form label {
+  font-weight: 600;
+  color: var(--brown);
+  font-size: 0.95rem;
+}
+
+.user-edit-form .input,
+.user-edit-form .select,
+.user-edit-form .textarea {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(75, 46, 22, 0.08);
+  background: #fff;
+  font-size: 1rem;
+  color: var(--brown);
+  transition: box-shadow var(--ease-s), border-color var(--ease-s);
+}
+
+.user-edit-form .textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.user-edit-form .input:focus,
+.user-edit-form .select:focus,
+.user-edit-form .textarea:focus {
+  outline: none;
+  box-shadow: var(--focus);
+  border-color: var(--copper);
+}
+
+.user-edit-form .accessibility-section {
+  padding: 0 24px 24px;
+}
+
+.user-edit-form .section-label {
+  display: block;
+  font-weight: 600;
+  color: var(--brown);
+  margin-bottom: 16px;
+  font-size: 0.95rem;
+}
+
+.user-edit-form .checkbox-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.user-edit-form .checkbox-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border-radius: var(--radius-sm);
+  background: rgba(169, 185, 125, 0.05);
+  cursor: pointer;
+  transition: all var(--ease-s);
+}
+
+.user-edit-form .checkbox-option:hover {
+  background: rgba(169, 185, 125, 0.1);
+}
+
+.user-edit-form .checkbox-option input[type="checkbox"] {
+  display: none;
+}
+
+.user-edit-form .checkmark {
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--copper);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--ease-s);
+}
+
+.user-edit-form .checkbox-option input[type="checkbox"]:checked + .checkmark {
+  background: var(--copper);
+  border-color: var(--copper);
+}
+
+.user-edit-form .checkbox-option input[type="checkbox"]:checked + .checkmark::after {
+  content: '✓';
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.user-edit-form .password-reset-section {
+  padding: 0 24px 24px;
+}
+
+.user-edit-form .password-info {
+  color: var(--muted);
+  margin-bottom: 16px;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.user-edit-form .form-actions {
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 24px;
+  margin-top: 32px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  align-items: center;
+}
+
+.avatar-upload-btn {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--copper);
+  color: white;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--ease-s);
+}
+
+.avatar-upload-btn:hover {
+  background: var(--brown);
+  transform: scale(1.1);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .user-edit-form .form-grid {
+    grid-template-columns: 1fr;
+    padding: 20px;
+  }
+  
+  .user-edit-form .checkbox-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .user-edit-form .form-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .user-edit-form .form-actions .btn {
+    justify-content: center;
+  }
+  
+  .user-edit-form .form-group {
+    margin: 0 !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .user-edit-form .section-header {
+    padding: 16px 20px;
+  }
+  
+  .user-edit-form .form-grid {
+    padding: 16px;
+  }
+}
+

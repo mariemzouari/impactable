@@ -102,7 +102,7 @@ body .form-container {
 /*message d'erreur*/
 
 .controle-saisie {
-  
+   background-color: white;
   color: red; 
   font-size: 0.9rem; 
   font-weight: 600;

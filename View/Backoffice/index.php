@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ImpactAble — Administration</title>
+  <title>Administration</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="assets\css\style.css">
 </head>
@@ -20,7 +20,7 @@
       <nav class="sidebar-nav">
         <div class="nav-section">
           <div class="nav-title">Principal</div>
-          <a href="index.html" class="sidebar-link active">
+          <a href="index.php" class="sidebar-link active">
             <i class="fas fa-tachometer-alt"></i>
             <span>Tableau de bord</span>
           </a>
@@ -32,7 +32,7 @@
         
         <div class="nav-section">
           <div class="nav-title">Gestion de contenu</div>
-          <a href="Ges_utilisateurs.html" class="sidebar-link">
+          <a href="Ges_utilisateurs.php" class="sidebar-link">
             <i class="fas fa-users"></i>
             <span>Utilisateurs</span>
           </a>
@@ -101,7 +101,7 @@
           </div>
           <button class="btn secondary">
             <i class="fas fa-sign-out-alt"></i>
-            <span>Déconnexion</span>
+            <a href="logout.php" >Déconnexion</a>
           </button>
         </div>
       </header>
@@ -244,4 +244,4 @@
 <script src="assets\js\script.js"> </script>
 
 </body>
-</html>
+</php>

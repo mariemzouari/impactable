@@ -1,0 +1,366 @@
+
+<?php
+
+require_once __DIR__ . '/../../Controller/UtilisateurController.php';
+require_once __DIR__ . '/../../Model/UtilisateurClass.php';
+
+$erreur = "";
+$userC = new UtilisateurController();
+  
+    if (
+        isset($_POST["last-name"]) &&
+        isset($_POST["name"]) &&
+        isset($_POST["email"]) &&
+        isset($_POST["phone"]) &&
+        isset($_POST["birthday"]) &&
+        isset($_POST["password"]) &&
+        isset($_POST["confirm"])
+    ) {
+        if (
+            !empty($_POST["last-name"]) &&
+            !empty($_POST["name"]) &&
+            !empty($_POST["email"]) &&
+            !empty($_POST["phone"]) &&
+            !empty($_POST["birthday"]) &&
+            !empty($_POST["password"]) &&
+            !empty($_POST["confirm"])
+        ) {
+            // gestion des checkboxes
+            $type_handicap = 'aucun';
+            if (isset($_POST['handicap-type']) && is_array($_POST['handicap-type'])) {
+                if (in_array('tous', $_POST['handicap-type'])) {
+                    $type_handicap = 'tous';
+                } else {
+                    $type_handicap = implode(', ', $_POST['handicap-type']);
+                }
+            }
+
+            $user = new Utilisateur([
+                'nom' => $_POST['last-name'],
+                'prenom' => $_POST['name'],
+                'email' => $_POST['email'],
+                'numero_tel' => $_POST['phone'] ?? null,
+                'date_naissance' => $_POST['birthday'] ?? null,
+                'mot_de_passe' => $_POST['password'],
+                'genre' => $_POST['gender'] ?? 'prefere_ne_pas_dire',
+                'role' => $_POST['role'] ?? 'user',
+                'type_handicap' => $type_handicap
+            ]);
+
+
+            
+            try {
+                $userC->addUser($user);
+                header('Location: Ges_utilisateurs.php');
+                exit;
+            } 
+            catch (Exception $e) {
+                $erreur = "Erreur lors de l'ajout : " . $e->getMessage();
+            }
+       
+    }
+}
+
+?>
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ajouter Utilisateur</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/style_mariem.css">
+</head>
+<body>
+  <div class="admin-container">
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+      <div class="sidebar-header">
+         <div class="admin-logo">
+      <img src="assets/images/logo.png" alt="Inclusive Opportunities" class="admin-logo-image">
+    </div>
+      </div>
+      
+      <nav class="sidebar-nav">
+        <div class="nav-section">
+          <div class="nav-title">Principal</div>
+          <a href="index.php" class="sidebar-link">
+            <i class="fas fa-tachometer-alt"></i>
+            <span>Tableau de bord</span>
+          </a>
+          <a href="#analytics" class="sidebar-link">
+            <i class="fas fa-chart-bar"></i>
+            <span>Analytiques</span>
+          </a>
+        </div>
+        
+        <div class="nav-section">
+          <div class="nav-title">Gestion de contenu</div>
+          <a href="Ges_utilisateurs.php" class="sidebar-link active">
+            <i class="fas fa-users"></i>
+            <span>Utilisateurs</span>
+          </a>
+          <a href="#opportunities" class="sidebar-link">
+            <i class="fas fa-briefcase"></i>
+            <span>Opportunités</span>
+          </a>
+          <a href="#events" class="sidebar-link">
+            <i class="fas fa-calendar-alt"></i>
+            <span>Événements</span>
+          </a>
+          <a href="#campaigns" class="sidebar-link">
+            <i class="fas fa-hand-holding-heart"></i>
+            <span>Campagnes</span>
+          </a>
+          <a href="#resources" class="sidebar-link">
+            <i class="fas fa-book"></i>
+            <span>Ressources</span>
+          </a>
+        </div>
+        
+        <div class="nav-section">
+          <div class="nav-title">Communauté</div>
+          <a href="#forum" class="sidebar-link">
+            <i class="fas fa-comments"></i>
+            <span>Forum</span>
+          </a>
+          <a href="#reclamations" class="sidebar-link">
+            <i class="fas fa-comment-alt"></i>
+            <span>Réclamations</span>
+          </a>
+        </div>
+        
+        <div class="nav-section">
+          <div class="nav-title">Paramètres</div>
+          <a href="#settings" class="sidebar-link">
+            <i class="fas fa-cog"></i>
+            <span>Configuration</span>
+          </a>
+        </div>
+      </nav>
+      
+      <div class="sidebar-footer">
+        <div class="admin-user">
+          <div class="admin-avatar">AD</div>
+          <div class="admin-user-info">
+            <h4>Admin ImpactAble</h4>
+            <p>Administrateur</p>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main content -->
+    <main class="admin-main">
+      <header class="admin-header">
+        <div>
+          <h2>Tableau de bord administrateur</h2>
+          <p class="text-muted">Bienvenue dans l'interface d'administration d'ImpactAble</p>
+        </div>
+        
+        <div class="header-actions">
+          <div class="search-bar">
+            <i class="fas fa-search"></i>
+            <input type="text" placeholder="Rechercher...">
+          </div>
+          <button class="btn secondary">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Déconnexion</span>
+          </button>
+        </div>
+      </header>
+
+      <div class="admin-content">
+        <div class="content-header">
+          <h1>Ajouter un Utilisateur</h1>
+          <div class="header-actions">
+            <a href="Ges_utilisateurs.php" class="btn secondary">
+              <i class="fas fa-arrow-left"></i>
+              Retour à la liste
+            </a>
+          </div>
+        </div>
+
+        <!-- Nouveau résumé utilisateur -->
+        <div class="user-summary-card">
+          <div class="user-avatar-large">
+            <div class="avatar-placeholder">
+              <i class="fas fa-user-plus"></i>
+            </div>
+          </div>
+          <div class="user-summary-info">
+            <h1>Nouvel Utilisateur</h1>
+            <p class="user-email">Compte en cours de création</p>
+            <div class="user-meta">
+              <span class="user-badge inactive">Non activé</span>
+              <span class="user-role">Utilisateur</span>
+              <span class="user-join-date">
+                <i class="fas fa-calendar-alt"></i>
+                Date de création : Aujourd'hui
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Formulaire d'ajout -->
+        <form class="user-edit-form" id="useraddForm" method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
+           
+           <!-- Errur -->
+          <?php if (!empty($erreur)) {echo $erreur;} ?>
+
+          <div class="form-sections">
+            <!-- Informations personnelles -->
+            <div class="form-section-card">
+              <div class="section-header">
+                <h3>
+                  <i class="fas fa-user-circle"></i>
+                  Informations personnelles
+                </h3>
+              </div>
+              
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="add-last-name">Nom *</label>
+                  <input type="text" id="add-last-name" class="input" placeholder="Ecrivez votre nom" name="last-name">
+                </div>
+                
+                <div class="form-group">
+                  <label for="add-name">Prénom *</label>
+                  <input type="text" id="add-name" class="input" placeholder="Ecrivez votre prénom" name="name" >
+                </div>
+                
+                <div class="form-group">
+                  <label for="add-email">Email *</label>
+                  <input type="text" id="add-email" class="input" placeholder="sarah.ben@example.com"  name="email">
+                </div>
+                
+                <div class="form-group">
+                  <label for="add-phone">Téléphone *</label>
+                  <input type="text" id="add-phone" class="input" placeholder="+216 12 345 678" name="phone">
+                </div>
+                
+                <div class="form-group">
+                  <label for="add-birthday">Date de naissance *</label>
+                  <input type="date" id="add-birthday" class="input" name="birthday">
+                </div>
+                
+                <div class="form-group">
+                  <label for="add-gender">Genre</label>
+                  <select id="add-gender" class="select" name="gender">
+                    <option value="femme" selected>Femme</option>
+                    <option value="homme">Homme</option>
+                    <option value="prefere-ne-pas">Préfère ne pas répondre</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Sécurité -->
+            <div class="form-section-card">
+              <div class="section-header">
+                <h3>
+                  <i class="fas fa-lock"></i>
+                  Sécurité 
+                </h3>
+              </div>
+              
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="add-password">Mot de passe *</label>
+                  <input type="password" id="add-password" class="input" placeholder="Créez un mot de passe" name="password">
+                </div>
+                
+                <div class="form-group">
+                  <label for="add-confirm">Confirmer le mot de passe *</label>
+                  <input type="password" id="add-confirm" class="input" placeholder="Confirmez votre mot de passe" name="confirm" >
+                </div>
+              </div>
+            </div>
+
+            <!-- Informations d'accessibilité -->
+            <div class="form-section-card">
+              <div class="section-header">
+                <h3>
+                  <i class="fas fa-universal-access"></i>
+                  Informations d'accessibilité
+                </h3>
+              </div>
+              
+              <div class="accessibility-section">
+                <label class="section-label">Type de handicap</label>
+                <div class="checkbox-grid">
+                  <label class="checkbox-option">
+                    <input type="checkbox" name="handicap-type[]" value="aucun" checked>
+                    <span class="checkmark"></span>
+                    Aucun
+                  </label>
+                    
+                  <label class="checkbox-option">
+                    <input type="checkbox" name="handicap-type[]" value="moteur">
+                    <span class="checkmark"></span>
+                    Moteur
+                  </label>
+                  
+                  <label class="checkbox-option">
+                    <input type="checkbox" name="handicap-type[]" value="visuel">
+                    <span class="checkmark"></span>
+                    Visuel
+                  </label>
+
+                  <label class="checkbox-option">
+                    <input type="checkbox" name="handicap-type[]" value="auditif">
+                    <span class="checkmark"></span>
+                    Auditif
+                  </label>
+                  <label class="checkbox-option">
+                    <input type="checkbox" name="handicap-type[]" value="cognitif">
+                    <span class="checkmark"></span>
+                    Cognitif
+                  </label>
+                  <label class="checkbox-option">
+                    <input type="checkbox" name="handicap-type[]" value="autre">
+                    <span class="checkmark"></span>
+                    Autre
+                  </label>
+                  <label class="checkbox-option">
+                    <input type="checkbox" name="handicap-type[]" value="tous">
+                    <span class="checkmark"></span>
+                    Tous
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <span id="useradd-control" class="controle-saisie"></span>
+          </div>
+
+          <!-- Form Actions -->
+          <div class="form-actions">
+            <a href="Ges_utilisateurs.php" class="btn secondary">
+              <i class="fas fa-times"></i>
+              Annuler
+            </a>
+            <button type="submit" class="btn primary">
+              <i class="fas fa-user-plus"></i>
+              Créer utilisateur
+            </button>
+          </div>
+        </form>
+      </div>
+    </main>
+  </div>
+   <script>
+
+
+</script>
+  <script src="assets/js/script.js"></script>
+  <script src="assets/js/controle_saisie_user.js"></script>
+</body>
+</html>

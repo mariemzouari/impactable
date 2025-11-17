@@ -75,9 +75,8 @@ if (signupForm) {
 
 const loginForm = document.getElementById("loginForm");
 if (loginForm) {
-loginForm
-.addEventListener("submit", function(event) {
-    event.preventDefault();
+loginForm.addEventListener("submit", function(event) {
+event.preventDefault(); 
   
 let erreur = "";
 const  email  = document.getElementById("login-email").value.trim();   
