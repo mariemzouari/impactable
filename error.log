@@ -1,0 +1,12 @@
+[16-Nov-2025 19:48:02 Europe/Berlin] Erreur create(): SQLSTATE[23000]: Integrity constraint violation: 1452 Cannot add or update a child row: a foreign key constraint fails (`impactable`.`post`, CONSTRAINT `post_ibfk_1` FOREIGN KEY (`Id_utilisateur`) REFERENCES `utilisateur` (`Id_utilisateur`) ON DELETE CASCADE)
+[16-Nov-2025 19:48:02 Europe/Berlin] Erreur création post - User: 1, Titre: fqs
+[16-Nov-2025 19:48:15 Europe/Berlin] Erreur create(): SQLSTATE[23000]: Integrity constraint violation: 1452 Cannot add or update a child row: a foreign key constraint fails (`impactable`.`post`, CONSTRAINT `post_ibfk_1` FOREIGN KEY (`Id_utilisateur`) REFERENCES `utilisateur` (`Id_utilisateur`) ON DELETE CASCADE)
+[16-Nov-2025 19:48:15 Europe/Berlin] Erreur création post - User: 1, Titre: gs
+[16-Nov-2025 19:50:50 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined method Post::getRecentPosts() in C:\xampp\htdocs\projt\control\control.php:310
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\projt\control\control.php on line 310
+[16-Nov-2025 19:50:55 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined method Post::getRecentPosts() in C:\xampp\htdocs\projt\control\control.php:310
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\projt\control\control.php on line 310
