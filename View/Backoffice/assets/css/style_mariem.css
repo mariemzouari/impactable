@@ -634,3 +634,129 @@
   }
 }
 
+/* Simple Avatar Styles */
+.user-avatar-large {
+    display: flex;
+    justify-content: center;
+    margin: 2rem 0;
+}
+
+.avatar-simple {
+    text-align: center;
+}
+
+.avatar-image-container {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin: 0 auto 1rem;
+    border: 3px solid #e9ecef;
+    background: #f8f9fa;
+}
+
+.avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.avatar-upload-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background 0.2s ease;
+    text-decoration: none;
+}
+
+.avatar-upload-btn:hover {
+    background: #0056b3;
+}
+
+.avatar-input {
+    display: none;
+}
+
+.avatar-note {
+    font-size: 0.8rem;
+    color: #6c757d;
+    margin-top: 0.5rem;
+    margin-bottom: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .avatar-image-container {
+        width: 120px;
+        height: 120px;
+    }
+}
+
+/* Profile Picture Modification Styles */
+.user-avatar-large .avatar-container {
+  position: relative;
+  width: 100px;
+  height: 100px;
+}
+
+.avatar-image {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid var(--white);
+  box-shadow: var(--shadow);
+  background: var(--light-sage);
+}
+
+.avatar-upload-btn {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--copper);
+  color: white;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--ease-s);
+  font-size: 0.9rem;
+}
+
+.avatar-upload-btn:hover {
+  background: var(--brown);
+  transform: scale(1.1);
+}
+
+.avatar-note {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-top: 8px;
+  margin-bottom: 0;
+  font-style: italic;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .user-avatar-large .avatar-container {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .avatar-upload-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 0.8rem;
+  }
+}

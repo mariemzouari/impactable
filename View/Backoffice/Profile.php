@@ -1,17 +1,45 @@
-<?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
 
+<?php 
 require_once __DIR__ . '/../../Controller/UtilisateurController.php';
+require_once __DIR__ . '/../../Controller/ProfileController.php';
 require_once __DIR__ . '/../../Model/UtilisateurClass.php';
+require_once __DIR__ . '/../../Model/ProfileClass.php';
 
-$userC = new UtilisateurController();
 
-// recuperer l'utilisateur
-if(isset($_GET['id'])) {
-    $user = $userC->showUser($_GET['id']);
+session_start();
+
+
+// verifier si utilisateur connecté si non send to login
+if (!isset($_SESSION['user_id'])) {
+    header('Location: login.php');
+    exit;
 }
+
+$erreur = "";
+
+// controllers
+$userC = new UtilisateurController();
+$profileC = new ProfileController();
+
+if(!isset($_GET['id'])) {
+    header('Location: Ges_utilisateurs.php?error=id_manquant');
+    exit;
+}
+
+// recuperer l'utilisateur 
+$user_id = $_GET['id'];
+$user = $userC->showUser($user_id);
+$profile = $profileC->showProfile($user_id);
+
+//si il n'ya pas de user
+if (!$user) {
+    echo "UTILISATEUR NON TROUVE EN BASE";
+    exit;
+}
+
+
+
+
 ?>
 
 <!DOCTYPE html>
@@ -143,6 +171,8 @@ if(isset($_GET['id'])) {
           <div class="user-avatar-large">
             <div class="avatar-placeholder">
               
+                   <img id="avatarPreview" src="../../uploads/<?php echo $profile['photo_profil']; ?>" alt="Photo de profil" class="avatar-image" style="border-radius: 50%; height: 90px; width: 90px;  ">
+
             </div>
           </div>
           <div class="user-summary-info">
@@ -153,7 +183,7 @@ if(isset($_GET['id'])) {
               <span class="user-role"><?php echo $user['role']; ?></span>
               <span class="user-join-date">
                 <i class="fas fa-calendar-alt"></i>
-                Membre depuis <?php echo $user['date_inscription']; ?>
+                Membre depuis <?php echo date("Y-m-d",strtotime($user['date_inscription'])); ?>
               </span>
             </div>
           </div>
@@ -217,6 +247,54 @@ if(isset($_GET['id'])) {
             </div>
           </div>
 
+
+          <!-- Informations pro -->
+          <div class="form-section-card">
+            <div class="section-header">
+              <h3>
+               <i class="fas fa-briefcase"></i>
+                  Informations professionnelles
+            </div>
+            
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Profession</label>
+                <div class="profile-field-value"> <?php echo $profile['profession']; ?> </div>
+              </div>
+              
+              <div class="form-group">
+                <label>Compétences</label>
+                <div class="profile-field-value"><?php echo $profile['competences']; ?></div>
+              </div>
+              
+              <div class="form-group">
+                <label>Ville</label>
+                <div class="profile-field-value"> <?php echo $profile['ville']; ?></div>
+              </div> 
+
+              <div class="form-group">
+                <label>Pays</label>
+                <div class="profile-field-value"> <?php echo $profile['pays']; ?></div>
+              </div> 
+
+              <div class="form-group">
+                <label>LinkedIn</label>
+                <div class="profile-field-value"><?php echo $profile['linkedin']; ?></div>
+              </div>
+
+              <div class="form-group">
+                <label>Bio</label>
+                <div class="profile-field-value"><?php echo $profile['bio']; ?></div>
+              </div>
+            
+
+
+
+            </div>
+          </div>
+
+
+
           <!-- Informations d'accessibilité -->
           <div class="form-section-card">
             <div class="section-header">
@@ -233,6 +311,10 @@ if(isset($_GET['id'])) {
               </div>
             </div>
           </div>
+
+
+
+
 
           <!-- Informations du compte -->
           <div class="form-section-card">
@@ -251,7 +333,7 @@ if(isset($_GET['id'])) {
               
               <div class="form-group">
                 <label>Date d'inscription</label>
-                <div class="profile-field-value"><?php echo $user['date_inscription']; ?></div>
+                <div class="profile-field-value"><?php echo date("Y-m-d",strtotime($user['date_inscription'])); ?></div>
               </div>
               
               <div class="form-group">
@@ -260,6 +342,12 @@ if(isset($_GET['id'])) {
               </div>
             </div>
           </div>
+
+
+
+
+
+
 
           <!-- Statistiques et activité -->
           <div class="form-section-card">

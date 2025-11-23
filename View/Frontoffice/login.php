@@ -1,48 +1,49 @@
-<?php
+<?php  
 session_start();
-
 require_once __DIR__ . '/../../Controller/UtilisateurController.php';
 
 $error = "";
+$userC = new UtilisateurController();
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['email']) && isset($_POST['password'])) {
-    $email = $_POST['email'];
-    $password = $_POST['password'];
-    
-    if (!empty($email) && !empty($password)) {
-        try {
-            $userController = new UtilisateurController();
-            
-            // Utilisation de la méthode du controller (POO)
-            $user = $userController->verifyLogin($email, $password);
-            
-            if ($user) {
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && 
+    isset($_POST['email']) && 
+    isset($_POST['password'])){
+     
+        if (!empty($_POST['email']) && 
+            !empty($_POST['password'])){
+
+             $email = $_POST['email'];
+             $password = $_POST['password'];
+             try{
+             $user = $userC->verifyLogin($email, $password); 
+              if($user){
                 $_SESSION['user_id'] = $user['Id_utilisateur'];
-                $_SESSION['user_email'] = $user['email'];
-                $_SESSION['user_nom'] = $user['nom'];
-                $_SESSION['user_prenom'] = $user['prenom'];
                 $_SESSION['user_role'] = $user['role'];
                 
-
-                if ($_SESSION['user_role'] == "user"){
+                if($_SESSION['user_role'] == "user"){
                 header('Location: Profile.php');
+                exit;}       
+                
+                else {
+                header('Location: ../Backoffice/index.php');
                 exit;}
 
-              else { header('Location: ../Backoffice/index.php');
-               exit ;
-              }
+
+              }   
+              else { $error = "Email ou mot de passe incorrect"; }
 
 
-            } else {
-                $error = "Email ou mot de passe incorrect";
-            }
-            
-        } catch (Exception $e) {
-            $error = "Erreur: " . $e->getMessage();
-        }
-    } else {
-        $error = "Veuillez remplir tous les champs";
-    }
+             }
+             catch(Exception $e){
+             $error = "Erreur: " . $e->getMessage();
+
+             }
+     
+     
+ } 
+
+else {$error = "Veuillez remplir tous les champs";}
+
 }
 ?>
 

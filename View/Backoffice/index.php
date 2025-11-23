@@ -1,3 +1,35 @@
+
+<?php 
+require_once __DIR__ . '/../../Controller/UtilisateurController.php';
+require_once __DIR__ . '/../../Controller/ProfileController.php';
+
+session_start();
+
+
+// verifier si utilisateur connecté si non send to login
+if (!isset($_SESSION['user_id'])) {
+    header('Location: ../Frontoffice/login.php');
+    exit;
+}
+
+
+// controllers
+$userC = new UtilisateurController();
+$profileC = new ProfileController();
+
+// recuperer l'utilisateur de la session et son profil pour la photo
+$user_id = $_SESSION['user_id'];
+$user = $userC->showUser($user_id);
+$profile = $profileC->showProfile($user_id);
+
+//si il n'ya pas de user
+if (!$user) {
+    echo "UTILISATEUR NON TROUVE EN BASE";
+    exit;
+}
+
+
+?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -77,9 +109,9 @@
       
       <div class="sidebar-footer">
         <div class="admin-user">
-          <div class="admin-avatar">AD</div>
+          <img src="../../uploads/<?php echo $profile['photo_profil'] ?>" class="admin-avatar"></img>
           <div class="admin-user-info">
-            <h4>Admin ImpactAble</h4>
+            <h4><?php echo htmlspecialchars($user['nom']) . ' '. htmlspecialchars($user['prenom'])  ?></h4>
             <p>Administrateur</p>
           </div>
         </div>

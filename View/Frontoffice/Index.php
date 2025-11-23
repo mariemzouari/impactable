@@ -91,7 +91,7 @@
     <!-- Hero -->
     <section id="home" class="hero" aria-labelledby="hero-title">
       <div class="hero-content">
-        <h1 id="hero-title">Donnez de la force à l'impact — Ensemble</h1>
+        <h1 id="hero-title">Donnez de la force à l'impact Ensemble</h1>
         <p class="lead">Découvrez des opportunités inclusives, participez à des événements, lancez ou soutenez des campagnes de dons et accédez à des ressources accessibles pour tous.</p>
 
         <div class="hero-cta">

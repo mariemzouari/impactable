@@ -26,7 +26,7 @@ class Utilisateur {
     $this->genre            = $data['genre'] ?? 'prefere_ne_pas_dire';
     $this->date_naissance   = $data['date_naissance'] ?? null;
     $this->email            = $data['email'] ?? null; // obligatoire
-    $this->numero_tel       = $data['numero_tel'] ?? null;
+    $this->numero_tel       = $data['numero_tel'] ?? null;  //obligatoire
     $this->mot_de_passe     = $data['mot_de_passe'] ?? null; // obligatoire
     $this->role             = $data['role'] ?? 'user';
     $this->type_handicap    = $data['type_handicap'] ?? 'aucun';

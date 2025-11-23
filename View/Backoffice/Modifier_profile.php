@@ -1,84 +1,134 @@
-<?php
-
+<?php 
 require_once __DIR__ . '/../../Controller/UtilisateurController.php';
+require_once __DIR__ . '/../../Controller/ProfileController.php';
 require_once __DIR__ . '/../../Model/UtilisateurClass.php';
+require_once __DIR__ . '/../../Model/ProfileClass.php';
 
-  $erreur = "";
-  $user = null;
+
+session_start();
+
+
+// verifier si utilisateur connecté si non send to login
+if (!isset($_SESSION['user_id'])) {
+    header('Location: login.php');
+    exit;
+}
+
+$erreur = "";
+
+// controllers
 $userC = new UtilisateurController();
+$profileC = new ProfileController();
 
-
-if(isset($_GET['id'])) {
-    $user = $userC->showUser($_GET['id']);
-    $password = $user['mot_de_passe'];
+if(!isset($_GET['id'])) {
+    header('Location: Ges_utilisateurs.php?error=id_manquant');
+    exit;
 }
 
+// recuperer l'utilisateur 
+$user_id = $_GET['id'];
+$user = $userC->showUser($user_id);
+$profile = $profileC->showProfile($user_id);
 
-// user info recuperation
-if(isset($_POST['id'])) {
+// pour gérer les checkboxes
+$type_handicap = $user['type_handicap'] ?? '';
+$handicap_array = $type_handicap ? explode(',', $type_handicap) : [];
 
-   $existingUser = $userC->showUser($_POST['id']);
-   $password = $existingUser['mot_de_passe'];
+if ($_SERVER['REQUEST_METHOD'] === 'POST'){
+   
+ if ( isset($_POST['last']) &&
+      isset($_POST['name']) &&
+      isset($_POST['gender']) &&
+      isset($_POST['birthday']) &&
+      isset($_POST['email']) &&
+      isset($_POST['phone']) &&
+      isset($_POST['bio']) &&
+      isset($_POST['city']) &&
+      isset($_POST['country']) &&
+      isset($_POST['profession']) &&
+      isset($_POST['skills']) &&
+      isset($_POST['linkedin']) 
 
-    $user = $userC->showUser($_GET['id']);
-}
-    if (
-        isset($_POST["id"], 
-        $_POST["last-name"], 
-        $_POST["name"], 
-        $_POST["email"], 
-        $_POST["phone"], 
-        $_POST["birthday"], 
-        $_POST["gender"], 
-        $_POST["role"])
-    ) {
+      ){
         if (
-            !empty($_POST["id"]) && 
-            !empty($_POST["last-name"]) && 
+            !empty($_POST["last"]) && 
             !empty($_POST["name"]) && 
             !empty($_POST["email"]) && 
             !empty($_POST["phone"]) && 
             !empty($_POST["birthday"])
-        ) {
-            // Gestion des checkboxes
-            $type_handicap = 'aucun';
-            if (isset($_POST['handicap-type']) && is_array($_POST['handicap-type'])) {
-                if (in_array('tous', $_POST['handicap-type'])) {
-                    $type_handicap = 'tous';
-                } else {
-                    $type_handicap = implode(', ', $_POST['handicap-type']);
-                }
-            }
+        ){
+             //checkboxes
+             if (empty($_POST['handicap'])) $handicap = 'aucun';
+             else $handicap = implode(',', $_POST['handicap']);
 
-            $user = new Utilisateur([
-                'Id_utilisateur' => $_POST['id'],
-                'nom' => $_POST['last-name'],
-                'prenom' => $_POST['name'],
-                'email' => $_POST['email'],
-                'numero_tel' => $_POST['phone'],
-                'date_naissance' => $_POST['birthday'],
-                'genre' => $_POST['gender'],
-                'role' => $_POST['role'],
-                'type_handicap' => $type_handicap,
-                'mot_de_passe' => $password 
+             // mot de passe
+            $password = $user['mot_de_passe']; 
+            
+
+        $new_name = $profile['photo_profil'];
+        //photo profil    
+        if (isset($_FILES['profile-pic']) && $_FILES['profile-pic']['error'] == 0) {
+        $ext = strtolower(pathinfo($_FILES['profile-pic']['name'], PATHINFO_EXTENSION));
+        $new_name = uniqid('profile_') . '.' . $ext;
+        $destination = __DIR__ . '/../../uploads/' . $new_name;
+        move_uploaded_file($_FILES['profile-pic']['tmp_name'], $destination);}
+     
+
+        
+
+     if (empty($erreur)) {
+          $user1 = new Utilisateur([
+                    'Id_utilisateur' => $user_id,
+                    'nom' => $_POST['last'],
+                    'prenom' => $_POST['name'],
+                    'email' => $_POST['email'],
+                    'numero_tel' => $_POST['phone'],
+                    'date_naissance' => $_POST['birthday'],
+                    'genre' => $_POST['gender'],
+                    'role' => $_POST['role'], 
+                    'type_handicap' => $handicap,
+                    'mot_de_passe' => $password  
+
             ]);
+         
+            $profile1 = new Profil([
+                'Id_utilisateur' => $user_id, 
+                'bio' => $_POST['bio'],
+                'ville' => $_POST['city'],
+                'pays' => $_POST['country'],
+                'profession' => $_POST['profession'],
+                'competences' => $_POST['skills'],
+                'linkedin' => $_POST['linkedin'],
+                'photo_profil' => $new_name ?? $profile['photo_profil']
+        ]);
+       
+        
+         try{
+          $userC->updateUser($user1, $user_id);
+          $profileC->updateProfile($profile1, $user_id); 
+          header('Location: Ges_utilisateurs.php?message=modification_reussie');
+          exit;   
 
-            try {
-                $userC->updateUser($user, $_POST['id']);
-                header('Location: Ges_utilisateurs.php');
-                exit;
-            } catch (Exception $e) {
-                $erreur = "erreur lors de la modification  " . $e->getMessage();
-            }
+         }
+         catch(Exception $e) {
+                   $erreur = "Erreur lors de la modification: " . $e->getMessage();
+               }
+        
 
+
+        }
+
+
+        }
+        else {
+        $erreur = "Veuillez remplir tous les champs obligatoires";    
+        }
+    
+    
     }
+
 }
 
-
-if (!$user && !isset($_POST['id'])) {
-    header('Location: Ges_utilisateurs.php');
-    exit;
-}
 ?>
 
 <!DOCTYPE html>
@@ -200,49 +250,40 @@ if (!$user && !isset($_POST['id'])) {
             </a>
           </div>
         </div>
-
-        <!-- User Summary -->
-        <div class="user-summary-card">
-          <div class="user-avatar-large">
-            <div class="avatar-placeholder">
-              <?php echo strtoupper(substr($user['prenom'], 0, 1) . substr($user['nom'], 0, 1));?>
-            </div>
-          </div>
-          <div class="user-summary-info">
-            <h1>
-              <?php
-                  echo $user['prenom'] . ' ' . $user['nom'];
-              ?>
-            </h1>
-            <p class="user-email">
-              <?php 
-              echo $user['email']
-        
-              ?>
-            </p>
-            <div class="user-meta">
-              <span class="user-badge active">Actif</span>
-              <span class="user-role">
-                <?php 
-                echo $user['role']
-              
-                ?>
-              </span>
-              <span class="user-join-date">
-                <i class="fas fa-calendar-alt"></i>
-                Membre depuis 
-                <?php 
-                    echo $user['date_inscription'];
-                ?>
-              </span>
-            </div>
-          </div>
-        </div>
-
         <!-- Edit Form -->
-        <form class="user-edit-form" id="usereditForm" method="post" action="">
-          <!-- ID (Hidden) -->
-          <input type="hidden" name="id" value="<?php echo $user['Id_utilisateur'] ?? ''; ?>">
+        <form class="user-edit-form" id="usereditForm" method="post" action="?id=<?php echo $user_id; ?>"enctype="multipart/form-data" >
+       
+        <!-- User Summary -->
+<div class="user-summary-card">
+  <div class="user-avatar-large">
+    <div class="avatar-container">
+      <img id="avatarPreview" src="../../uploads/<?php echo $profile['photo_profil']; ?>" alt="Photo de profil" class="avatar-image" style="border-radius: 50%; height: 100px; width: 100px; border: solid 0.5px rgb(166, 98, 56);  ">
+      <label for="avatarInput" class="avatar-upload-btn">
+        <i class="fas fa-camera"></i>
+      </label>
+      <input type="file" id="avatarInput" name="profile-pic" accept="image/jpeg,image/png,image/gif" style="display: none;">
+    </div>
+  </div>
+  <div class="user-summary-info">
+    <h1>
+      <?php echo $user['prenom'] . ' ' . $user['nom']; ?>
+    </h1>
+    <p class="user-email">
+      <?php echo $user['email'] ?>
+    </p>
+    <div class="user-meta">
+      <span class="user-badge active">Actif</span>
+      <span class="user-role">
+        <?php echo $user['role'] ?>
+      </span>
+      <span class="user-join-date">
+        <i class="fas fa-calendar-alt"></i>
+        Membre depuis 
+        <?php echo date("Y-m-d",strtotime($user['date_inscription'])); ?>
+      </span>
+    </div>
+  </div>
+</div>
 
 
 
@@ -259,27 +300,27 @@ if (!$user && !isset($_POST['id'])) {
               <div class="form-grid">
                 <div class="form-group">
                   <label for="edit-nom">Nom</label>
-                  <input type="text" id="edit-nom" name="last-name" class="input" value="<?php echo $user['nom'] ?? ''; ?>">
+                  <input type="text" id="edit-nom" name="last" class="input" value="<?php echo $user['nom'] ; ?>">
                 </div>
                 
                 <div class="form-group">
                   <label for="edit-prenom">Prénom</label>
-                  <input type="text" id="edit-prenom" name="name" class="input" value="<?php echo $user['prenom'] ?? ''; ?>">
+                  <input type="text" id="edit-prenom" name="name" class="input" value="<?php echo $user['prenom'] ; ?>">
                 </div>
                 
                 <div class="form-group">
                   <label for="edit-email">Email</label>
-                  <input type="text" id="edit-email" name="email" class="input" value="<?php echo $user['email'] ?? ''; ?>">
+                  <input type="text" id="edit-email" name="email" class="input" value="<?php echo $user['email'] ; ?>">
                 </div>
                 
                 <div class="form-group">
                   <label for="edit-telephone">Téléphone</label>
-                  <input type="text" id="edit-telephone" name="phone" class="input" value="<?php echo $user['numero_tel'] ?? ''; ?>">
+                  <input type="text" id="edit-telephone" name="phone" class="input" value="<?php echo $user['numero_tel'] ; ?>">
                 </div>
                 
                 <div class="form-group">
                   <label for="edit-date-naissance">Date de naissance</label>
-                  <input type="date" id="edit-date-naissance" name="birthday" class="input" value="<?php echo $user['date_naissance'] ?? ''; ?>">
+                  <input type="date" id="edit-date-naissance" name="birthday" class="input" value="<?php echo $user['date_naissance'] ; ?>">
                 </div>
                 
                 <div class="form-group">
@@ -305,33 +346,33 @@ if (!$user && !isset($_POST['id'])) {
               <div class="form-grid">
                 <div class="form-group">
                   <label for="edit-profession">Profession</label>
-                  <input type="text" id="edit-profession" class="input" value="Développeuse Web">
+                  <input type="text" id="edit-profession" class="input" value="<?php echo htmlspecialchars($profile['profession'] ?? ''); ?>" name="profession">
                 </div>
                 
                 <div class="form-group">
                   <label for="edit-competences">Compétences</label>
-                  <input type="text" id="edit-competences" class="input" value="HTML, CSS, JavaScript, React">
+                  <input type="text" id="edit-competences" class="input" value="<?php echo htmlspecialchars($profile['competences'] ?? ''); ?>" name="skills">
                 </div>
                 
                 <div class="form-group">
                   <label for="edit-ville">Ville</label>
-                  <input type="text" id="edit-ville" class="input" value="Tunis">
+                  <input type="text" id="edit-ville" class="input" value="<?php echo htmlspecialchars($profile['ville'] ?? ''); ?>" name="city">
                 </div>
                 
                 <div class="form-group">
                   <label for="edit-pays">Pays</label>
-                  <input type="text" id="edit-pays" class="input" value="Tunisie">
+                  <input type="text" id="edit-pays" class="input"  value="<?php echo htmlspecialchars($profile['pays']?? ''); ?>" name="country">
                 </div>
               </div>
 
               <div class="form-group" style="margin: 0 30px;">
                 <label for="edit-linkedin">LinkedIn</label>
-                <input type="text" id="edit-linkedin" class="input" placeholder="Lien vers votre profil LinkedIn">
+                <input type="text" id="edit-linkedin" class="input" style="width: 49%" stplaceholder="Lien vers votre profil LinkedIn" name="linkedin" value="<?php echo htmlspecialchars($profile['linkedin'] ?? ''); ?>">
               </div>
                 
-              <div class="form-group" style="margin: 0 30px;">
+              <div class="form-group" style="margin: 30px 30px;" >
                 <label for="edit-bio">Bio</label>
-                <textarea id="edit-bio" class="textarea" rows="4" placeholder="Description de l'utilisateur...">Développeuse passionnée par l'accessibilité web et l'inclusion numérique.</textarea>
+                <textarea id="edit-bio" class="textarea" rows="4" placeholder="Description de l'utilisateur..." name="bio"><?php echo htmlspecialchars($profile['bio'] ?? ''); ?></textarea>
               </div>
             </div>
 
@@ -347,19 +388,18 @@ if (!$user && !isset($_POST['id'])) {
               <div class="accessibility-section">
                 <label class="section-label">Type de handicap</label>
                 <div class="checkbox-grid">
-                  <?php
-                  $handicapTypes = ['aucun', 'moteur', 'visuel', 'auditif', 'cognitif', 'autre', 'tous'];
-                  $currentHandicap = isset($user['type_handicap']) ? explode(', ', $user['type_handicap']) : ['aucun'];
                   
-                  foreach($handicapTypes as $type):
-                  ?>
-                  <label class="checkbox-option">
-                    <input type="checkbox" name="handicap-type[]" value="<?php echo $type; ?>" 
-                      <?php echo in_array($type, $currentHandicap) ? 'checked' : ''; ?>>
-                    <span class="checkmark"></span>
-                    <?php echo ucfirst($type); ?>
-                  </label>
-                  <?php endforeach; ?>
+                
+                  <label class="checkbox-option"> <input type="checkbox" name="handicap[]" value="aucun" <?= in_array('aucun', $handicap_array) ? 'checked' : '' ?>> Aucun  <span class="checkmark"></span> </label>
+                  <label class="checkbox-option">  <input type="checkbox" name="handicap[]" value="moteur" <?= in_array('moteur', $handicap_array) ? 'checked' : '' ?>> Moteur <span class="checkmark"></span> </label>
+                  <label class="checkbox-option">  <input type="checkbox" name="handicap[]" value="visuel" <?= in_array('visuel', $handicap_array) ? 'checked' : '' ?>> Visuel <span class="checkmark"></span> </label>
+                  <label class="checkbox-option">  <input type="checkbox" name="handicap[]" value="auditif" <?= in_array('auditif', $handicap_array) ? 'checked' : '' ?>> Auditif <span class="checkmark"></span> </label>
+                  <label class="checkbox-option">   <input type="checkbox" name="handicap[]" value="cognitif" <?= in_array('cognitif', $handicap_array) ? 'checked' : '' ?>> Cognitif <span class="checkmark"></span> </label>
+                  <label class="checkbox-option">  <input type="checkbox" name="handicap[]" value="autre" <?= in_array('autre', $handicap_array) ? 'checked' : '' ?>> Autre <span class="checkmark"></span> </label>
+        
+                 
+
+
                 </div>
               </div>
 
@@ -429,5 +469,22 @@ if (!$user && !isset($_POST['id'])) {
 
   <script src="assets/js/script.js"></script>
   <script src="assets/js/controle_saisie_user.js"></script>
+  <script>// Profile picture preview only (no validation needed)
+document.addEventListener('DOMContentLoaded', function() {
+    const avatarInput = document.getElementById('avatarInput');
+    const avatarPreview = document.getElementById('avatarPreview');
+    
+    if (avatarInput && avatarPreview) {
+        avatarInput.addEventListener('change', function(e) {
+            if (this.files && this.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    avatarPreview.src = e.target.result;
+                }
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
+    }
+});</script>
 </body>
 </html>

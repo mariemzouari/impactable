@@ -1,5 +1,5 @@
 <?php
-include(__DIR__ . '/../config.php');
+require_once __DIR__ . '/../config.php';
 include(__DIR__ . '/../Model/UtilisateurClass.php');
 
 class UtilisateurController {
@@ -8,7 +8,9 @@ class UtilisateurController {
     // lister les utilisateurs
  
     public function listUsers() {
-        $sql = "SELECT * FROM utilisateur";
+        $sql = "SELECT u.*, p.photo_profil
+        FROM utilisateur u
+        LEFT JOIN profil p ON p.Id_utilisateur = u.Id_utilisateur";
         $db = config::getConnexion();
         try {
             $list = $db->query($sql);
@@ -36,10 +38,6 @@ class UtilisateurController {
  
     public function addUser(Utilisateur $user) {
 
-     // debug to fix issue   
-    echo "<div style='background: blue; color: white; padding: 10px; margin: 10px;'>";
-    echo "CONTROLLER addUser APPELÉ";
-    echo "</div>";
     
     $sql = "INSERT INTO utilisateur 
         (nom, prenom, genre, date_naissance, email, numero_tel, mot_de_passe, role, type_handicap) 
@@ -60,18 +58,17 @@ class UtilisateurController {
             'role' => $user->getRole(),
             'type_handicap' => $user->getType_handicap()
         ]);
+
         
-        echo "<div style='background: green; color: white; padding: 10px; margin: 10px;'>";
-        echo " INSERTION RÉUSSIE: " . ($result ? "OUI" : "NON");
-        echo "</div>";
-        
-        return $result;
+        // CHANGEMENT ICI: Retourner l'ID pas resultat
+        if ($result) {
+            return $db->lastInsertId(); 
+        } else {
+            return false; 
+        }
         
     } catch (Exception $e) {
-        echo "<div style='background: red; color: white; padding: 10px; margin: 10px;'>";
-        echo " ERREUR SQL: " . $e->getMessage();
-        echo "</div>";
-        throw $e;
+         die('Error: ' . $e->getMessage());
     }
 }
 
@@ -128,10 +125,11 @@ class UtilisateurController {
         }
     }
 
+     
 
-    
-     //pour verifier login
-public function verifyLogin($email, $password) {
+
+    //pour verifier login
+    public function verifyLogin($email, $password) {
     $sql = "SELECT * FROM utilisateur WHERE email = :email";
     $db = config::getConnexion();
     
@@ -149,5 +147,8 @@ public function verifyLogin($email, $password) {
         throw new Exception("Erreur de connexion: " . $e->getMessage());
     }
 }
+    
+
 }
+
 ?>

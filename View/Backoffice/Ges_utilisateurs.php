@@ -1,15 +1,32 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
 require_once __DIR__ . '/../../Controller/UtilisateurController.php';
-require_once __DIR__ . '/../../Model/UtilisateurClass.php';
+require_once __DIR__ . '/../../Controller/ProfileController.php';
+
+session_start();
+// verifier si utilisateur connecté si non send to login
+if (!isset($_SESSION['user_id'])) {
+    header('Location: login.php');
+    exit;
+}
 
 $userC = new UtilisateurController();
+$profileC = new ProfileController();
 
-// recuperer tous les utilisateurs
+//recuperer users and profiles
 $users = $userC->listUsers();
+
+// recuperer l'utilisateur de la session et son profil pour la photo
+$user_id = $_SESSION['user_id'];
+$user = $userC->showUser($user_id);
+$profile = $profileC->showProfile($user_id);
+
+//si il n'ya pas de user
+if (!$user) {
+    echo "UTILISATEUR NON TROUVE EN BASE";
+    exit;
+}
+
+
 
 // gestion  suppression
 if (isset($_GET['delete_id'])) {
@@ -98,9 +115,9 @@ if (isset($_GET['delete_id'])) {
       
       <div class="sidebar-footer">
         <div class="admin-user">
-          <div class="admin-avatar">AD</div>
+          <img src="../../uploads/<?php echo $profile['photo_profil'] ?>" class="admin-avatar"></img>
           <div class="admin-user-info">
-            <h4>Admin ImpactAble</h4>
+            <h4><?php echo htmlspecialchars($user['nom']) . ' '. htmlspecialchars($user['prenom'])  ?></h4>
             <p>Administrateur</p>
           </div>
         </div>
@@ -159,17 +176,14 @@ if (isset($_GET['delete_id'])) {
                   <div class="activity-icon">
                     <div class="user-avatar-small">
                 <!-- photo ici a faire-->
-                    <?php echo strtoupper(substr($user['prenom'], 0, 1) . substr($user['nom'], 0, 1));?>
+                    <img src="../../uploads/<?php echo $user['photo_profil'] ?> " alt="poto" style="border-radius: 50%;">
                     </div>
                   </div>
 
                   <div class="activity-content">
                     <h4><?php echo $user['prenom'] . ' ' . $user['nom']; ?></h4>
                     <p><?php echo $user['role'] . ' • ' . $user['type_handicap'] . ' • ' . $user['email']; ?></p>
-                    <div class="user-meta-small">
-                      <span class="user-badge-small active">Actif</span>
-                      <span class="user-date-small">Inscrit le <?php echo $user['date_inscription']; ?></span>
-                    </div>
+
                   </div>
                   <div class="activity-time">
                     <div class="table-actions">

@@ -1,65 +1,69 @@
-<?php
+<?php 
+require_once __DIR__ . '/../../Controller/UtilisateurController.php';
+require_once __DIR__ . '/../../Controller/ProfileController.php';
+require_once __DIR__ . '/../../Model/UtilisateurClass.php';
+require_once __DIR__ . '/../../Model/ProfileClass.php';
+
+
 session_start();
 
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
 
-
-
-// verifier si utilisateur  connecté
+// verifier si utilisateur connecté si non send to login
 if (!isset($_SESSION['user_id'])) {
     header('Location: login.php');
     exit;
 }
 
-require_once __DIR__ . '/../../Controller/UtilisateurController.php';
-require_once __DIR__ . '/../../Model/UtilisateurClass.php';
-
 $erreur = "";
-$user = null;
+// controllers
 $userC = new UtilisateurController();
+$profileC = new ProfileController();
 
-// recuperer l'utilisateur depuis la session
+// recuperer l'utilisateur de la session et son profil 
 $user_id = $_SESSION['user_id'];
 $user = $userC->showUser($user_id);
+$profile = $profileC->showProfile($user_id);
 
+// pour gérer les checkboxes
+$type_handicap = $user['type_handicap'] ?? '';
+$handicap_array = $type_handicap ? explode(',', $type_handicap) : [];
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST'){
+   
+ if ( isset($_POST['last']) &&
+      isset($_POST['name']) &&
+      isset($_POST['gender']) &&
+      isset($_POST['birthday']) &&
+      isset($_POST['email']) &&
+      isset($_POST['phone']) &&
+      isset($_POST['password']) &&
+      isset($_POST['new']) &&
+      isset($_POST['bio']) &&
+      isset($_POST['city']) &&
+      isset($_POST['country']) &&
+      isset($_POST['profession']) &&
+      isset($_POST['skills']) &&
+      isset($_POST['linkedin']) 
 
-//  la modification
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (
-        isset($_POST["last-name"], 
-        $_POST["name"], 
-        $_POST["email"], 
-        $_POST["phone"], 
-        $_POST["birthday"], 
-        $_POST["gender"])
-    ) {
+      ){
         if (
-            !empty($_POST["last-name"]) && 
+            !empty($_POST["last"]) && 
             !empty($_POST["name"]) && 
             !empty($_POST["email"]) && 
             !empty($_POST["phone"]) && 
             !empty($_POST["birthday"])
-        ) {
-            // Gestion des checkboxes
-            $type_handicap = 'aucun';
-            if (isset($_POST['handicap-type']) && is_array($_POST['handicap-type'])) {
-                if (in_array('tous', $_POST['handicap-type'])) {
-                    $type_handicap = 'tous';
-                } else {
-                    $type_handicap = implode(', ', $_POST['handicap-type']);
-                }
-            }
+        ){
+             //checkboxes
+             if (empty($_POST['handicap'])) $handicap = 'aucun';
+             else $handicap = implode(',', $_POST['handicap']);
 
-            // mot de passe
-            $mot_de_passe = $user['mot_de_passe']; 
+             // mot de passe
+            $password = $user['mot_de_passe']; 
             
-            if (!empty($_POST['new-password'])) {
-                if (!empty($_POST['current-password'])) {
-                    if (password_verify($_POST['current-password'], $user['mot_de_passe'])) {
-                       $mot_de_passe = password_hash($_POST['new-password'], PASSWORD_DEFAULT);
+            if (!empty($_POST['new'])) {
+                if (!empty($_POST['password'])) {
+                    if (password_verify($_POST['password'], $user['mot_de_passe'])) {
+                       $password = password_hash($_POST['new'], PASSWORD_DEFAULT);
                     } else {
                         $erreur = "Le mot de passe actuel est incorrect";
                     }
@@ -68,40 +72,70 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             }
 
-            // si pas d'erreur la modification
-            if (empty($erreur)) {
-                $user = new Utilisateur([
+        $new_name = $profile['photo_profil'];
+        //photo profil    
+        if (isset($_FILES['profile-pic']) && $_FILES['profile-pic']['error'] == 0) {
+        $ext = strtolower(pathinfo($_FILES['profile-pic']['name'], PATHINFO_EXTENSION));
+        $new_name = uniqid('profile_') . '.' . $ext;
+        $destination = __DIR__ . '/../../uploads/' . $new_name;
+        move_uploaded_file($_FILES['profile-pic']['tmp_name'], $destination);}
+     
+
+        
+
+     if (empty($erreur)) {
+          $user = new Utilisateur([
                     'Id_utilisateur' => $user_id,
-                    'nom' => $_POST['last-name'],
+                    'nom' => $_POST['last'],
                     'prenom' => $_POST['name'],
                     'email' => $_POST['email'],
                     'numero_tel' => $_POST['phone'],
                     'date_naissance' => $_POST['birthday'],
                     'genre' => $_POST['gender'],
                     'role' => $user['role'], 
-                    'type_handicap' => $type_handicap,
-                    'mot_de_passe' => $mot_de_passe  
-                ]);
+                    'type_handicap' => $handicap,
+                    'mot_de_passe' => $password  
 
-                try {
-                    $userC->updateUser($user, $user_id);
-                    
-                    // mise a jour de la session
-                    $_SESSION['user_nom'] = $_POST['last-name'];
-                    $_SESSION['user_prenom'] = $_POST['name'];
-                    $_SESSION['user_email'] = $_POST['email'];
-                    
-                    header('Location: Profile.php?message=modification_reussie');
-                    exit;
-                } catch (Exception $e) {
-                    $erreur = "Erreur lors de la modification: " . $e->getMessage();
-                }
-            }
-        } else {
-            $erreur = "Veuillez remplir tous les champs obligatoires";
+            ]);
+         
+            $profile = new Profil([
+                'Id_utilisateur' => $user_id, 
+                'bio' => $_POST['bio'],
+                'ville' => $_POST['city'],
+                'pays' => $_POST['country'],
+                'profession' => $_POST['profession'],
+                'competences' => $_POST['skills'],
+                'linkedin' => $_POST['linkedin'],
+                'photo_profil' => $new_name ?? $profile['photo_profil']
+        ]);
+       
+        
+         try{
+          $userC->updateUser($user, $user_id);
+          $profileC->updateProfile($profile, $user_id); 
+          header('Location: Profile.php?message=modification_reussie');
+          exit;   
+
+         }
+         catch(Exception $e) {
+                   $erreur = "Erreur lors de la modification: " . $e->getMessage();
+               }
+        
+
+
         }
+
+
+        }
+        else {
+        $erreur = "Veuillez remplir tous les champs obligatoires";    
+        }
+    
+    
     }
+
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -143,33 +177,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
          
         </div>
 
+       
+
+        <form method="POST" action="Modifier_profile.php" id="profileForm" enctype="multipart/form-data">
+          
         <div class="profile-header">
-          <div class="profile-avatar">
+          <div class="profile-avatar" style="margin-left: 50px;">
             <div class="avatar-placeholder">
               
-            <!--fix for picture-->
-          <div class="profile-avatar">
-          <img id="avatarPreview" src="" alt="Photo de profil" style="display: none;">
-          <div id="avatarPlaceholder" class="avatar-placeholder">VS</div>
-          <input type="file" id="avatarInput" style="display: none;">
+            <!--Profile picture-->
+          <div class="profile-avatar" >
+          <img id="avatarPreview" src="../../uploads/<?php echo $profile['photo_profil']; ?>" alt="Photo de profil" >
           <div class="avatar-edit" id="avatarEditBtn">
           <i class="fas fa-camera"></i> Modifier
+          <input type="file" id="avatarInput" style="display: none;" name="profile-pic">
           </div>
           </div>
-            
-            
-            
             </div>
           </div>
 
-          <div class="profile-info">
+          <div class="profile-info" style="margin-left: 50px;">
             <h1><?php echo $user['prenom'] . ' ' . $user['nom']; ?> </h1>
-            <p>Membre depuis <?php echo $user['date_inscription']; ?></p>
+            <p><i class="fas fa-calendar"></i> Membre depuis : <?php echo date("Y-m-d",strtotime($user['date_inscription'])); ?></p>
           </div>
         </div>
 
-        <form method="POST" action="Modifier_profile.php" id="profileForm">
-          <!-- Informations personnelles -->
+        
+        <!-- Informations personnelles -->
           <div class="form-section">
             <h3 class="form-section-title">Informations personnelles</h3>
             <div class="form-grid">
@@ -178,8 +212,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                   <i class="fas fa-user"></i>
                   Nom
                 </label>
-                <input id="last-name-profile" name="last-name" class="input" type="text" 
-                       value="<?php echo htmlspecialchars($user['nom'] ?? ''); ?>" >
+                <input id="last-name-profile" name="last" class="input" type="text" 
+                       value="<?php echo htmlspecialchars($user['nom'] ); ?>" >
               </div>
               
               <div class="form-group">
@@ -188,7 +222,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                   Prénom
                 </label>
                 <input id="name-profile" name="name" class="input" type="text" 
-                       value="<?php echo htmlspecialchars($user['prenom'] ?? ''); ?>" >
+                       value="<?php echo htmlspecialchars($user['prenom'] ); ?>" >
               </div>
               
               <div class="form-group">
@@ -209,7 +243,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                   Date de naissance
                 </label>
                 <input id="birthday-profile" name="birthday" class="input" type="date" 
-                       value="<?php echo $user['date_naissance'] ?? ''; ?>" >
+                       value="<?php echo $user['date_naissance'] ; ?>" >
               </div>
               
               <div class="form-group">
@@ -218,7 +252,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                   E-mail
                 </label>
                 <input id="email-profile" name="email" class="input" type="text" 
-                       value="<?php echo htmlspecialchars($user['email'] ?? ''); ?>" >
+                       value="<?php echo htmlspecialchars($user['email'] ); ?>" >
               </div>
               
               <div class="form-group">
@@ -227,7 +261,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                   Téléphone
                 </label>
                 <input id="phone-number-profile" name="phone" class="input" type="text" 
-                       value="<?php echo htmlspecialchars($user['numero_tel'] ?? ''); ?>" >
+                       value="<?php echo htmlspecialchars($user['numero_tel'] ); ?>" >
               </div>
             </div>
           </div>
@@ -241,7 +275,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <i class="fas fa-edit"></i>
                 Bio
               </label>
-              <textarea id="bio-profile" class="textarea" placeholder="Parlez-nous de vous..."><?php echo htmlspecialchars($user['bio'] ?? ''); ?></textarea>
+              <textarea id="bio-profile" class="textarea" name="bio"><?php echo htmlspecialchars($profile['bio'] ?? ''); ?></textarea>
             </div>
             
             <div class="form-grid">
@@ -250,8 +284,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                   <i class="fas fa-city"></i>
                   Ville
                 </label>
-                <input id="city-profile" class="input" type="text" placeholder="Votre ville" 
-                       value="<?php echo htmlspecialchars($user['ville'] ?? ''); ?>">
+                <input id="city-profile" class="input" type="text" name="city" placeholder="Votre ville" 
+                       value="<?php echo htmlspecialchars($profile['ville'] ?? ''); ?>">
               </div>
               
               <div class="form-group">
@@ -259,8 +293,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                   <i class="fas fa-globe"></i>
                   Pays
                 </label>
-                <input id="country-profile" class="input" type="text" placeholder="Votre pays" 
-                       value="<?php echo htmlspecialchars($user['pays'] ?? ''); ?>">
+                <input id="country-profile" class="input" name="country" type="text" placeholder="Votre pays" 
+                       value="<?php echo htmlspecialchars($profile['pays']?? ''); ?>">
               </div>
               
               <div class="form-group">
@@ -268,8 +302,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                   <i class="fas fa-briefcase"></i>
                   Profession
                 </label>
-                <input id="job-profile" class="input" type="text" placeholder="Votre profession" 
-                       value="<?php echo htmlspecialchars($user['profession'] ?? ''); ?>">
+                <input id="job-profile" class="input" name="profession" type="text" placeholder="Votre profession" 
+                       value="<?php echo htmlspecialchars($profile['profession'] ?? ''); ?>">
               </div>
               
               <div class="form-group">
@@ -277,8 +311,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                   <i class="fas fa-tools"></i>
                   Compétences
                 </label>
-                <input id="skills-profile" class="input" type="text" placeholder="Vos compétences" 
-                       value="<?php echo htmlspecialchars($user['competences'] ?? ''); ?>">
+                <input id="skills-profile" name="skills" class="input" type="text" placeholder="Vos compétences" 
+                       value="<?php echo htmlspecialchars($profile['competences'] ?? ''); ?>">
               </div>
               
               <div class="form-group">
@@ -286,8 +320,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                   <i class="fab fa-linkedin"></i>
                   LinkedIn
                 </label>
-                <input type="text" id="linkedin-profile" class="input" placeholder="Lien vers votre profil LinkedIn" 
-                       value="<?php echo htmlspecialchars($user['linkedin'] ?? ''); ?>">
+                <input type="text" name="linkedin" id="linkedin-profile" class="input" placeholder="Lien vers votre profil LinkedIn" 
+                       value="<?php echo htmlspecialchars($profile['linkedin'] ?? ''); ?>">
               </div>
             </div>
           </div>
@@ -303,18 +337,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 Type de handicap (optionnel)
               </div>
               <div class="checkbox-group">
-                <?php
-                $handicapTypes = ['aucun', 'moteur', 'visuel', 'auditif', 'cognitif', 'autre', 'tous'];
-                $currentHandicap = isset($user['type_handicap']) ? explode(', ', $user['type_handicap']) : ['aucun'];
                 
-                foreach($handicapTypes as $type):
-                ?>
                 <label class="checkbox-label">
-                  <input type="checkbox" name="handicap-type[]" value="<?php echo $type; ?>" 
-                    <?php echo in_array($type, $currentHandicap) ? 'checked' : ''; ?>>
-                  <?php echo ucfirst($type); ?>
+                 <input type="checkbox" name="handicap[]" value="aucun" <?= in_array('aucun', $handicap_array) ? 'checked' : '' ?>> Aucun
+                 <input type="checkbox" name="handicap[]" value="moteur" <?= in_array('moteur', $handicap_array) ? 'checked' : '' ?>> Moteur
+                 <input type="checkbox" name="handicap[]" value="visuel" <?= in_array('visuel', $handicap_array) ? 'checked' : '' ?>> Visuel
+                 <input type="checkbox" name="handicap[]" value="auditif" <?= in_array('auditif', $handicap_array) ? 'checked' : '' ?>> Auditif
+                 <input type="checkbox" name="handicap[]" value="cognitif" <?= in_array('cognitif', $handicap_array) ? 'checked' : '' ?>> Cognitif
+                 <input type="checkbox" name="handicap[]" value="autre" <?= in_array('autre', $handicap_array) ? 'checked' : '' ?>> Autre 
                 </label>
-                <?php endforeach; ?>
+            
               </div>
             </div>
           </div>
@@ -329,7 +361,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <i class="fas fa-lock"></i>
                 Mot de passe actuel
               </label>
-              <input  id="password-profile" class="input" type="password" placeholder="Votre mot de passe actuel" name="current-password">
+              <input  id="password-profile" class="input" type="password" placeholder="Votre mot de passe actuel" name="password">
             </div>
             
             <div class="form-group">
@@ -337,7 +369,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <i class="fas fa-lock"></i>
                 Nouveau mot de passe
               </label>
-              <input id="new-password-profile" class="input" type="password" placeholder="Nouveau mot de passe" name="new-password">
+              <input id="new-password-profile" class="input" type="password" placeholder="Nouveau mot de passe" name="new">
             </div>
             
             <div class="form-group">
@@ -345,7 +377,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <i class="fas fa-lock"></i>
                 Confirmer le nouveau mot de passe
               </label>
-              <input id="confirm-profile" class="input" type="password" placeholder="Confirmer le nouveau mot de passe" name="confirm-password">
+              <input id="confirm-profile" class="input" type="password" placeholder="Confirmer le nouveau mot de passe" name="confirm">
             </div>
 
           <span id="profile-control" class="controle-saisie"></span> 
