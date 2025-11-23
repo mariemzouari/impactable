@@ -10,23 +10,29 @@ class AdminController {
         $this->utilisateurManager = new Utilisateur();
     }
     
-private function checkAdmin() {
-    if (!Utils::isAuthenticated()) {
-        $_SESSION['redirect_url'] = $_SERVER['REQUEST_URI'];
-        Utils::redirect('index.php?action=connexion');
-    }
-    
-    $user = $this->utilisateurManager->getById($_SESSION['user_id']);
-    if ($user['role'] !== 'admin') {
-        $_SESSION['error'] = "Accès refusé. Réservé aux administrateurs.";
-        Utils::redirect('index.php?action=offres');
-    }
-}
-    
-    public function dashboard() {
-        $this->checkAdmin();
+    /**
+     * Vérifie si l'utilisateur est admin
+     */
+    private function checkAdmin() {
+        if (!Utils::isAuthenticated()) {
+            $_SESSION['redirect_url'] = $_SERVER['REQUEST_URI'];
+            Utils::redirect('index.php?action=connexion');
+        }
         
         $user = $this->utilisateurManager->getById($_SESSION['user_id']);
+        if ($user['role'] !== 'admin') {
+            $_SESSION['error'] = "Accès refusé. Réservé aux administrateurs.";
+            Utils::redirect('index.php?action=offres');
+        }
+        
+        return $user;
+    }
+    
+    /**
+     * Dashboard administrateur
+     */
+    public function dashboard() {
+        $user = $this->checkAdmin();
         
         // Statistiques
         $stats = [
@@ -39,17 +45,31 @@ private function checkAdmin() {
         // Dernières offres
         $dernieres_offres = $this->offreManager->getAll([], 5);
         
-        // Dernières candidatures
-        $dernieres_candidatures = $this->getDernieresCandidatures(5);
+// Dernières candidatures
+error_log("🔄 Dashboard - Appel de getRecentCandidatures");
+$dernieres_candidatures = $this->candidatureManager->getRecentCandidatures(5);
+        
+        // Debug final
+        error_log("📊 DASHBOARD FINAL:");
+        error_log("   - Offres: " . count($dernieres_offres));
+        error_log("   - Candidatures: " . count($dernieres_candidatures));
+        error_log("   - Total en base: " . $stats['total_candidatures']);
         
         require_once __DIR__ . '/../views/backoffice/admin/dashboard.php';
     }
     
+    /**
+     * Gestion des offres
+     */
     public function gestionOffres() {
-        $this->checkAdmin();
+        $user = $this->checkAdmin();
         
-        $user = $this->utilisateurManager->getById($_SESSION['user_id']);
-        $offres = $this->offreManager->getAll([], 50); // Toutes les offres
+        $filters = [];
+        if (isset($_GET['type']) && !empty($_GET['type'])) {
+            $filters['type_offre'] = $_GET['type'];
+        }
+        
+        $offres = $this->offreManager->getAll($filters, 50);
         
         // Messages
         $success = $_SESSION['success'] ?? '';
@@ -58,9 +78,15 @@ private function checkAdmin() {
         
         require_once __DIR__ . '/../views/backoffice/admin/gestion_offres.php';
     }
-    
+    /**
+ * Voir une candidature spécifique en détail
+ */
+
+    /**
+     * Voir une offre spécifique
+     */
     public function voirOffre() {
-        $this->checkAdmin();
+        $user = $this->checkAdmin();
         
         $offreId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
         $offre = $this->offreManager->getById($offreId);
@@ -70,15 +96,17 @@ private function checkAdmin() {
             Utils::redirect('index.php?action=admin-gestion-offres');
         }
         
-        $user = $this->utilisateurManager->getById($_SESSION['user_id']);
         $createur = $this->utilisateurManager->getById($offre['Id_utilisateur']);
         $candidatures = $this->candidatureManager->getByOffre($offreId, $offre['Id_utilisateur']);
         
         require_once __DIR__ . '/../views/backoffice/admin/voir_offre.php';
     }
     
+    /**
+     * Modifier une offre
+     */
     public function modifierOffre() {
-        $this->checkAdmin();
+        $user = $this->checkAdmin();
         
         $offreId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
         $offre = $this->offreManager->getById($offreId);
@@ -88,63 +116,19 @@ private function checkAdmin() {
             Utils::redirect('index.php?action=admin-gestion-offres');
         }
         
-        $user = $this->utilisateurManager->getById($_SESSION['user_id']);
         $createur = $this->utilisateurManager->getById($offre['Id_utilisateur']);
-        
-        // Traitement du formulaire de modification
         $success = false;
         $errors = [];
         
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $titre = Utils::sanitize($_POST['titre'] ?? '');
-            $description = Utils::sanitize($_POST['description'] ?? '');
-            $date_expiration = $_POST['date_expiration'] ?? '';
-            $impact_sociale = Utils::sanitize($_POST['impact_sociale'] ?? '');
-            $disability_friendly = isset($_POST['disability_friendly']) ? 1 : 0;
-            $type_handicap = $_POST['type_handicap'] ?? [];
-            $type_offre = $_POST['type_offre'] ?? 'emploi';
-            $mode = $_POST['mode'] ?? 'presentiel';
-            $horaire = $_POST['horaire'] ?? 'temps_plein';
-            $lieu = Utils::sanitize($_POST['lieu'] ?? '');
-            
-            // Validation
-            if (empty($titre)) {
-                $errors[] = "Le titre de l'offre est obligatoire.";
-            }
-            
-            if (empty($description)) {
-                $errors[] = "La description de l'offre est obligatoire.";
-            }
-            
-            if (empty($impact_sociale)) {
-                $errors[] = "L'impact social de l'offre est obligatoire.";
-            }
-            
-            if (empty($date_expiration) || !strtotime($date_expiration)) {
-                $errors[] = "La date d'expiration est invalide.";
-            }
+            $errors = $this->validateOffreData($_POST);
             
             if (empty($errors)) {
-                $type_handicap_str = !empty($type_handicap) ? implode(',', $type_handicap) : 'tous';
-                
-                $offreData = [
-                    'Id_utilisateur' => $offre['Id_utilisateur'], // Garder le propriétaire original
-                    'titre' => $titre,
-                    'description' => $description,
-                    'date_expiration' => $date_expiration,
-                    'impact_sociale' => $impact_sociale,
-                    'disability_friendly' => $disability_friendly,
-                    'type_handicap' => $type_handicap_str,
-                    'type_offre' => $type_offre,
-                    'mode' => $mode,
-                    'horaire' => $horaire,
-                    'lieu' => $lieu
-                ];
+                $offreData = $this->prepareOffreData($_POST, $offre['Id_utilisateur']);
                 
                 if ($this->offreManager->update($offreId, $offreData)) {
                     $success = true;
                     $_SESSION['success'] = "L'offre a été modifiée avec succès !";
-                    // Recharger les données de l'offre
                     $offre = $this->offreManager->getById($offreId);
                 } else {
                     $errors[] = "Une erreur est survenue lors de la modification de l'offre.";
@@ -155,6 +139,9 @@ private function checkAdmin() {
         require_once __DIR__ . '/../views/backoffice/admin/modifier_offre.php';
     }
     
+    /**
+     * Supprimer une offre
+     */
     public function supprimerOffre() {
         $this->checkAdmin();
         
@@ -166,7 +153,6 @@ private function checkAdmin() {
             Utils::redirect('index.php?action=admin-gestion-offres');
         }
         
-        // Supprimer l'offre (l'admin peut supprimer n'importe quelle offre)
         if ($this->offreManager->deleteAdmin($offreId)) {
             $_SESSION['success'] = "L'offre a été supprimée avec succès.";
         } else {
@@ -175,26 +161,226 @@ private function checkAdmin() {
         
         Utils::redirect('index.php?action=admin-gestion-offres');
     }
+
+
+    /**
+     * Voir une candidature spécifique
+     */
+/**
+ * Voir une candidature spécifique en détail
+ */
+public function voirCandidature() {
+    $user = $this->checkAdmin();
     
-    public function gestionCandidatures() {
-        $this->checkAdmin();
-        
-        $user = $this->utilisateurManager->getById($_SESSION['user_id']);
-        $candidatures = $this->getToutesCandidatures();
-        
-        require_once __DIR__ . '/../views/backoffice/admin/gestion_candidatures.php';
+    $candidatureId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+    
+    // Récupérer la candidature
+    $candidature = $this->candidatureManager->getById($candidatureId);
+    
+    if (!$candidature) {
+        $_SESSION['error'] = "Candidature non trouvée.";
+        Utils::redirect('index.php?action=admin-gestion-candidatures');
     }
     
-    public function gestionUtilisateurs() {
+    // Récupérer le candidat
+    $candidat = $this->utilisateurManager->getById($candidature['Id_utilisateur']);
+    
+    // Récupérer l'offre
+    $offre = $this->offreManager->getById($candidature['Id_offre']);
+    
+    if (!$offre) {
+        $_SESSION['error'] = "Offre non trouvée.";
+        Utils::redirect('index.php?action=admin-gestion-candidatures');
+    }
+    
+    // Récupérer le recruteur (créateur de l'offre)
+    // Utilise l'ID du recruteur depuis l'offre ou depuis la candidature
+    $recruteurId = $offre['Id_utilisateur'] ?? $candidature['id_recruteur'] ?? null;
+    $recruteur = null;
+    
+    if ($recruteurId) {
+        $recruteur = $this->utilisateurManager->getById($recruteurId);
+    }
+    
+    require_once __DIR__ . '/../views/backoffice/admin/voir_candidature.php';
+}
+    /**
+     * Modifier le statut d'une candidature
+     */
+    public function modifierStatutCandidature() {
         $this->checkAdmin();
         
-        $user = $this->utilisateurManager->getById($_SESSION['user_id']);
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $_SESSION['error'] = "Méthode non autorisée.";
+            Utils::redirect('index.php?action=admin-gestion-candidatures');
+        }
+        
+        $candidatureId = isset($_POST['candidature_id']) ? (int)$_POST['candidature_id'] : 0;
+        $nouveauStatut = isset($_POST['status']) ? $_POST['status'] : '';
+        
+        $statutsAutorises = ['en_attente', 'en_revue', 'entretien', 'retenu', 'refuse'];
+        
+        if (!in_array($nouveauStatut, $statutsAutorises)) {
+            $_SESSION['error'] = "Statut invalide.";
+            Utils::redirect('index.php?action=admin-gestion-candidatures');
+        }
+        
+        $stmt = $this->offreManager->getConnection()->prepare("
+            UPDATE candidature SET status = ? WHERE Id_candidature = ?
+        ");
+        
+        if ($stmt->execute([$nouveauStatut, $candidatureId])) {
+            $_SESSION['success'] = "Statut de la candidature mis à jour avec succès.";
+        } else {
+            $_SESSION['error'] = "Erreur lors de la mise à jour du statut.";
+        }
+        
+        Utils::redirect('index.php?action=admin-gestion-candidatures');
+    }
+    
+    /**
+     * Gestion des utilisateurs
+     */
+    public function gestionUtilisateurs() {
+        $user = $this->checkAdmin();
+        
         $utilisateurs = $this->getAllUtilisateurs();
         
         require_once __DIR__ . '/../views/backoffice/admin/gestion_utilisateurs.php';
     }
     
-    // Méthodes utilitaires pour les statistiques
+    /**
+     * Voir un utilisateur spécifique
+     */
+    public function voirUtilisateur() {
+        $user = $this->checkAdmin();
+        
+        $utilisateurId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+        $utilisateur = $this->utilisateurManager->getById($utilisateurId);
+        
+        if (!$utilisateur) {
+            $_SESSION['error'] = "Utilisateur non trouvé.";
+            Utils::redirect('index.php?action=admin-gestion-utilisateurs');
+        }
+        
+        // Récupérer les données associées
+        $candidatures = $this->candidatureManager->getByUser($utilisateurId);
+        $offresPostees = $this->offreManager->getByUser($utilisateurId);
+        
+        require_once __DIR__ . '/../views/backoffice/admin/voir_utilisateur.php';
+    }
+
+    
+    /**
+     * Valide les données d'une offre
+     */
+    private function validateOffreData($data) {
+        $errors = [];
+        
+        if (empty($data['titre'])) {
+            $errors[] = "Le titre de l'offre est obligatoire.";
+        }
+        
+        if (empty($data['description'])) {
+            $errors[] = "La description de l'offre est obligatoire.";
+        }
+        
+        if (empty($data['impact_sociale'])) {
+            $errors[] = "L'impact social de l'offre est obligatoire.";
+        }
+        
+        if (empty($data['date_expiration']) || !strtotime($data['date_expiration'])) {
+            $errors[] = "La date d'expiration est invalide.";
+        }
+        
+        return $errors;
+    }
+    /**
+ * Gestion des candidatures
+ */
+/**
+ * Récupère les statistiques des candidatures
+ */
+private function getCandidatureStats() {
+    try {
+        $stmt = $this->offreManager->getConnection()->prepare("
+            SELECT 
+                COUNT(*) as total,
+                SUM(CASE WHEN status = 'en_attente' THEN 1 ELSE 0 END) as en_attente,
+                SUM(CASE WHEN status = 'en_revue' THEN 1 ELSE 0 END) as en_revue,
+                SUM(CASE WHEN status = 'entretien' THEN 1 ELSE 0 END) as entretien,
+                SUM(CASE WHEN status = 'retenu' THEN 1 ELSE 0 END) as retenu,
+                SUM(CASE WHEN status = 'refuse' THEN 1 ELSE 0 END) as refuse
+            FROM candidature
+        ");
+        $stmt->execute();
+        return $stmt->fetch();
+    } catch(PDOException $e) {
+        error_log("Erreur récupération stats candidatures: " . $e->getMessage());
+        return ['total' => 0, 'en_attente' => 0, 'en_revue' => 0, 'entretien' => 0, 'retenu' => 0, 'refuse' => 0];
+    }
+}
+public function gestionCandidatures() {
+    $user = $this->checkAdmin();
+    
+    // Filtres
+    $filters = [];
+    if (isset($_GET['status']) && !empty($_GET['status'])) {
+        $filters['status'] = $_GET['status'];
+    }
+    if (isset($_GET['type_offre']) && !empty($_GET['type_offre'])) {
+        $filters['type_offre'] = $_GET['type_offre'];
+    }
+    
+    // Récupérer les candidatures
+    $candidatures = $this->candidatureManager->getAll($filters);
+    
+    // Statistiques pour les filtres
+    $stats = $this->getCandidatureStats();
+    
+    require_once __DIR__ . '/../views/backoffice/admin/gestion_candidatures.php';
+}
+    /**
+     * Prépare les données d'une offre pour l'insertion
+     */
+    private function prepareOffreData($data, $userId) {
+        $type_handicap_str = !empty($data['type_handicap']) ? implode(',', $data['type_handicap']) : 'tous';
+        
+        return [
+            'Id_utilisateur' => $userId,
+            'titre' => Utils::sanitize($data['titre'] ?? ''),
+            'description' => Utils::sanitize($data['description'] ?? ''),
+            'date_expiration' => $data['date_expiration'] ?? '',
+            'impact_sociale' => Utils::sanitize($data['impact_sociale'] ?? ''),
+            'disability_friendly' => isset($data['disability_friendly']) ? 1 : 0,
+            'type_handicap' => $type_handicap_str,
+            'type_offre' => $data['type_offre'] ?? 'emploi',
+            'mode' => $data['mode'] ?? 'presentiel',
+            'horaire' => $data['horaire'] ?? 'temps_plein',
+            'lieu' => Utils::sanitize($data['lieu'] ?? '')
+        ];
+    }
+    
+    /**
+     * Récupère tous les utilisateurs
+     */
+    private function getAllUtilisateurs() {
+        try {
+            $stmt = $this->offreManager->getConnection()->prepare("
+                SELECT * FROM utilisateur ORDER BY date_inscription DESC
+            ");
+            $stmt->execute();
+            return $stmt->fetchAll();
+        } catch(PDOException $e) {
+            error_log("Erreur récupération utilisateurs: " . $e->getMessage());
+            return [];
+        }
+    }
+    
+    // =========================================================================
+    // MÉTHODES DE COMPTAGE
+    // =========================================================================
+    
     private function getOffresActivesCount() {
         try {
             $stmt = $this->offreManager->getConnection()->prepare(
@@ -227,55 +413,6 @@ private function checkAdmin() {
         } catch(PDOException $e) {
             error_log("Erreur comptage utilisateurs: " . $e->getMessage());
             return 0;
-        }
-    }
-    
-    private function getDernieresCandidatures($limit = 5) {
-        try {
-            $stmt = $this->offreManager->getConnection()->prepare("
-                SELECT c.*, u.prenom, u.nom, u.email, o.titre 
-                FROM candidature c 
-                JOIN utilisateur u ON c.Id_utilisateur = u.Id_utilisateur 
-                JOIN offre o ON c.Id_offre = o.Id_offre 
-                ORDER BY c.date_candidature DESC 
-                LIMIT ?
-            ");
-            $stmt->execute([$limit]);
-            return $stmt->fetchAll();
-        } catch(PDOException $e) {
-            error_log("Erreur récupération dernières candidatures: " . $e->getMessage());
-            return [];
-        }
-    }
-    
-    private function getToutesCandidatures() {
-        try {
-            $stmt = $this->offreManager->getConnection()->prepare("
-                SELECT c.*, u.prenom, u.nom, u.email, o.titre, o.Id_utilisateur as id_recruteur 
-                FROM candidature c 
-                JOIN utilisateur u ON c.Id_utilisateur = u.Id_utilisateur 
-                JOIN offre o ON c.Id_offre = o.Id_offre 
-                ORDER BY c.date_candidature DESC
-            ");
-            $stmt->execute();
-            return $stmt->fetchAll();
-        } catch(PDOException $e) {
-            error_log("Erreur récupération toutes candidatures: " . $e->getMessage());
-            return [];
-        }
-    }
-    
-    
-    private function getAllUtilisateurs() {
-        try {
-            $stmt = $this->offreManager->getConnection()->prepare("
-                SELECT * FROM utilisateur ORDER BY date_inscription DESC
-            ");
-            $stmt->execute();
-            return $stmt->fetchAll();
-        } catch(PDOException $e) {
-            error_log("Erreur récupération utilisateurs: " . $e->getMessage());
-            return [];
         }
     }
 }

@@ -2,6 +2,213 @@
 $title = "Gestion Candidatures - " . Utils::escape($offre['titre']) . " | " . Config::SITE_NAME;
 require_once __DIR__ . '/../templates/header.php'; 
 ?>
+<style>
+/* Section Statistiques */
+.stats-custom-section {
+    margin: 2rem 0;
+    padding: 1.5rem;
+    background: #f8f9fa;
+    border-radius: 10px;
+}
+
+.stats-custom-section h2 {
+    margin-bottom: 1rem;
+    color: #333;
+    font-size: 1.5rem;
+}
+
+.stats-custom-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+}
+
+.stat-custom-item {
+    text-align: center;
+    padding: 1rem;
+    border-radius: 8px;
+    background: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.stat-custom-total { border-top: 4px solid #6c757d; }
+.stat-custom-pending { border-top: 4px solid #ffc107; }
+.stat-custom-review { border-top: 4px solid #17a2b8; }
+.stat-custom-interview { border-top: 4px solid #007bff; }
+.stat-custom-accepted { border-top: 4px solid #28a745; }
+.stat-custom-rejected { border-top: 4px solid #dc3545; }
+
+.stat-custom-number {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.stat-custom-label {
+    font-size: 0.9rem;
+    color: #666;
+    text-transform: uppercase;
+    font-weight: 500;
+}
+
+/* Responsive pour les stats */
+@media (max-width: 768px) {
+    .stats-custom-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .stat-custom-number {
+        font-size: 1.5rem;
+    }
+}
+
+/* Le reste du CSS pour les candidats reste inchangé */
+.candidature-card {
+    margin-bottom: 1.5rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 1.5rem;
+    background: white;
+    transition: box-shadow 0.3s ease;
+}
+
+.candidature-card:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.candidature-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.candidate-avatar {
+    width: 50px;
+    height: 50px;
+    background: #007bff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.2rem;
+}
+
+.candidature-info {
+    flex: 1;
+}
+
+.candidature-info h3 {
+    margin: 0 0 0.5rem 0;
+    color: #333;
+}
+
+.candidature-contact {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.contact-item {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.handicap-info {
+    color: #e74c3c;
+    font-weight: 500;
+}
+
+.documents-links {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.doc-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: #f8f9fa;
+    border-radius: 4px;
+    text-decoration: none;
+    color: #007bff;
+    transition: background-color 0.3s ease;
+}
+
+.doc-link:hover {
+    background: #e9ecef;
+}
+
+.lettre-motivation,
+.additional-info {
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 4px;
+}
+
+.lettre-motivation h4,
+.additional-info h4 {
+    margin: 0 0 0.5rem 0;
+    color: #333;
+}
+
+.candidature-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e0e0e0;
+}
+
+.candidature-date {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.action-form {
+    margin: 0;
+}
+
+@media (max-width: 768px) {
+    .candidature-header {
+        flex-direction: column;
+    }
+    
+    .candidature-footer {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+    }
+    
+    .action-buttons {
+        width: 100%;
+        justify-content: flex-start;
+    }
+    
+    .candidature-contact {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .documents-links {
+        flex-direction: column;
+    }
+}
+</style>
 
 <div class="gestion-offre-container">
     <!-- En-tête de l'offre -->
@@ -54,26 +261,33 @@ require_once __DIR__ . '/../templates/header.php';
         }
         ?>
         
-        <div class="stats-candidatures">
-            <div class="stat-candidature">
-                <div class="stat-number"><?php echo count($candidatures); ?></div>
-                <div class="stat-label">Total</div>
-            </div>
-            <div class="stat-candidature">
-                <div class="stat-number"><?php echo $stats['en_attente']; ?></div>
-                <div class="stat-label">En attente</div>
-            </div>
-            <div class="stat-candidature">
-                <div class="stat-number"><?php echo $stats['en_revue']; ?></div>
-                <div class="stat-label">En revue</div>
-            </div>
-            <div class="stat-candidature">
-                <div class="stat-number"><?php echo $stats['entretien']; ?></div>
-                <div class="stat-label">Entretien</div>
-            </div>
-            <div class="stat-candidature">
-                <div class="stat-number"><?php echo $stats['retenu']; ?></div>
-                <div class="stat-label">Retenus</div>
+        <div class="stats-custom-section">
+            <h2>Statistiques des Candidatures</h2>
+            <div class="stats-custom-grid">
+                <div class="stat-custom-item stat-custom-total">
+                    <div class="stat-custom-number"><?php echo count($candidatures); ?></div>
+                    <div class="stat-custom-label">Total</div>
+                </div>
+                <div class="stat-custom-item stat-custom-pending">
+                    <div class="stat-custom-number"><?php echo $stats['en_attente']; ?></div>
+                    <div class="stat-custom-label">En attente</div>
+                </div>
+                <div class="stat-custom-item stat-custom-review">
+                    <div class="stat-custom-number"><?php echo $stats['en_revue']; ?></div>
+                    <div class="stat-custom-label">En revue</div>
+                </div>
+                <div class="stat-custom-item stat-custom-interview">
+                    <div class="stat-custom-number"><?php echo $stats['entretien']; ?></div>
+                    <div class="stat-custom-label">Entretien</div>
+                </div>
+                <div class="stat-custom-item stat-custom-accepted">
+                    <div class="stat-custom-number"><?php echo $stats['retenu']; ?></div>
+                    <div class="stat-custom-label">Retenus</div>
+                </div>
+                <div class="stat-custom-item stat-custom-rejected">
+                    <div class="stat-custom-number"><?php echo $stats['refuse']; ?></div>
+                    <div class="stat-custom-label">Refusés</div>
+                </div>
             </div>
         </div>
     <?php endif; ?>

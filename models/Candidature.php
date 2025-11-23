@@ -6,6 +6,33 @@ class Candidature {
         $this->db = Database::getInstance()->getConnection();
     }
     
+
+
+
+/**
+ * Récupère les dernières candidatures avec données minimales garanties pour le dashboard
+ */
+// Fichier: Candidature.php
+
+/**
+ * Récupère les dernières candidatures avec données minimales garanties pour le dashboard
+ */
+public function getRecentCandidatures($limit = 5) {
+    try {
+        // REQUÊTE DIRECTE - TOUTES LES CANDIDATURES
+        $query = "SELECT * FROM candidature ORDER BY date_candidature DESC";
+        
+        $stmt = $this->db->prepare($query);
+        $stmt->execute();
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        return $result;
+        
+    } catch(PDOException $e) {
+        error_log("Erreur getRecentCandidatures: " . $e->getMessage());
+        return [];
+    }
+}
     public function getCountByOffre($offreId) {
         try {
             $stmt = $this->db->prepare("SELECT COUNT(*) as count FROM candidature WHERE Id_offre = ?");
@@ -78,7 +105,6 @@ class Candidature {
         }
     }
     
-    // MÉTHODE CORRIGÉE - getByOffre
     public function getByOffre($offreId, $userId) {
         try {
             // Vérifier d'abord que l'utilisateur est propriétaire de l'offre
@@ -91,7 +117,7 @@ class Candidature {
             $isOwner = $checkStmt->fetch()['count'] > 0;
             
             if (!$isOwner) {
-                return []; // Retourner vide si l'utilisateur n'est pas propriétaire
+                return [];
             }
             
             // Si propriétaire, récupérer les candidatures
@@ -124,7 +150,7 @@ class Candidature {
             $canUpdate = $checkStmt->fetch()['count'] > 0;
             
             if (!$canUpdate) {
-                return false; // L'utilisateur n'est pas propriétaire de l'offre
+                return false;
             }
             
             // Mettre à jour le statut
@@ -141,7 +167,6 @@ class Candidature {
         }
     }
 
-    // Méthode pour récupérer une candidature spécifique
     public function getById($candidatureId) {
         try {
             $stmt = $this->db->prepare("
@@ -158,7 +183,6 @@ class Candidature {
         }
     }
 
-    // Méthode pour supprimer une candidature
     public function delete($candidatureId, $userId) {
         try {
             $stmt = $this->db->prepare("
@@ -173,7 +197,6 @@ class Candidature {
         }
     }
 
-    // Méthode pour vérifier si l'utilisateur est propriétaire de la candidature
     public function isOwner($candidatureId, $userId) {
         try {
             $stmt = $this->db->prepare("
@@ -189,7 +212,6 @@ class Candidature {
         }
     }
 
-    // Méthode pour récupérer les statistiques des candidatures d'un utilisateur
     public function getUserStats($userId) {
         try {
             $stmt = $this->db->prepare("
@@ -211,7 +233,6 @@ class Candidature {
         }
     }
 
-    // Méthode pour récupérer toutes les candidatures (pour l'admin)
     public function getAll($filters = []) {
         try {
             $sql = "
@@ -244,7 +265,7 @@ class Candidature {
             
         } catch(PDOException $e) {
             error_log("Erreur récupération toutes les candidatures: " . $e->getMessage());
-            return [];
+            return [];  
         }
     }
 }

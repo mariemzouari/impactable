@@ -84,6 +84,32 @@ class CandidatureController {
 
         $userId = $_SESSION['user_id'];
         $user = $this->utilisateurManager->getById($userId);
+        
+        // Variables pour les messages
+        $success = '';
+        $error = '';
+        
+        // Gérer la suppression de candidature
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'supprimer_candidature') {
+            $candidatureId = $_POST['candidature_id'] ?? '';
+            
+            if ($candidatureId) {
+                // Vérifier que l'utilisateur est bien propriétaire de la candidature
+                if ($this->candidatureManager->isOwner($candidatureId, $userId)) {
+                    if ($this->candidatureManager->delete($candidatureId, $userId)) {
+                        $success = "Votre candidature a été retirée avec succès.";
+                    } else {
+                        $error = "Une erreur est survenue lors du retrait de votre candidature.";
+                    }
+                } else {
+                    $error = "Vous n'êtes pas autorisé à retirer cette candidature.";
+                }
+            } else {
+                $error = "Identifiant de candidature manquant.";
+            }
+        }
+        
+        // Récupérer les candidatures de l'utilisateur
         $candidatures = $this->candidatureManager->getByUser($userId);
 
         require_once __DIR__ . '/../views/frontoffice/candidature/mes_candidatures.php';

@@ -9,6 +9,7 @@ require_once 'models/Candidature.php';
 require_once 'controllers/AuthController.php';
 require_once 'controllers/OffreController.php';
 require_once 'controllers/CandidatureController.php';
+require_once 'controllers/AdminController.php';
 
 // Démarrer la session
 if (session_status() === PHP_SESSION_NONE) {
@@ -116,6 +117,11 @@ case 'admin-gestion-utilisateurs':
     require_once 'controllers/AdminController.php';
     $controller = new AdminController();
     $controller->gestionUtilisateurs();
+    break;
+
+case 'admin-voir-candidature':
+    $adminController = new AdminController();
+    $adminController->voirCandidature();
     break;
             
             
