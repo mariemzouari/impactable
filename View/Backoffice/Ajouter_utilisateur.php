@@ -1,65 +1,96 @@
 
-<?php
-
+<?php 
 require_once __DIR__ . '/../../Controller/UtilisateurController.php';
+require_once __DIR__ . '/../../Controller/ProfileController.php';
 require_once __DIR__ . '/../../Model/UtilisateurClass.php';
+require_once __DIR__ . '/../../Model/ProfileClass.php';
+
 
 $erreur = "";
 $userC = new UtilisateurController();
-  
-    if (
-        isset($_POST["last-name"]) &&
-        isset($_POST["name"]) &&
-        isset($_POST["email"]) &&
-        isset($_POST["phone"]) &&
-        isset($_POST["birthday"]) &&
-        isset($_POST["password"]) &&
-        isset($_POST["confirm"])
-    ) {
-        if (
-            !empty($_POST["last-name"]) &&
-            !empty($_POST["name"]) &&
-            !empty($_POST["email"]) &&
-            !empty($_POST["phone"]) &&
-            !empty($_POST["birthday"]) &&
-            !empty($_POST["password"]) &&
-            !empty($_POST["confirm"])
-        ) {
-            // gestion des checkboxes
-            $type_handicap = 'aucun';
-            if (isset($_POST['handicap-type']) && is_array($_POST['handicap-type'])) {
-                if (in_array('tous', $_POST['handicap-type'])) {
-                    $type_handicap = 'tous';
-                } else {
-                    $type_handicap = implode(', ', $_POST['handicap-type']);
-                }
-            }
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST'){
+ if ( isset($_POST['last']) &&
+      isset($_POST['name']) &&
+      isset($_POST['gender']) &&
+      isset($_POST['birthday']) &&
+      isset($_POST['email']) &&
+      isset($_POST['phone']) &&
+      isset($_POST['role']) &&
+      isset($_POST['password']) &&
+      isset($_POST['confirm']) 
+    ){
+
+        if( !empty($_POST['last']) &&
+            !empty($_POST['name']) &&
+            !empty($_POST['email']) &&
+            !empty($_POST['phone']) &&
+            !empty($_POST['role']) &&
+            !empty($_POST['birthday']) &&
+            !empty($_POST['password']) &&
+            !empty($_POST['confirm'])  
+            ){
+            
+             //checkboxes
+             if (empty($_POST['handicap'])) $handicap = 'aucun';
+             else $handicap = implode(',', $_POST['handicap']);
+             
+
+
+           
             $user = new Utilisateur([
-                'nom' => $_POST['last-name'],
+                'nom' => $_POST['last'],
                 'prenom' => $_POST['name'],
                 'email' => $_POST['email'],
-                'numero_tel' => $_POST['phone'] ?? null,
-                'date_naissance' => $_POST['birthday'] ?? null,
+                'numero_tel' => $_POST['phone'] ,
+                'date_naissance' => $_POST['birthday'] ,
                 'mot_de_passe' => $_POST['password'],
-                'genre' => $_POST['gender'] ?? 'prefere_ne_pas_dire',
-                'role' => $_POST['role'] ?? 'user',
-                'type_handicap' => $type_handicap
+                'genre' => $_POST['gender'],
+                'role' => $_POST['role'] ,
+                'type_handicap' => $handicap
+
             ]);
-
-
             
-            try {
-                $userC->addUser($user);
-                header('Location: Ges_utilisateurs.php');
+    
+      
+          
+          try{
+                $user_id = $userC->addUser($user);
+
+                $profileC = new ProfileController();
+                $empty_profile = new Profil([
+                'Id_utilisateur' => $user_id,
+                'photo_profil' => 'default.jpg',
+                'bio' => '',
+                'ville' => '',
+                'pays' => '', 
+                'profession' => '',
+                'competences' => '',
+                'linkedin' => '',
+                'date_creation' => date("Y-m-d H:i:s"),
+                'date_modification' => date("Y-m-d H:i:s")
+                ]);
+
+                $profileC->addProfile($empty_profile);
+                header('Location: Ges_utilisateurs.php'); 
                 exit;
-            } 
-            catch (Exception $e) {
-                $erreur = "Erreur lors de l'ajout : " . $e->getMessage();
-            }
-       
+          }
+          catch(Exception $e) {
+                 $erreur = "Erreur lors de l'ajout : " . $e->getMessage();
+          }
+
+
+        }
+        else{
+          $erreur = "Veuillez remplir tous les champs obligatoires";   
+        }
+
+
     }
+
+
 }
+
 
 ?>
 
@@ -228,7 +259,7 @@ $userC = new UtilisateurController();
               <div class="form-grid">
                 <div class="form-group">
                   <label for="add-last-name">Nom *</label>
-                  <input type="text" id="add-last-name" class="input" placeholder="Ecrivez votre nom" name="last-name">
+                  <input type="text" id="add-last-name" class="input" placeholder="Ecrivez votre nom" name="last">
                 </div>
                 
                 <div class="form-group">
@@ -284,6 +315,37 @@ $userC = new UtilisateurController();
               </div>
             </div>
 
+
+
+            <!-- Paramètres du compte -->
+            <div class="form-section-card">
+              <div class="section-header">
+                <h3>
+                  <i class="fas fa-cog"></i>
+                  Paramètres du compte
+                </h3>
+              </div>
+              
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="edit-statut">Statut du compte</label>
+                  <select id="edit-statut" class="select">
+                    <option value="actif" selected>Actif</option>
+                    <option value="inactif">Inactif</option>
+                    <option value="suspendu">Suspendu</option>
+                  </select>
+                </div>
+                
+                <div class="form-group">
+                  <label for="edit-role">Rôle</label>
+                  <select id="edit-role" name="role" class="select">
+                    <option value="user"  >Utilisateur</option>
+                    <option value="admin" >Administrateur</option>
+                  </select>
+                </div>
+              </div>
+
+
             <!-- Informations d'accessibilité -->
             <div class="form-section-card">
               <div class="section-header">
@@ -297,42 +359,37 @@ $userC = new UtilisateurController();
                 <label class="section-label">Type de handicap</label>
                 <div class="checkbox-grid">
                   <label class="checkbox-option">
-                    <input type="checkbox" name="handicap-type[]" value="aucun" checked>
+                    <input type="checkbox" name="handicap[]" value="aucun" >
                     <span class="checkmark"></span>
                     Aucun
                   </label>
                     
                   <label class="checkbox-option">
-                    <input type="checkbox" name="handicap-type[]" value="moteur">
+                    <input type="checkbox" name="handicap[]" value="moteur">
                     <span class="checkmark"></span>
                     Moteur
                   </label>
                   
                   <label class="checkbox-option">
-                    <input type="checkbox" name="handicap-type[]" value="visuel">
+                    <input type="checkbox" name="handicap[]" value="visuel">
                     <span class="checkmark"></span>
                     Visuel
                   </label>
 
                   <label class="checkbox-option">
-                    <input type="checkbox" name="handicap-type[]" value="auditif">
+                    <input type="checkbox" name="handicap[]" value="auditif">
                     <span class="checkmark"></span>
                     Auditif
                   </label>
                   <label class="checkbox-option">
-                    <input type="checkbox" name="handicap-type[]" value="cognitif">
+                    <input type="checkbox" name="handicap[]" value="cognitif">
                     <span class="checkmark"></span>
                     Cognitif
                   </label>
                   <label class="checkbox-option">
-                    <input type="checkbox" name="handicap-type[]" value="autre">
+                    <input type="checkbox" name="handicap[]" value="autre">
                     <span class="checkmark"></span>
                     Autre
-                  </label>
-                  <label class="checkbox-option">
-                    <input type="checkbox" name="handicap-type[]" value="tous">
-                    <span class="checkmark"></span>
-                    Tous
                   </label>
                 </div>
               </div>

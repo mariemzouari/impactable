@@ -20,11 +20,6 @@ $user_id = $_SESSION['user_id'];
 $user = $userC->showUser($user_id);
 $profile = $profileC->showProfile($user_id);
 
-//si il n'ya pas de user
-if (!$user) {
-    echo "UTILISATEUR NON TROUVE EN BASE";
-    exit;
-}
 
 
 
@@ -176,7 +171,7 @@ if (isset($_GET['delete_id'])) {
                   <div class="activity-icon">
                     <div class="user-avatar-small">
                 <!-- photo ici a faire-->
-                    <img src="../../uploads/<?php echo $user['photo_profil'] ?> " alt="poto" style="border-radius: 50%;">
+                    <img src="../../uploads/<?php echo $user['photo_profil'] ?> " alt="poto" style="border-radius: 50%;s">
                     </div>
                   </div>
 
@@ -212,7 +207,7 @@ if (isset($_GET['delete_id'])) {
               <h3>Actions Rapides</h3>
             </div>
             <div class="card-body">
-              <div style="display: flex; flex-direction: column; gap: 12px;">
+              <div style="display: flex ; flex-direction: column; gap: 12px;">
                 <a href="Ajouter_utilisateur.php" class="btn primary">
                   <i class="fas fa-user-plus"></i>
                   <span>Nouvel Utilisateur</span>
