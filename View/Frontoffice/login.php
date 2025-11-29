@@ -101,6 +101,7 @@ else {$error = "Veuillez remplir tous les champs";}
                 E‑mail
               </label>
               <input id="login-email" name="email" class="input" type="text" placeholder="votremail@email.com" >
+              <span id="login-email-error" class="controle-saisie"></span>
             </div>
             <div class="form-group">
               <label for="login-password">
@@ -108,6 +109,7 @@ else {$error = "Veuillez remplir tous les champs";}
                 Mot de passe
               </label>
               <input id="login-password" name="password" class="input" type="password" placeholder="Votre mot de passe" >
+              <span id="login-password-error" class="controle-saisie"></span>
             </div>
              
 

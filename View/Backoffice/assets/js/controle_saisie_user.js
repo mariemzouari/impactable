@@ -1,3 +1,38 @@
+// mot de passe strong, weak 
+function passwordStrong(idPass, idStrength) {
+  const password = document.getElementById(idPass);
+  const strength = document.getElementById(idStrength);
+
+    password.addEventListener("input", function () {
+    const val = password.value;
+    let score = 0;
+
+  
+    if (val.length >= 8) score++;
+    if (val.length >= 12) score++; 
+    if (/\d/.test(val)) score++;
+    if (/[A-Z]/.test(val)) score++;
+    if (/[a-z]/.test(val)) score++;
+    if (/[^A-Za-z0-9]/.test(val)) score++;
+
+
+    if (score <= 2) {
+      strength.innerHTML = 'Weak';
+      strength.style.color = "red";
+    } 
+    else if (score <= 4) {
+      strength.innerHTML =  "Medium";
+      strength.style.color = "orange";
+    } 
+    else {
+      strength.innerHTML = "Strong";
+      strength.style.color = "green";
+    }
+  });
+}
+
+
+
 //add user
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -5,9 +40,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     if (useraddForm) {
         useraddForm.addEventListener("submit", function(event) {
-            console.log(" Validation en cours...");
             
-            let erreur = "";
             const last_name = document.getElementById("add-last-name").value.trim();
             const name = document.getElementById("add-name").value.trim();
             const birthday = document.getElementById("add-birthday").value;
@@ -16,29 +49,96 @@ document.addEventListener('DOMContentLoaded', function() {
             const password = document.getElementById("add-password").value.trim();     
             const confirm = document.getElementById("add-confirm").value.trim();
 
-            // Validation
-            if (!last_name) erreur = "Veuillez entrer votre nom.";
-            else if (!name) erreur = "Veuillez entrer votre prénom.";
-            else if (!email) erreur = "Veuillez entrer un e-mail.";
-            else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) erreur = "Veuillez entrer un e-mail valide.";
-            else if (!number) erreur = "Veuillez entrer un numéro de téléphone.";
-            else if (number.length < 8) erreur = "Veuillez entrer un numéro valide.";
-            else if (!birthday) erreur = "Veuillez entrer une date de naissance.";
-            else if (new Date(birthday) > new Date()) erreur = "La date de naissance ne peut pas être dans le futur.";
-            else if (!password) erreur = "Veuillez créer un mot de passe.";
-            else if (password.length < 8) erreur = "Le mot de passe doit contenir au moins 8 caractères.";
-            else if (!confirm) erreur = "Veuillez confirmer votre mot de passe.";
-            else if (confirm !== password) erreur = "Les mots de passe ne correspondent pas.";
 
-            if (erreur) {
-                console.log("Erreur:", erreur);
-                event.preventDefault(); 
-                document.getElementById("useradd-control").innerHTML = '<i class="fas fa-exclamation-triangle"></i> ' + erreur;
-                document.getElementById("useradd-control").style.display = "block";
-            } else {
-                console.log("Validation réussie - envoi du formulaire");
-                document.getElementById("useradd-control").style.display = "none";
-            }
+            var isValid = true;
+       
+        
+        // Fonction pour afficher les messages
+        function displayMessage(id, message) {
+        var element = document.getElementById(id + "-error");
+        element.style.display = "block";
+        element.innerHTML= '<i class="fas fa-exclamation-triangle"></i> '+ message;
+        }
+
+        //function for display none
+        function displaynone(id){
+            var element = document.getElementById(id + "-error");
+             element.style.display = "none";
+        }
+
+        if (!last_name){    
+        displayMessage("add-last-name","Veuillez entrer votre nom." );
+        isValid = false;
+            
+        } 
+        else displaynone("add-last-name");
+
+        if (!name){
+            displayMessage("add-name","Veuillez entrer votre prénom." );
+            isValid =false;
+        }
+        else displaynone("add-name");
+
+       if (!birthday){
+            displayMessage("add-birthday", "Veuillez entrer une date de naissance.");
+            isValid =false;
+        }
+        else if (new Date(birthday) > new Date()) {
+            displayMessage("add-birthday", "La date de naissance ne peut pas être dans le futur.");
+            isValid =false;
+        }
+        else displaynone("add-birthday");
+
+
+
+        if (!email){
+            displayMessage("add-email", "Veuillez entrer un e-mail.");
+            isValid =false;
+        }
+       else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+            displayMessage("add-email", "Veuillez entrer un e-mail valide.");
+            isValid =false; 
+        }
+        else displaynone("add-email");
+
+
+        if (!number){
+            displayMessage("add-phone", "Veuillez entrer un numéro de téléphone.");
+            isValid =false; 
+        }
+       else if (number.length < 8){ 
+            displayMessage("add-phone", "Veuillez entrer un numéro valide.");
+            isValid =false;
+        }
+        else displaynone("add-phone");
+
+       
+       if (!password){
+            displayMessage("add-password", "Veuillez créer un mot de passe." );
+            isValid =false;
+        }
+        else if (password.length < 8) {
+            displayMessage("add-password", "Le mot de passe doit contenir au moins 8 caractères." );
+            isValid =false;
+        }
+        else displaynone("add-password");
+
+
+        if (!confirm){
+            displayMessage("add-confirm", "Veuillez confirmer votre mot de passe." );
+            isValid =false; 
+        }
+        else if (confirm !== password){
+            displayMessage("add-confirm", "Les mots de passe ne correspondent pas." );
+            isValid =false; 
+        }
+        else displaynone("add-confirm");
+
+       if (!isValid){
+        event.preventDefault();
+       }
+             
+          
         });
     }
 });
@@ -49,7 +149,7 @@ if (usereditForm) {
     usereditForm.addEventListener("submit", function(event) {
         console.log(" Validation modification en cours...");
         
-        let erreur = "";
+        const photo = document.getElementById("avatarInput").files[0];
         const last_name = document.getElementById("edit-nom").value.trim();
         const name = document.getElementById("edit-prenom").value.trim();
         const birthday = document.getElementById("edit-date-naissance").value;
@@ -60,27 +160,103 @@ if (usereditForm) {
         const country = document.getElementById("edit-pays").value.trim();
         const linkedin = document.getElementById("edit-linkedin").value.trim();
 
-        // Validation
-        if (!last_name) erreur = "Veuillez entrer votre nom.";
-        else if (!name) erreur = "Veuillez entrer votre prénom.";
-        else if (!email) erreur = "Veuillez entrer un e-mail.";
-        else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) erreur = "Veuillez entrer un e-mail valide.";
-        else if (!number) erreur = "Veuillez entrer un numéro de téléphone.";
-        else if (number.length < 8) erreur = "Veuillez entrer un numéro valide.";
-        else if (!birthday) erreur = "Veuillez entrer une date de naissance.";
-        else if (new Date(birthday) > new Date()) erreur = "La date de naissance ne peut pas être dans le futur.";
-        else if (bio && bio.length > 200) erreur = "La bio ne doit pas dépasser 200 caractères.";
-        else if (city && city.length > 20) erreur = "La ville ne doit pas dépasser 20 caractères.";
-        else if (country && country.length > 20) erreur = "Le pays ne doit pas dépasser 20 caractères.";
-        else if (linkedin && !linkedin.includes('linkedin.com')) erreur = "Veuillez entrer une URL LinkedIn valide.";
-
-        if (erreur) {
-            event.preventDefault();
-            document.getElementById("useredit-control").innerHTML = '<i class="fas fa-exclamation-triangle"></i> ' + erreur;
-            document.getElementById("useredit-control").style.display = "block";
-        } else {
-            document.getElementById("useredit-control").style.display = "none";
+        var isValid = true;
+       
+        
+        // Fonction pour afficher les messages
+        function displayMessage(id, message) {
+        var element = document.getElementById(id + "-error");
+        element.style.display = "block";
+        element.innerHTML= '<i class="fas fa-exclamation-triangle"></i> '+ message;
         }
+
+        //function for display none
+        function displaynone(id){
+            var element = document.getElementById(id + "-error");
+             element.style.display = "none";
+        }
+
+        // photo    
+        if (photo && !photo.type.startsWith('image/')){
+            displayMessage("avatarInput", "Veuillez sélectionner une image.");
+            isValid =false;
+        }
+        else if(photo && photo.size > 5 * 1024 * 1024){
+            displayMessage("avatarInput", "L'image est trop lourde." );
+            isValid =false;
+        } 
+        else displaynone("avatarInput");
+
+
+        // infos user
+        if (!last_name){   
+            displayMessage("info-perso", "Veuillez entrer votre nom." );
+            isValid =false;
+        }  
+
+        else if (!name){
+            displayMessage("info-perso", "Veuillez entrer votre prénom." );
+            isValid =false;
+        }
+        else if (!birthday){
+            displayMessage("info-perso", "Veuillez entrer une date de naissance." );
+            isValid =false;
+        }
+        else if (new Date(birthday) > new Date()) {
+            displayMessage("info-perso", "La date de naissance ne peut pas être dans le futur." );
+            isValid =false;
+        }
+        else if (!email){
+            displayMessage("info-perso", "Veuillez entrer un e-mail." );
+            isValid =false;
+        }
+        else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+            displayMessage("info-perso", "Veuillez entrer un e-mail valide.");
+            isValid =false;
+        }
+        else if (!number){
+            displayMessage("info-perso", "Veuillez entrer un numéro de téléphone." );
+            isValid =false;
+        }
+        else if (number.length < 8){ 
+            displayMessage("info-perso", "Veuillez entrer un numéro valide." );
+            isValid =false;
+        }
+        else  displaynone("info-perso");
+
+
+        // profil
+        if (bio && bio.length > 200) {
+            displayMessage("info-pro", "La bio ne doit pas dépasser 200 caractères.");
+            isValid =false;
+        }
+        else if (city && city.length > 20) {
+            displayMessage("info-pro", "La ville ne doit pas dépasser 20 caractères.");
+            isValid =false;
+        }
+        else if (country && country.length > 20) {
+            displayMessage("info-pro", "Le pays ne doit pas dépasser 20 caractères." );
+            isValid =false;
+        }
+        else if (linkedin && !linkedin.includes('linkedin.com')) {
+            displayMessage("info-pro", "Veuillez entrer une URL LinkedIn valide." );
+            isValid =false;
+        }
+        else  displaynone("info-pro");
+
+    
+
+       
+        if (!isValid){
+        event.preventDefault();
+       }
+        
+
+
+
+
+
+
     });
 }
 

@@ -260,26 +260,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'){
                 <div class="form-group">
                   <label for="add-last-name">Nom *</label>
                   <input type="text" id="add-last-name" class="input" placeholder="Ecrivez votre nom" name="last">
+                  <span id="add-last-name-error" class="controle-saisie"></span>
                 </div>
                 
                 <div class="form-group">
                   <label for="add-name">Prénom *</label>
                   <input type="text" id="add-name" class="input" placeholder="Ecrivez votre prénom" name="name" >
+                  <span id="add-name-error" class="controle-saisie"></span>
                 </div>
                 
                 <div class="form-group">
                   <label for="add-email">Email *</label>
                   <input type="text" id="add-email" class="input" placeholder="sarah.ben@example.com"  name="email">
+                  <span id="add-email-error" class="controle-saisie"></span>
                 </div>
                 
                 <div class="form-group">
                   <label for="add-phone">Téléphone *</label>
                   <input type="text" id="add-phone" class="input" placeholder="+216 12 345 678" name="phone">
+                  <span id="add-phone-error" class="controle-saisie"></span>
                 </div>
                 
                 <div class="form-group">
                   <label for="add-birthday">Date de naissance *</label>
                   <input type="date" id="add-birthday" class="input" name="birthday">
+                  <span id="add-birthday-error" class="controle-saisie"></span>
                 </div>
                 
                 <div class="form-group">
@@ -304,13 +309,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'){
               
               <div class="form-grid">
                 <div class="form-group">
-                  <label for="add-password">Mot de passe *</label>
+                  <label for="add-password">Mot de passe * <span id="strength-add" style="margin-left: 70%;"></span> </label>
                   <input type="password" id="add-password" class="input" placeholder="Créez un mot de passe" name="password">
+                  <span id="add-password-error" class="controle-saisie"></span>
                 </div>
                 
                 <div class="form-group">
                   <label for="add-confirm">Confirmer le mot de passe *</label>
                   <input type="password" id="add-confirm" class="input" placeholder="Confirmez votre mot de passe" name="confirm" >
+                  <span id="add-confirm-error" class="controle-saisie"></span>
                 </div>
               </div>
             </div>
@@ -395,7 +402,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'){
               </div>
             </div>
 
-            <span id="useradd-control" class="controle-saisie"></span>
+            
           </div>
 
           <!-- Form Actions -->
@@ -419,5 +426,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'){
 </script>
   <script src="assets/js/script.js"></script>
   <script src="assets/js/controle_saisie_user.js"></script>
+  <script> passwordStrong("add-password", "strength-add"); </script>
 </body>
 </html>

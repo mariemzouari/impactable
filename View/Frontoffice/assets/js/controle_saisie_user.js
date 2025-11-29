@@ -1,62 +1,146 @@
+
+// mot de passe strong, weak 
+
+
+function passwordStrong(idPass, idStrength) {
+  const password = document.getElementById(idPass);
+  const strength = document.getElementById(idStrength);
+
+    password.addEventListener("input", function () {
+    const val = password.value;
+    let score = 0;
+
+  
+    if (val.length >= 8) score++;
+    if (val.length >= 12) score++; 
+    if (/\d/.test(val)) score++;
+    if (/[A-Z]/.test(val)) score++;
+    if (/[a-z]/.test(val)) score++;
+    if (/[^A-Za-z0-9]/.test(val)) score++;
+
+
+    if (score <= 2) {
+      strength.innerHTML = 'Weak';
+      strength.style.color = "red";
+    } 
+    else if (score <= 4) {
+      strength.innerHTML =  "Medium";
+      strength.style.color = "orange";
+    } 
+    else {
+      strength.innerHTML = "Strong";
+      strength.style.color = "green";
+    }
+  });
+}
+
+
+
 // sign up 
 const signupForm = document.getElementById("signupForm");
 if (signupForm) {
     signupForm.addEventListener("submit", function(event) {
-        let erreur = "";
+        
         const last_name = document.getElementById("signup-last-name").value.trim();
         const name = document.getElementById("signup-name").value.trim();
-        const birthday = document.getElementById("birthday").value;
+        const birthday = document.getElementById("signup-birthday").value;
         const email = document.getElementById("signup-email").value.trim();
-        const number = document.getElementById("phone-number").value.trim();     
+        const number = document.getElementById("signup-phone").value.trim();     
         const password = document.getElementById("signup-password").value.trim();     
         const confirm = document.getElementById("signup-confirm").value.trim();     
-
-        if (!last_name){    
-            erreur = "Veuillez entrer votre nom.";
-        }     
-        else if (!name){
-            erreur = "Veuillez entrer votre prénom.";
+        
+        var isValid = true;
+       
+        
+        // Fonction pour afficher les messages
+        function displayMessage(id, message) {
+        var element = document.getElementById(id + "-error");
+        element.style.display = "block";
+        element.innerHTML= '<i class="fas fa-exclamation-triangle"></i> '+ message;
         }
-        else if (!birthday){
-            erreur = "Veuillez entrer une date de naissance.";
+
+        //function for display none
+        function displaynone(id){
+            var element = document.getElementById(id + "-error");
+             element.style.display = "none";
+        }
+
+
+
+        
+        if (!last_name){    
+            displayMessage("signup-last-name","Veuillez entrer votre nom." );
+            isValid = false;
+            
+        } 
+        else displaynone("signup-last-name");
+
+        if (!name){
+            displayMessage("signup-name","Veuillez entrer votre prénom." );
+            isValid =false;
+        }
+        else displaynone("signup-name");
+
+       if (!birthday){
+            displayMessage("signup-birthday", "Veuillez entrer une date de naissance.");
+            isValid =false;
         }
         else if (new Date(birthday) > new Date()) {
-            erreur = "La date de naissance ne peut pas être dans le futur.";
+            displayMessage("signup-birthday", "La date de naissance ne peut pas être dans le futur.");
+            isValid =false;
         }
-        else if (!email){
-            erreur = "Veuillez entrer un e-mail.";
+        else displaynone("signup-birthday");
+
+
+
+        if (!email){
+            displayMessage("signup-email", "Veuillez entrer un e-mail.");
+            isValid =false;
         }
-        else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
-            erreur = "Veuillez entrer un e-mail valide.";   
+       else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+            displayMessage("signup-email", "Veuillez entrer un e-mail valide.");
+            isValid =false; 
         }
-        else if (!number){
-            erreur = "Veuillez entrer un numéro de téléphone.";
+        else displaynone("signup-email");
+
+
+        if (!number){
+            displayMessage("signup-phone", "Veuillez entrer un numéro de téléphone.");
+            isValid =false; 
         }
-        else if (number.length < 8){ // Changé de 12 à 8
-            erreur = "Veuillez entrer un numéro valide." ;
+       else if (number.length < 8){ 
+            displayMessage("signup-phone", "Veuillez entrer un numéro valide.");
+            isValid =false;
         }
-        else if (!password){
-            erreur = "Veuillez créer un mot de passe." ;
+        else displaynone("signup-phone");
+
+       
+       if (!password){
+            displayMessage("signup-password", "Veuillez créer un mot de passe." );
+            isValid =false;
         }
         else if (password.length < 8) {
-            erreur = "Le mot de passe doit contenir au moins 8 caractères." ;
+            displayMessage("signup-password", "Le mot de passe doit contenir au moins 8 caractères." );
+            isValid =false;
         }
-        else if (!confirm){
-            erreur = "Veuillez confirmer votre mot de passe."; 
+        else displaynone("signup-password");
+
+
+        if (!confirm){
+            displayMessage("signup-confirm", "Veuillez confirmer votre mot de passe." );
+            isValid =false; 
         }
         else if (confirm !== password){
-            erreur = "Les mots de passe ne correspondent pas." ;
+            displayMessage("signup-confirm", "Les mots de passe ne correspondent pas." );
+            isValid =false; 
         }
+        else displaynone("signup-confirm");
 
-        if (erreur) {
-            event.preventDefault(); 
-            document.getElementById("signup-control").innerHTML = '<i class="fas fa-exclamation-triangle"></i> ' + erreur;
-            document.getElementById("signup-control").style.display = "block";
-        } else {
-            document.getElementById("signup-control").innerHTML = "";
-            document.getElementById("signup-control").style.display = "none";
-           
-        }
+       if (!isValid){
+        event.preventDefault();
+       }
+
+        
     });
 }
 
@@ -64,31 +148,55 @@ if (signupForm) {
 const loginForm = document.getElementById("loginForm");
 if (loginForm) {
     loginForm.addEventListener("submit", function(event) {
-        let erreur = "";
+       
         const email = document.getElementById("login-email").value.trim();   
-        const password = document.getElementById("login-password").value.trim();   
+        const password = document.getElementById("login-password").value.trim();  
+        
+        var isValid = true;
+       
+        
+        // Fonction pour afficher les messages
+        function displayMessage(id, message) {
+        var element = document.getElementById(id + "-error");
+        element.style.display = "block";
+        element.innerHTML= '<i class="fas fa-exclamation-triangle"></i> '+ message;
+        }
+
+        //function for display none
+        function displaynone(id){
+            var element = document.getElementById(id + "-error");
+             element.style.display = "none";
+        }
+        
 
         if (!email){
-            erreur = "Veuillez entrer votre e-mail.";
+            displayMessage("login-email", "Veuillez entrer votre e-mail." );
+            isValid =false;
         }
         else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
-            erreur = "Veuillez entrer un e-mail valide.";   
+            displayMessage("login-email", "Veuillez entrer un e-mail valide." );
+            isValid =false;
         }
-        else if (!password){
-            erreur = "Veuillez entrer votre mot de passe." ;
+        else displaynone("login-email");
+
+
+        if (!password){
+            displayMessage("login-password", "Veuillez entrer votre mot de passe." );
+            isValid =false;
         }
         else if (password.length < 8) {
-            erreur = "Le mot de passe doit contenir au moins 8 caractères." ;
-        }
+            displayMessage("login-password", "Le mot de passe doit contenir au moins 8 caractères." );
+            isValid =false;
 
-        if (erreur) {
-            event.preventDefault(); 
-            document.getElementById("login-control").innerHTML = '<i class="fas fa-exclamation-triangle"></i> ' + erreur;
-            document.getElementById("login-control").style.display = "block";
-        } else {
-            document.getElementById("login-control").innerHTML = "";
-            document.getElementById("login-control").style.display = "none";
         }
+        else displaynone("login-password");
+
+        
+         if (!isValid){
+        event.preventDefault();
+       }
+
+
     });
 }
 
@@ -106,7 +214,7 @@ if (profileForm) {
         const name = document.getElementById("name-profile").value.trim();
         const birthday = document.getElementById("birthday-profile").value;
         const email = document.getElementById("email-profile").value.trim();
-        const number = document.getElementById("phone-number-profile").value.trim();     
+        const number = document.getElementById("phone-profile").value.trim();     
 
         // profile
         const bio = document.getElementById("bio-profile").value.trim();
@@ -119,78 +227,145 @@ if (profileForm) {
         const new_password = document.getElementById("new-password-profile").value.trim();
         const confirm = document.getElementById("confirm-profile").value.trim();
 
+
+        var isValid = true;
+       
+        
+        // Fonction pour afficher les messages
+        function displayMessage(id, message) {
+        var element = document.getElementById(id + "-error");
+        element.style.display = "block";
+        element.innerHTML= '<i class="fas fa-exclamation-triangle"></i> '+ message;
+        }
+
+        //function for display none
+        function displaynone(id){
+            var element = document.getElementById(id + "-error");
+             element.style.display = "none";
+        }
+
         // photo    
         if (photo && !photo.type.startsWith('image/')){
-            erreur = "Veuillez sélectionner une image." ;
+            displayMessage("avatarInput", "Veuillez sélectionner une image.");
+            isValid =false;
         }
         else if(photo && photo.size > 5 * 1024 * 1024){
-            erreur = "L'image est trop lourde." ;
+            displayMessage("avatarInput", "L'image est trop lourde." );
+            isValid =false;
         } 
+        else displaynone("avatarInput");
+
 
         // infos user
-        else if (!last_name){    
-            erreur = "Veuillez entrer votre nom.";
-        }     
+        if (!last_name){   
+            displayMessage("info-perso", "Veuillez entrer votre nom." );
+            isValid =false;
+        }  
+
         else if (!name){
-            erreur = "Veuillez entrer votre prénom.";
+            displayMessage("info-perso", "Veuillez entrer votre prénom." );
+            isValid =false;
         }
         else if (!birthday){
-            erreur = "Veuillez entrer une date de naissance.";
+            displayMessage("info-perso", "Veuillez entrer une date de naissance." );
+            isValid =false;
         }
         else if (new Date(birthday) > new Date()) {
-            erreur = "La date de naissance ne peut pas être dans le futur.";
+            displayMessage("info-perso", "La date de naissance ne peut pas être dans le futur." );
+            isValid =false;
         }
         else if (!email){
-            erreur = "Veuillez entrer un e-mail.";
+            displayMessage("info-perso", "Veuillez entrer un e-mail." );
+            isValid =false;
         }
         else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
-            erreur = "Veuillez entrer un e-mail valide.";   
+            displayMessage("info-perso", "Veuillez entrer un e-mail valide.");
+            isValid =false;
         }
         else if (!number){
-            erreur = "Veuillez entrer un numéro de téléphone.";
+            displayMessage("info-perso", "Veuillez entrer un numéro de téléphone." );
+            isValid =false;
         }
-        else if (number.length < 8){ // Changé de 12 à 8
-            erreur = "Veuillez entrer un numéro valide." ;
+        else if (number.length < 8){ 
+            displayMessage("info-perso", "Veuillez entrer un numéro valide." );
+            isValid =false;
         }
+        else  displaynone("info-perso");
+
 
         // profil
-        else if (bio && bio.length > 200) {
-            erreur = "La bio ne doit pas dépasser 200 caractères.";
+        if (bio && bio.length > 200) {
+            displayMessage("info-pro", "La bio ne doit pas dépasser 200 caractères.");
+            isValid =false;
         }
         else if (city && city.length > 20) {
-            erreur = "La ville ne doit pas dépasser 20 caractères.";
+            displayMessage("info-pro", "La ville ne doit pas dépasser 20 caractères.");
+            isValid =false;
         }
         else if (country && country.length > 20) {
-            erreur = "Le pays ne doit pas dépasser 20 caractères.";
+            displayMessage("info-pro", "Le pays ne doit pas dépasser 20 caractères." );
+            isValid =false;
         }
         else if (linkedin && !linkedin.includes('linkedin.com')) {
-            erreur = "Veuillez entrer une URL LinkedIn valide.";
+            displayMessage("info-pro", "Veuillez entrer une URL LinkedIn valide." );
+            isValid =false;
         }
+        else  displaynone("info-pro");
+
+        
 
         // password
-        else if(password || new_password || confirm) {
-            if (password && password.length < 8) {
-                erreur = "Le mot de passe doit contenir au moins 8 caractères." ;
+        if(password || new_password || confirm) {
+            if (!password){
+                displayMessage("security", "Veuillez écrire votre ancien mot de passe."  );
+                isValid =false;
             }
-            else if (new_password && new_password.length < 8) {
-                erreur = "Le nouveau mot de passe doit contenir au moins 8 caractères." ;
+            else if ( password.length < 8) {
+                displayMessage("security", "Le mot de passe doit contenir au moins 8 caractères."  );
+                isValid =false;
             }
-            else if (confirm && confirm.length < 8) {
-                erreur = "La confirmation doit contenir au moins 8 caractères." ;
+            else if (!new_password){
+              displayMessage("security", "Veuillez créer un nouveau mot de passe."  );
+              isValid =false;   
             }
-            else if (new_password && confirm && new_password !== confirm) {
-                erreur = "Les mots de passe ne correspondent pas." ;
+            else if ( new_password.length < 8) {
+                displayMessage("security", "Le nouveau mot de passe doit contenir au moins 8 caractères.");
+                isValid =false;
             }
-        }
-
-        if (erreur) {
-            event.preventDefault(); 
-            document.getElementById("profile-control").innerHTML = '<i class="fas fa-exclamation-triangle"></i> ' + erreur;
-            document.getElementById("profile-control").style.display = "block";
-        } else {
-            document.getElementById("profile-control").innerHTML = "";
-            document.getElementById("profile-control").style.display = "none";
+            else if (!confirm) {
+              displayMessage("security", "Veuillez confirmer votre mot de passe."  );
+              isValid =false;
+            }
+            else if ( confirm.length < 8) {
+                displayMessage("security", "La confirmation doit contenir au moins 8 caractères." );
+                isValid =false;
+            }
+            else if ( new_password !== confirm) {
+                displayMessage("security", "Les mots de passe ne correspondent pas."  );
+                isValid =false;
+            }
+            else  displaynone("security");
+   
             
         }
+
+       
+        if (!isValid){
+        event.preventDefault();
+       }
+
+
+
     });
 }
+
+
+
+
+
+
+
+
+
+
+

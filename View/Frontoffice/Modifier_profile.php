@@ -191,7 +191,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'){
           <div class="avatar-edit" id="avatarEditBtn">
           <i class="fas fa-camera"></i> Modifier
           <input type="file" id="avatarInput" style="display: none;" name="profile-pic">
+          
           </div>
+
+
           </div>
             </div>
           </div>
@@ -200,8 +203,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'){
             <h1><?php echo $user['prenom'] . ' ' . $user['nom']; ?> </h1>
             <p><i class="fas fa-calendar"></i> Membre depuis : <?php echo date("Y-m-d",strtotime($user['date_inscription'])); ?></p>
           </div>
-        </div>
 
+          
+        </div>
+        <?php if (!empty($erreur)): ?>
+            <div class="alert-error" style="background: #fee; color: #c33; padding: 10px; border-radius: 5px; margin-bottom: 15px;">
+              <?php echo $erreur; ?>
+            </div>
+          <?php endif; ?>
+        <span id="avatarInput-error" class="controle-saisie"></span>
         
         <!-- Informations personnelles -->
           <div class="form-section">
@@ -256,14 +266,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'){
               </div>
               
               <div class="form-group">
-                <label for="phone-number-profile">
+                <label for="phone-profile">
                   <i class="fas fa-phone"></i>
                   Téléphone
                 </label>
-                <input id="phone-number-profile" name="phone" class="input" type="text" 
+                <input id="phone-profile" name="phone" class="input" type="text" 
                        value="<?php echo htmlspecialchars($user['numero_tel'] ); ?>" >
               </div>
+
+              
             </div>
+            <span id="info-perso-error" class="controle-saisie"></span>
           </div>
 
           <!-- Informations de profil -->
@@ -323,7 +336,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'){
                 <input type="text" name="linkedin" id="linkedin-profile" class="input" placeholder="Lien vers votre profil LinkedIn" 
                        value="<?php echo htmlspecialchars($profile['linkedin'] ?? ''); ?>">
               </div>
+              
             </div>
+            <span id="info-pro-error" class="controle-saisie"></span>
           </div>
           
 
@@ -367,9 +382,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'){
             <div class="form-group">
               <label for="new-password-profile">
                 <i class="fas fa-lock"></i>
-                Nouveau mot de passe
+                Nouveau mot de passe    <span  style="margin-left: 60%;" id="strength-profile"></span>  
               </label>
+              
               <input id="new-password-profile" class="input" type="password" placeholder="Nouveau mot de passe" name="new">
+                     
             </div>
             
             <div class="form-group">
@@ -380,7 +397,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'){
               <input id="confirm-profile" class="input" type="password" placeholder="Confirmer le nouveau mot de passe" name="confirm">
             </div>
 
-          <span id="profile-control" class="controle-saisie"></span> 
+           <span id="security-error" class="controle-saisie"></span>
           <div class="form-footer">
             <a href="Profile.php" class="btn secondary">Annuler</a>
             <button class="btn primary" type="submit">Enregistrer les modifications</button>
@@ -442,5 +459,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'){
   <script src="assets/js/script.js"></script>
   <script src="assets\js\profile_picture_mariem.js"> </script>
   <script src="assets\js\controle_saisie_user.js"> </script>
+  <script>  
+ passwordStrong("new-password-profile", "strength-profile" );
+ </script>
+
+
+
 </body>
 </html>

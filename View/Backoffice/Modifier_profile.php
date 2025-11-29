@@ -284,6 +284,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'){
     </div>
   </div>
 </div>
+<span id="avatarInput-error" class="controle-saisie" style="margin-bottom:40px;"></span>
 
 
 
@@ -331,7 +332,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'){
                     <option value="prefere_ne_pas_dire" <?php echo (isset($user['genre']) && $user['genre']=='prefere_ne_pas_dire')?'selected':''; ?>>Préfère ne pas répondre</option>
                   </select>
                 </div>
+
               </div>
+                <span id="info-perso-error" class="controle-saisie" style="margin-bottom:40px;"></span>
             </div>
 
             <!-- Informations professionnelles -->
@@ -374,6 +377,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'){
                 <label for="edit-bio">Bio</label>
                 <textarea id="edit-bio" class="textarea" rows="4" placeholder="Description de l'utilisateur..." name="bio"><?php echo htmlspecialchars($profile['bio'] ?? ''); ?></textarea>
               </div>
+              <span id="info-pro-error" class="controle-saisie" style="margin-bottom:40px;"></span>
             </div>
 
             <!-- Informations d'accessibilité -->

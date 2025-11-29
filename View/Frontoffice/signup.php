@@ -206,7 +206,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'){
                 Nom complet *
               </label>
               <input id="signup-last-name" class="input" type="text" placeholder="Nom" name="last">
+              <span id="signup-last-name-error" class="controle-saisie"></span>
+
               <input id="signup-name" class="input" type="text" placeholder="Prénom" name="name">
+              <span id="signup-name-error" class="controle-saisie"></span>
             </div>
 
             <div class="form-group">
@@ -222,11 +225,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'){
             </div>
 
             <div class="form-group">
-              <label for="birthday">
+              <label for="signup-birthday">
                 <i class="fa-solid fa-calendar-alt"></i>
                 Date de Naissance *
               </label>
-              <input type="date" id="birthday" class="input" name="birthday">
+              <input type="date" id="signup-birthday" class="input" name="birthday">
+              <span id="signup-birthday-error" class="controle-saisie"></span>
+
+              
             </div>
 
             <div class="form-group">
@@ -235,22 +241,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'){
                 E‑mail *
               </label>
               <input name="email" id="signup-email" class="input" type="text" placeholder="vous@email.com">
+              <span id="signup-email-error" class="controle-saisie"></span>
+
             </div>
 
             <div class="form-group">
-              <label for="phone-number">
+              <label for="signup-phone">
                 <i class="fas fa-phone"></i>
                 Numéro *
               </label>
-              <input id="phone-number" class="input" type="text" placeholder="+216 00 000 000" name="phone">
+              <input id="signup-phone" class="input" type="text" placeholder="+216 00 000 000" name="phone">
+              <span id="signup-phone-error" class="controle-saisie"></span>
+
             </div>
 
             <div class="form-group">
               <label for="signup-password">
                 <i class="fas fa-lock"></i>
-                Mot de passe *
+                Mot de passe *  <span id="strength-signup" style="margin-left: 50%;"></span> 
               </label>
               <input id="signup-password" class="input" type="password" placeholder="Créez un mot de passe" name="password">
+               
+              <span id="signup-password-error" class="controle-saisie"></span>
+
             </div>
             <div class="form-group">
               <label for="signup-confirm">
@@ -258,6 +271,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'){
                 Confirmer le mot de passe *
               </label>
               <input id="signup-confirm" class="input" type="password" placeholder="Confirmez votre mot de passe" name="confirm">
+              <span id="signup-confirm-error" class="controle-saisie"></span>
+
             </div>
 
             <div class="accessibility-options">
@@ -294,7 +309,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'){
               </div>
             </div>
 
-            <span id="signup-control" class="controle-saisie"></span>
 
             <div class="form-footer">
               <button class="btn primary" type="submit">S'inscrire</button>
@@ -359,6 +373,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'){
 
   <script src="assets/js/script.js"></script>
   <script src="assets\js\controle_saisie_user.js"> </script>
+   <script> passwordStrong("signup-password", "strength-signup" ); </script>
 
 
 
