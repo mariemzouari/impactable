@@ -93,3 +93,148 @@ document.addEventListener('DOMContentLoaded', function(){
     });
   });
 });
+
+
+
+    function validerFormulaireDon(event) {
+        // Réinitialiser les erreurs
+        reinitialiserErreurs();
+        
+        let estValide = true;
+        
+        // Validation du montant
+        const montantSelectionne = document.querySelector('input[name="montant"]:checked');
+        const montantCustom = document.getElementById('custom-amount').value;
+        
+        let montantFinal = 0;
+        
+        if (montantSelectionne && montantSelectionne.value === 'custom') {
+            if (!montantCustom || parseFloat(montantCustom) <= 0) {
+                afficherErreur('erreur-custom-montant', 'Veuillez entrer un montant personnalisé valide.');
+                document.getElementById('custom-amount').classList.add('erreur');
+                estValide = false;
+            } else {
+                montantFinal = parseFloat(montantCustom);
+            }
+        } else if (montantSelectionne) {
+            montantFinal = parseFloat(montantSelectionne.value);
+        } else {
+            afficherErreur('erreur-montant', 'Veuillez sélectionner un montant.');
+            estValide = false;
+        }
+        
+        // Validation du montant minimum
+        if (montantFinal > 0 && montantFinal < 1) {
+            afficherErreur('erreur-montant', 'Le montant minimum est de 1 TND.');
+            estValide = false;
+        }
+        
+        // Validation de l'email si fourni
+        const email = document.getElementById('donor-email').value;
+        if (email && !validerEmail(email)) {
+            afficherErreur('erreur-email', 'Veuillez entrer une adresse email valide.');
+            document.getElementById('donor-email').classList.add('erreur');
+            estValide = false;
+        }
+        
+        // Validation de la méthode de paiement
+        const methodePaiement = document.querySelector('input[name="methode_paiment"]:checked');
+        if (!methodePaiement) {
+            afficherErreur('erreur-paiement', 'Veuillez sélectionner une méthode de paiement.');
+            estValide = false;
+        }
+        
+        if (!estValide) {
+            event.preventDefault();
+            return false;
+        }
+        
+        // Créer un champ hidden pour le montant final
+        const hiddenInput = document.createElement('input');
+        hiddenInput.type = 'hidden';
+        hiddenInput.name = 'montant';
+        hiddenInput.value = montantFinal;
+        document.getElementById('donationForm').appendChild(hiddenInput);
+        
+        return true;
+    }
+
+    function validerEmail(email) {
+        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return regex.test(email);
+    }
+
+    function afficherErreur(idElement, message) {
+        const element = document.getElementById(idElement);
+        element.textContent = message;
+        element.style.display = 'block';
+    }
+
+    function reinitialiserErreurs() {
+        const erreurs = document.querySelectorAll('.message-erreur');
+        erreurs.forEach(erreur => {
+            erreur.style.display = 'none';
+            erreur.textContent = '';
+        });
+        
+        const inputs = document.querySelectorAll('.input');
+        inputs.forEach(input => input.classList.remove('erreur'));
+    }
+
+    // Gestion des options de montant
+    document.addEventListener('DOMContentLoaded', function() {
+        const montantOptions = document.querySelectorAll('.montant-option');
+        const customAmountInput = document.getElementById('custom-amount');
+        
+        montantOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                const input = this.querySelector('input');
+                const allInputs = document.querySelectorAll('input[name="montant"]');
+                
+                // Retirer la sélection précédente
+                montantOptions.forEach(opt => {
+                    opt.style.borderColor = 'var(--light-sage)';
+                    opt.style.backgroundColor = 'white';
+                });
+                
+                // Appliquer le style à l'option sélectionnée
+                this.style.borderColor = 'var(--moss)';
+                this.style.backgroundColor = 'var(--light-sage)';
+                
+                // Cocher l'input
+                allInputs.forEach(inp => inp.checked = false);
+                input.checked = true;
+                
+                // Gérer le champ personnalisé
+                if (input.value === 'custom') {
+                    customAmountInput.style.display = 'block';
+                    customAmountInput.focus();
+                } else {
+                    customAmountInput.style.display = 'block';
+                    customAmountInput.value = input.value;
+                }
+            });
+        });
+        
+        // Gestion du style des options de paiement
+        document.querySelectorAll('.payment-option').forEach(option => {
+            option.addEventListener('click', function() {
+                const input = this.querySelector('input');
+                const groupName = input.name;
+                
+                // Retirer la sélection de toutes les options du même groupe
+                document.querySelectorAll(`input[name="${groupName}"]`).forEach(opt => {
+                    const parent = opt.closest('.payment-option');
+                    if (parent) {
+                        parent.style.borderColor = 'var(--light-sage)';
+                        parent.style.backgroundColor = 'white';
+                    }
+                });
+                
+                // Appliquer le style à l'option sélectionnée
+                this.style.borderColor = 'var(--moss)';
+                this.style.backgroundColor = 'var(--light-sage)';
+                input.checked = true;
+            });
+        });
+    });

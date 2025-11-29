@@ -1,5 +1,6 @@
 <?php
-include '../../controller/CampagneController.php';
+include __DIR__ . '/../../controller/CampagneController.php';
+require_once __DIR__ . '/../../model/Campagne.php';
 $campagneController = new CampagneController();
 
 if (isset($_GET["id"])) {

@@ -1,6 +1,8 @@
 <?php
-include '../../controller/CampagneController.php';
+
+include __DIR__ . '/../../controller/CampagneController.php';
 require_once __DIR__ . '/../../model/Campagne.php';
+
 
 $error = '';
 $campagne = null;
@@ -62,13 +64,13 @@ if (
 </head>
 <body>
     <div class="admin-container">
-        <aside class="admin-sidebar">
+               <aside class="admin-sidebar">
             <div class="sidebar-header">
                 <div class="admin-logo">
                     <img src="assets/images/logo.png" alt="ImpactAble" class="admin-logo-image">
                 </div>
             </div>
-
+            
             <nav class="sidebar-nav">
                 <div class="nav-section">
                     <div class="nav-title">Principal</div>
@@ -76,17 +78,57 @@ if (
                         <i class="fas fa-tachometer-alt"></i>
                         <span>Tableau de bord</span>
                     </a>
+                    <a href="#analytics" class="sidebar-link">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Analytiques</span>
+                    </a>
                 </div>
-
+                
                 <div class="nav-section">
                     <div class="nav-title">Gestion de contenu</div>
-                    <a href="list-camp.php" class="sidebar-link">
+                    <a href="#users" class="sidebar-link">
+                        <i class="fas fa-users"></i>
+                        <span>Utilisateurs</span>
+                    </a>
+                    <a href="#opportunities" class="sidebar-link">
+                        <i class="fas fa-briefcase"></i>
+                        <span>Opportunités</span>
+                    </a>
+                    <a href="#events" class="sidebar-link">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Événements</span>
+                    </a>
+                    <a href="list-camp.php" class="sidebar-link active">
                         <i class="fas fa-hand-holding-heart"></i>
                         <span>Campagnes</span>
                     </a>
+                    <a href="#resources" class="sidebar-link">
+                        <i class="fas fa-book"></i>
+                        <span>Ressources</span>
+                    </a>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-title">Communauté</div>
+                    <a href="#forum" class="sidebar-link">
+                        <i class="fas fa-comments"></i>
+                        <span>Forum</span>
+                    </a>
+                    <a href="#reclamations" class="sidebar-link">
+                        <i class="fas fa-comment-alt"></i>
+                        <span>Réclamations</span>
+                    </a>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-title">Paramètres</div>
+                    <a href="#settings" class="sidebar-link">
+                        <i class="fas fa-cog"></i>
+                        <span>Configuration</span>
+                    </a>
                 </div>
             </nav>
-
+            
             <div class="sidebar-footer">
                 <div class="admin-user">
                     <div class="admin-avatar">AD</div>
@@ -126,7 +168,7 @@ if (
                         </div>
                         <?php endif; ?>
 
-                        <form action="" method="POST" class="form-container">
+                        <form action="" method="POST" class="form-container" onsubmit="return validerFormulaireModification(event)">
                             <input type="hidden" name="Id_campagne" value="<?php echo $campagne['Id_campagne'] ?? ''; ?>">
 
                             <div class="form-grid">
@@ -134,13 +176,13 @@ if (
                                 <div class="form-group full-width">
                                     <label for="titre">Titre de la campagne</label>
                                     <input type="text" class="input" id="titre" name="titre" 
-                                           value="<?php echo htmlspecialchars($campagne['titre'] ?? ''); ?>" required>
+                                           value="<?php echo htmlspecialchars($campagne['titre'] ?? ''); ?>" >
                                 </div>
 
                                 <!-- Catégorie et Urgence -->
                                 <div class="form-group">
                                     <label for="categorie_impact">Catégorie d'impact</label>
-                                    <select class="select" id="categorie_impact" name="categorie_impact" required>
+                                    <select class="select" id="categorie_impact" name="categorie_impact">
                                         <option value="education" <?php echo (isset($campagne['categorie_impact']) && $campagne['categorie_impact']=='education')?'selected':''; ?>>Éducation</option>
                                         <option value="logement" <?php echo (isset($campagne['categorie_impact']) && $campagne['categorie_impact']=='logement')?'selected':''; ?>>Logement</option>
                                         <option value="sante" <?php echo (isset($campagne['categorie_impact']) && $campagne['categorie_impact']=='sante')?'selected':''; ?>>Santé</option>
@@ -152,7 +194,7 @@ if (
 
                                 <div class="form-group">
                                     <label for="urgence">Niveau d'urgence</label>
-                                    <select class="select" id="urgence" name="urgence" required>
+                                    <select class="select" id="urgence" name="urgence">
                                         <option value="normale" <?php echo (isset($campagne['urgence']) && $campagne['urgence']=='normale')?'selected':''; ?>>Normale</option>
                                         <option value="elevee" <?php echo (isset($campagne['urgence']) && $campagne['urgence']=='elevee')?'selected':''; ?>>Élevée</option>
                                         <option value="critique" <?php echo (isset($campagne['urgence']) && $campagne['urgence']=='critique')?'selected':''; ?>>Critique</option>
@@ -163,26 +205,26 @@ if (
                                 <div class="form-group full-width">
                                     <label for="objectif_montant">Objectif de collecte (TND)</label>
                                     <input type="number" class="input" id="objectif_montant" name="objectif_montant" 
-                                           value="<?php echo $campagne['objectif_montant'] ?? ''; ?>" min="1" step="0.01" required>
+                                           value="<?php echo $campagne['objectif_montant'] ?? ''; ?>" min="1" step="0.01" >
                                 </div>
 
                                 <!-- Dates -->
                                 <div class="form-group">
                                     <label for="date_debut">Date de début</label>
                                     <input type="date" class="input" id="date_debut" name="date_debut" 
-                                           value="<?php echo $campagne['date_debut'] ?? ''; ?>" required>
+                                           value="<?php echo $campagne['date_debut'] ?? ''; ?>" >
                                 </div>
 
                                 <div class="form-group">
                                     <label for="date_fin">Date de fin</label>
                                     <input type="date" class="input" id="date_fin" name="date_fin" 
-                                           value="<?php echo $campagne['date_fin'] ?? ''; ?>" required>
+                                           value="<?php echo $campagne['date_fin'] ?? ''; ?>" >
                                 </div>
 
                                 <!-- Description -->
                                 <div class="form-group full-width">
                                     <label for="description">Description détaillée</label>
-                                    <textarea class="textarea" id="description" name="description" rows="6" required><?php echo htmlspecialchars($campagne['description'] ?? ''); ?></textarea>
+                                    <textarea class="textarea" id="description" name="description" rows="6"><?php echo htmlspecialchars($campagne['description'] ?? ''); ?></textarea>
                                 </div>
 
                                 <!-- Statut -->
@@ -207,6 +249,7 @@ if (
                                 </button>
                             </div>
                         </form>
+                        <script src="assets/js/script.js"></script>
                     </div>
                 </section>
             </div>

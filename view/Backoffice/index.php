@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -24,7 +25,25 @@
                         <i class="fas fa-tachometer-alt"></i>
                         <span>Tableau de bord</span>
                     </a>
+                    <a href="#analytics" class="sidebar-link">
+            <i class="fas fa-chart-bar"></i>
+            <span>Analytiques</span>
+          </a>
                 </div>
+                <div class="nav-section">
+                    <div class="nav-title">Gestion de contenu</div>
+                    <a href="#users" class="sidebar-link">
+                        <i class="fas fa-users"></i>
+                        <span>Utilisateurs</span>
+                    </a>
+                    <a href="#opportunities" class="sidebar-link">
+                        <i class="fas fa-briefcase"></i>
+                        <span>Opportunités</span>
+                    </a>
+                    <a href="#events" class="sidebar-link">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Événements</span>
+                     </a>
                 
                 <div class="nav-section">
                     <div class="nav-title">Gestion de contenu</div>
@@ -33,8 +52,34 @@
                         <span>Campagnes</span>
                     </a>
                 </div>
-            </nav>
-
+                <a href="#resources" class="sidebar-link">
+            <i class="fas fa-book"></i>
+            <span>Ressources</span>
+          </a>
+        </div>
+        
+        <div class="nav-section">
+          <div class="nav-title">Communauté</div>
+          <a href="#forum" class="sidebar-link">
+            <i class="fas fa-comments"></i>
+            <span>Forum</span>
+          </a>
+          <a href="#reclamations" class="sidebar-link">
+            <i class="fas fa-comment-alt"></i>
+            <span>Réclamations</span>
+          </a>
+        </div>
+        
+        <div class="nav-section">
+          <div class="nav-title">Paramètres</div>
+          <a href="#settings" class="sidebar-link">
+            <i class="fas fa-cog"></i>
+            <span>Configuration</span>
+          </a>
+        </div>
+      </nav>
+        
+        
             <div class="sidebar-footer">
                 <div class="admin-user">
                     <div class="admin-avatar">AD</div>

@@ -94,23 +94,3 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 });
-
-
-
-
-// Confirmation de suppression
-function confirmDelete(message = 'Êtes-vous sûr de vouloir supprimer cet élément ?') {
-    return confirm(message);
-}
-
-// Appliquer la confirmation à tous les liens de suppression
-document.addEventListener('DOMContentLoaded', function() {
-    const deleteLinks = document.querySelectorAll('a[href*="delete"]');
-    deleteLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
-            if (!confirmDelete()) {
-                e.preventDefault();
-            }
-        });
-    });
-});

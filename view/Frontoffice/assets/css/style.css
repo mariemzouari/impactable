@@ -1652,3 +1652,343 @@
       }
     }
   
+
+    /* ==================== FORMULAIRE DE PAIEMENT ==================== */
+
+/* Styles pour les options de paiement */
+.payment-options {
+  display: grid;
+  gap: 12px;
+}
+
+.payment-option {
+  text-align: center;
+  padding: 15px;
+  border: 2px solid var(--light-sage);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--ease-s);
+  background: white;
+}
+
+.payment-option:hover {
+  border-color: var(--sage);
+  transform: translateY(-2px);
+}
+
+.payment-option.selected {
+  border-color: var(--moss);
+  background: var(--light-sage);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+
+.payment-icon {
+  font-size: 1.5rem;
+  margin-bottom: 5px;
+}
+
+/* Détails de paiement masqués par défaut */
+.payment-details {
+  display: none;
+  animation: fadeIn 0.3s ease;
+}
+
+.payment-details.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Informations bancaires */
+.bank-info {
+  background: var(--light-sage);
+  padding: 20px;
+  border-radius: var(--radius-sm);
+  margin-top: 10px;
+}
+
+.bank-details {
+  line-height: 1.6;
+  margin-bottom: 15px;
+}
+
+.bank-details p {
+  margin-bottom: 8px;
+}
+
+.transfer-notice {
+  margin-top: 15px;
+  padding: 10px;
+  background: #fff3cd;
+  border-radius: 5px;
+  color: #856404;
+  font-size: 0.9rem;
+}
+
+/* Grille pour les champs de carte */
+.card-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+/* Messages d'erreur */
+.error-message {
+  color: #dc3545;
+  font-size: 0.875rem;
+  margin-top: 5px;
+  display: none;
+}
+
+.error-message.show {
+  display: block;
+}
+
+.input.error,
+.select.error,
+.textarea.error {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+}
+
+/* États de validation */
+.input.valid,
+.select.valid,
+.textarea.valid {
+  border-color: var(--moss);
+  box-shadow: 0 0 0 3px rgba(94, 109, 59, 0.1);
+}
+
+/* Loading state */
+.btn.loading {
+  position: relative;
+  color: transparent;
+}
+
+.btn.loading::after {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  top: 50%;
+  left: 50%;
+  margin: -10px 0 0 -10px;
+  border: 2px solid transparent;
+  border-top: 2px solid currentColor;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Success message */
+.success-message {
+  background: var(--light-sage);
+  border: 2px solid var(--moss);
+  border-radius: var(--radius-sm);
+  padding: 20px;
+  text-align: center;
+  margin: 20px 0;
+  display: none;
+}
+
+.success-message.show {
+  display: block;
+  animation: fadeIn 0.5s ease;
+}
+
+.success-icon {
+  font-size: 3rem;
+  color: var(--moss);
+  margin-bottom: 15px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .payment-options {
+    grid-template-columns: 1fr;
+  }
+  
+  .card-fields {
+    grid-template-columns: 1fr;
+  }
+  
+  .bank-info {
+    padding: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .payment-option {
+    padding: 12px;
+  }
+  
+  .payment-icon {
+    font-size: 1.25rem;
+  }
+}
+
+
+.message-erreur {
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    padding: 0.5rem;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    border-radius: 0.25rem;
+}
+
+.input.erreur {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+
+
+/* Styles pour listCampagnes.php */
+.campaign-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.campaign-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-lg);
+}
+
+.campaign-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 8px 8px 0 0;
+}
+
+.campaign-placeholder {
+  width: 100%;
+  height: 200px;
+  background: var(--light-sage);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px 8px 0 0;
+  color: var(--moss);
+  font-size: 3rem;
+}
+
+.campaign-badge {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.campaign-badge.normale {
+  background: #e8f5e8;
+  color: #2e7d32;
+}
+
+.campaign-badge.elevee {
+  background: #fff3e0;
+  color: #f57c00;
+}
+
+.campaign-badge.critique {
+  background: #ffebee;
+  color: #c62828;
+}
+
+.campaign-category {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #6b7280;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+.campaign-description {
+  color: #6b7280;
+  line-height: 1.5;
+  margin-bottom: 1.5rem;
+}
+
+.campaign-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat-value {
+  font-weight: 700;
+  color: var(--moss);
+  font-size: 1.1rem;
+}
+
+.stat-label {
+  font-size: 0.8rem;
+  color: #6b7280;
+  margin-top: 0.25rem;
+}
+
+.progress-container {
+  margin-bottom: 1.5rem;
+}
+
+.progress-text {
+  text-align: center;
+  font-size: 0.9rem;
+  color: #6b7280;
+  margin-top: 0.5rem;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 3rem;
+  grid-column: 1 / -1;
+}
+
+.alert {
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+}
+
+.alert.success {
+  background: #e8f5e8;
+  color: #2e7d32;
+  border: 1px solid #4caf50;
+}
+
+.alert.error {
+  background: #ffebee;
+  color: #c62828;
+  border: 1px solid #f44336;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .campaign-stats {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+  
+  .cards-grid {
+    grid-template-columns: 1fr;
+  }
+}

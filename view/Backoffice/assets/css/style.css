@@ -1286,3 +1286,27 @@ label {
         gap: 5px;
     }
 }
+
+
+
+
+/* Style pour les champs valides/invalides */
+.input:valid,
+.select:valid,
+.textarea:valid {
+    border-color: #27ae60 !important;
+}
+
+.input:invalid,
+.select:invalid,
+.textarea:invalid {
+    border-color: #e74c3c !important;
+}
+
+/* Focus amélioré */
+.input:focus,
+.select:focus,
+.textarea:focus {
+    border-color: var(--copper) !important;
+    box-shadow: 0 0 0 3px rgba(180, 123, 71, 0.2) !important;
+}

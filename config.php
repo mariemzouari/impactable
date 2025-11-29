@@ -1,20 +1,21 @@
 <?php
-// Configuration de la base de données
-$host = 'localhost';
-$dbname = 'impactable';  
-$username = 'root';
-$password = '';
-
-try {
-    $conn = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch(PDOException $e) {
-    die("Erreur de connexion : " . $e->getMessage());
-}
-
-// Fonction de connexion
-function getConnection() {
-    global $conn;
-    return $conn;
+class config {
+    private static $pdo = null;
+    
+    public static function getConnexion() {
+        if (!self::$pdo) {
+            try {
+                self::$pdo = new PDO(
+                    'mysql:host=localhost;dbname=impactable;charset=utf8', 
+                    'root', 
+                    ''
+                );
+                self::$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            } catch(PDOException $e) {
+                die("Erreur de connexion : " . $e->getMessage());
+            }
+        }
+        return self::$pdo;
+    }
 }
 ?>

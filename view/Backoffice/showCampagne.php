@@ -1,5 +1,6 @@
 <?php
-include '../../controller/CampagneController.php';
+include __DIR__ . '/../../controller/CampagneController.php';
+require_once __DIR__ . '/../../model/Campagne.php';
 $campagneController = new CampagneController();
 
 if (isset($_GET['id'])) {
@@ -25,13 +26,13 @@ if (isset($_GET['id'])) {
 </head>
 <body>
     <div class="admin-container">
-        <aside class="admin-sidebar">
+                <aside class="admin-sidebar">
             <div class="sidebar-header">
                 <div class="admin-logo">
                     <img src="assets/images/logo.png" alt="ImpactAble" class="admin-logo-image">
                 </div>
             </div>
-
+            
             <nav class="sidebar-nav">
                 <div class="nav-section">
                     <div class="nav-title">Principal</div>
@@ -39,17 +40,57 @@ if (isset($_GET['id'])) {
                         <i class="fas fa-tachometer-alt"></i>
                         <span>Tableau de bord</span>
                     </a>
+                    <a href="#analytics" class="sidebar-link">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Analytiques</span>
+                    </a>
                 </div>
-
+                
                 <div class="nav-section">
                     <div class="nav-title">Gestion de contenu</div>
-                    <a href="list-camp.php" class="sidebar-link">
+                    <a href="#users" class="sidebar-link">
+                        <i class="fas fa-users"></i>
+                        <span>Utilisateurs</span>
+                    </a>
+                    <a href="#opportunities" class="sidebar-link">
+                        <i class="fas fa-briefcase"></i>
+                        <span>Opportunités</span>
+                    </a>
+                    <a href="#events" class="sidebar-link">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Événements</span>
+                    </a>
+                    <a href="list-camp.php" class="sidebar-link active">
                         <i class="fas fa-hand-holding-heart"></i>
                         <span>Campagnes</span>
                     </a>
+                    <a href="#resources" class="sidebar-link">
+                        <i class="fas fa-book"></i>
+                        <span>Ressources</span>
+                    </a>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-title">Communauté</div>
+                    <a href="#forum" class="sidebar-link">
+                        <i class="fas fa-comments"></i>
+                        <span>Forum</span>
+                    </a>
+                    <a href="#reclamations" class="sidebar-link">
+                        <i class="fas fa-comment-alt"></i>
+                        <span>Réclamations</span>
+                    </a>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-title">Paramètres</div>
+                    <a href="#settings" class="sidebar-link">
+                        <i class="fas fa-cog"></i>
+                        <span>Configuration</span>
+                    </a>
                 </div>
             </nav>
-
+            
             <div class="sidebar-footer">
                 <div class="admin-user">
                     <div class="admin-avatar">AD</div>
@@ -60,7 +101,6 @@ if (isset($_GET['id'])) {
                 </div>
             </div>
         </aside>
-
         <main class="admin-main">
             <header class="admin-header">
                 <div>
