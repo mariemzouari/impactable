@@ -33,22 +33,28 @@ class OffreController {
         require_once __DIR__ . '/../views/frontoffice/offre/liste.php';
     }
     
-    public function details() {
-        $offreId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
-        $offre = $this->offreManager->getById($offreId);
-        
-        if (!$offre) {
-            header('HTTP/1.0 404 Not Found');
-            die("Offre non trouvée");
-        }
-        
-        $hasApplied = false;
-        if (isset($_SESSION['user_id'])) {
-            $hasApplied = $this->candidatureManager->hasAlreadyApplied($_SESSION['user_id'], $offreId);
-        }
-        
-        require_once __DIR__ . '/../views/frontoffice/offre/details.php';
+public function details() {
+    $offreId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+    $offre = $this->offreManager->getById($offreId);
+    
+    if (!$offre) {
+        header('HTTP/1.0 404 Not Found');
+        require_once __DIR__ . '/../views/errors/404.php';
+        exit;
     }
+    
+    $hasApplied = false;
+    if (isset($_SESSION['user_id'])) {
+        $hasApplied = $this->candidatureManager->hasAlreadyApplied($_SESSION['user_id'], $offreId);
+    }
+    
+    $viewPath = __DIR__ . '/../views/frontoffice/offre/details.php';
+    if (!file_exists($viewPath)) {
+        die("View file not found: " . $viewPath);
+    }
+    
+    require_once $viewPath;
+}
     
     public function poster() {
         if (!Utils::isAuthenticated()) {

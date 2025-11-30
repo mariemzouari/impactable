@@ -342,13 +342,10 @@ select[name="type_offre"][value="formation"] {
                                    class="btn small primary" title="Voir détails">
                                     <i class="fas fa-eye"></i>
                                 </a>
-                                <a href="index.php?action=admin-voir-offre&id=<?= $candidature['Id_offre'] ?>" 
-                                   class="btn small secondary" title="Voir l'offre">
-                                    <i class="fas fa-briefcase"></i>
-                                </a>
-                                <a href="index.php?action=admin-voir-utilisateur&id=<?= $candidature['Id_utilisateur'] ?>" 
-                                   class="btn small secondary" title="Voir le candidat">
-                                    <i class="fas fa-user"></i>
+                                        <a href="index.php?action=admin-modifier-candidature&id=<?= $candidature['Id_candidature'] ?>" class="btn warning">
+            <i class="fas fa-edit"></i>
+        </a>
+
                                 </a>
                             </div>
                         </td>

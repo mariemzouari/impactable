@@ -5,34 +5,26 @@ class Candidature {
     public function __construct() {
         $this->db = Database::getInstance()->getConnection();
     }
-    
 
-
-
-/**
- * Récupère les dernières candidatures avec données minimales garanties pour le dashboard
- */
-// Fichier: Candidature.php
-
-/**
- * Récupère les dernières candidatures avec données minimales garanties pour le dashboard
- */
-public function getRecentCandidatures($limit = 5) {
-    try {
-        // REQUÊTE DIRECTE - TOUTES LES CANDIDATURES
-        $query = "SELECT * FROM candidature ORDER BY date_candidature DESC";
-        
-        $stmt = $this->db->prepare($query);
-        $stmt->execute();
-        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
-        return $result;
-        
-    } catch(PDOException $e) {
-        error_log("Erreur getRecentCandidatures: " . $e->getMessage());
-        return [];
+    /**
+     * Récupère les dernières candidatures avec données minimales garanties pour le dashboard
+     */
+    public function getRecentCandidatures($limit = 5) {
+        try {
+            $query = "SELECT * FROM candidature ORDER BY date_candidature DESC";
+            
+            $stmt = $this->db->prepare($query);
+            $stmt->execute();
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            return $result;
+            
+        } catch(PDOException $e) {
+            error_log("Erreur getRecentCandidatures: " . $e->getMessage());
+            return [];
+        }
     }
-}
+
     public function getCountByOffre($offreId) {
         try {
             $stmt = $this->db->prepare("SELECT COUNT(*) as count FROM candidature WHERE Id_offre = ?");
@@ -183,6 +175,9 @@ public function getRecentCandidatures($limit = 5) {
         }
     }
 
+    /**
+     * Supprimer une candidature (version utilisateur - avec restriction de propriétaire)
+     */
     public function delete($candidatureId, $userId) {
         try {
             $stmt = $this->db->prepare("
@@ -193,6 +188,19 @@ public function getRecentCandidatures($limit = 5) {
             return $stmt->execute([$candidatureId, $userId]);
         } catch(PDOException $e) {
             error_log("Erreur suppression candidature: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Supprimer une candidature (version admin - sans restriction de propriétaire)
+     */
+    public function deleteAdmin($candidatureId) {
+        try {
+            $stmt = $this->db->prepare("DELETE FROM candidature WHERE Id_candidature = ?");
+            return $stmt->execute([$candidatureId]);
+        } catch(PDOException $e) {
+            error_log("Erreur suppression candidature admin: " . $e->getMessage());
             return false;
         }
     }
@@ -268,4 +276,75 @@ public function getRecentCandidatures($limit = 5) {
             return [];  
         }
     }
+
+    /**
+     * Mettre à jour une candidature (version admin - sans restriction de propriétaire)
+     */
+
+public function update($id, $data) {
+    try {
+        error_log("=== UPDATE CANDIDATURE ===");
+        error_log("ID: " . $id);
+        error_log("Data: " . print_r($data, true));
+        
+        $sql = "UPDATE candidature SET 
+                status = ?, 
+                notes = ?
+                WHERE Id_candidature = ?";
+        
+        $stmt = $this->db->prepare($sql);
+        $result = $stmt->execute([
+            $data['status'],
+            $data['notes'],
+            $id
+        ]);
+        
+        error_log("Résultat update: " . ($result ? 'SUCCÈS' : 'ÉCHEC'));
+        error_log("Lignes affectées: " . $stmt->rowCount());
+        
+        return $result;
+        
+    } catch(PDOException $e) {
+        error_log("Erreur mise à jour candidature: " . $e->getMessage());
+        return false;
+    }
+}
+
+    /**
+     * Récupérer les statistiques des candidatures pour l'admin
+     */
+    public function getStats() {
+        try {
+            $stmt = $this->db->prepare("
+                SELECT 
+                    COUNT(*) as total,
+                    SUM(CASE WHEN status = 'en_attente' THEN 1 ELSE 0 END) as en_attente,
+                    SUM(CASE WHEN status = 'en_revue' THEN 1 ELSE 0 END) as en_revue,
+                    SUM(CASE WHEN status = 'entretien' THEN 1 ELSE 0 END) as entretien,
+                    SUM(CASE WHEN status = 'retenu' THEN 1 ELSE 0 END) as retenu,
+                    SUM(CASE WHEN status = 'refuse' THEN 1 ELSE 0 END) as refuse
+            FROM candidature
+            ");
+            $stmt->execute();
+            return $stmt->fetch();
+        } catch(PDOException $e) {
+            error_log("Erreur récupération stats candidatures: " . $e->getMessage());
+            return ['total' => 0, 'en_attente' => 0, 'en_revue' => 0, 'entretien' => 0, 'retenu' => 0, 'refuse' => 0];
+        }
+    }
+
+    /**
+     * Vérifier si une candidature existe
+     */
+    public function exists($id) {
+        try {
+            $stmt = $this->db->prepare("SELECT COUNT(*) as count FROM candidature WHERE Id_candidature = ?");
+            $stmt->execute([$id]);
+            return $stmt->fetch()['count'] > 0;
+        } catch(PDOException $e) {
+            error_log("Erreur vérification existence candidature: " . $e->getMessage());
+            return false;
+        }
+    }
+    
 }

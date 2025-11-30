@@ -169,6 +169,9 @@ $dernieres_candidatures = $this->candidatureManager->getRecentCandidatures(5);
 /**
  * Voir une candidature spécifique en détail
  */
+/**
+ * Voir une candidature spécifique en détail
+ */
 public function voirCandidature() {
     $user = $this->checkAdmin();
     
@@ -193,14 +196,18 @@ public function voirCandidature() {
         Utils::redirect('index.php?action=admin-gestion-candidatures');
     }
     
-    // Récupérer le recruteur (créateur de l'offre)
-    // Utilise l'ID du recruteur depuis l'offre ou depuis la candidature
+    // Récupérer le recruteur
     $recruteurId = $offre['Id_utilisateur'] ?? $candidature['id_recruteur'] ?? null;
     $recruteur = null;
     
     if ($recruteurId) {
         $recruteur = $this->utilisateurManager->getById($recruteurId);
     }
+    
+    // Messages
+    $success = $_SESSION['success'] ?? '';
+    $error = $_SESSION['error'] ?? '';
+    unset($_SESSION['success'], $_SESSION['error']);
     
     require_once __DIR__ . '/../views/backoffice/admin/voir_candidature.php';
 }
@@ -415,4 +422,166 @@ public function gestionCandidatures() {
             return 0;
         }
     }
+    /**
+ * Afficher le formulaire de modification d'une candidature
+ */
+public function modifierCandidature() {
+    $user = $this->checkAdmin();
+    
+    $candidatureId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+    
+    // Récupérer la candidature
+    $candidature = $this->candidatureManager->getById($candidatureId);
+    
+    if (!$candidature) {
+        $_SESSION['error'] = "Candidature non trouvée.";
+        Utils::redirect('index.php?action=admin-gestion-candidatures');
+    }
+    
+    // Récupérer le candidat
+    $candidat = $this->utilisateurManager->getById($candidature['Id_utilisateur']);
+    
+    // Récupérer l'offre
+    $offre = $this->offreManager->getById($candidature['Id_offre']);
+    
+    if (!$offre) {
+        $_SESSION['error'] = "Offre non trouvée.";
+        Utils::redirect('index.php?action=admin-gestion-candidatures');
+    }
+    
+    // Récupérer le recruteur
+    $recruteur = $this->utilisateurManager->getById($offre['Id_utilisateur']);
+    
+    // Messages
+    $success = $_SESSION['success'] ?? '';
+    $error = $_SESSION['error'] ?? '';
+    unset($_SESSION['success'], $_SESSION['error']);
+    
+    require_once __DIR__ . '/../views/backoffice/admin/modifier_candidature.php';
+}
+
+/**
+ * Traiter la modification d'une candidature
+ */
+public function modifierCandidatureTraitement() {
+    $this->checkAdmin();
+    
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        $_SESSION['error'] = "Méthode non autorisée.";
+        Utils::redirect('index.php?action=admin-gestion-candidatures');
+    }
+    
+    $candidatureId = isset($_POST['id_candidature']) ? (int)$_POST['id_candidature'] : 0;
+    
+    // DEBUG
+    error_log("=== TRAITEMENT MODIFICATION ===");
+    error_log("ID: " . $candidatureId);
+    error_log("Status: " . ($_POST['status'] ?? 'non défini'));
+    error_log("Notes: " . ($_POST['notes'] ?? 'non définies'));
+    
+    if (!$candidatureId) {
+        $_SESSION['error'] = "Candidature non spécifiée.";
+        Utils::redirect('index.php?action=admin-gestion-candidatures');
+    }
+    
+    // Validation simple
+    $statutsAutorises = ['en_attente', 'en_revue', 'entretien', 'retenu', 'refuse'];
+    
+    if (empty($_POST['status']) || !in_array($_POST['status'], $statutsAutorises)) {
+        $_SESSION['error'] = "Le statut de la candidature est invalide.";
+        Utils::redirect('index.php?action=admin-modifier-candidature&id=' . $candidatureId);
+    }
+    
+    // Préparer les données
+    $data = [
+        'status' => $_POST['status'],
+        'notes' => $_POST['notes'] ?? null
+    ];
+    
+    error_log("Données préparées: " . print_r($data, true));
+    
+    // Mettre à jour
+    if ($this->candidatureManager->update($candidatureId, $data)) {
+        $_SESSION['success'] = "Candidature mise à jour avec succès.";
+        error_log("✅ Mise à jour réussie");
+        Utils::redirect('index.php?action=admin-voir-candidature&id=' . $candidatureId);
+    } else {
+        $_SESSION['error'] = "Erreur lors de la mise à jour de la candidature.";
+        error_log("❌ Échec de la mise à jour");
+        Utils::redirect('index.php?action=admin-modifier-candidature&id=' . $candidatureId);
+    }
+}
+/**
+ * Supprimer une candidature
+ */
+
+public function supprimerCandidature() {
+    $this->checkAdmin();
+    
+    $candidatureId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+    
+    if (!$candidatureId) {
+        $_SESSION['error'] = "Candidature non spécifiée.";
+        Utils::redirect('index.php?action=admin-gestion-candidatures');
+    }
+    
+    // Vérifier que la candidature existe
+    $candidature = $this->candidatureManager->getById($candidatureId);
+    
+    if (!$candidature) {
+        $_SESSION['error'] = "Candidature non trouvée.";
+        Utils::redirect('index.php?action=admin-gestion-candidatures');
+    }
+    
+    // Supprimer la candidature (version admin)
+    if ($this->candidatureManager->deleteAdmin($candidatureId)) {
+        $_SESSION['success'] = "Candidature supprimée avec succès.";
+    } else {
+        $_SESSION['error'] = "Erreur lors de la suppression de la candidature.";
+    }
+    
+    Utils::redirect('index.php?action=admin-gestion-candidatures');
+}
+
+/**
+ * Valider les données d'une candidature
+ */
+private function validateCandidatureData($data) {
+    $errors = [];
+    
+    $statutsAutorises = ['en_attente', 'en_revue', 'entretien', 'retenu', 'refuse'];
+    
+    if (empty($data['status']) || !in_array($data['status'], $statutsAutorises)) {
+        $errors[] = "Le statut de la candidature est invalide.";
+    }
+    
+    return $errors;
+}
+/**
+ * Afficher les candidatures d'une offre spécifique
+ */
+public function candidaturesOffre() {
+    $user = $this->checkAdmin();
+    
+    $offreId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+    $offre = $this->offreManager->getById($offreId);
+    
+    if (!$offre) {
+        $_SESSION['error'] = "Offre non trouvée.";
+        Utils::redirect('index.php?action=admin-gestion-offres');
+    }
+    
+    // Récupérer le créateur de l'offre
+    $createur = $this->utilisateurManager->getById($offre['Id_utilisateur']);
+    
+    // Récupérer les candidatures pour cette offre
+    $candidatures = $this->candidatureManager->getByOffre($offreId, $offre['Id_utilisateur']);
+    
+    // Messages
+    $success = $_SESSION['success'] ?? '';
+    $error = $_SESSION['error'] ?? '';
+    unset($_SESSION['success'], $_SESSION['error']);
+    
+    require_once __DIR__ . '/../views/backoffice/admin/candidatures_offre.php';
+}
 }

@@ -16,120 +16,115 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+// Instanciation des contrôleurs
+$authController = new AuthController();
+$offreController = new OffreController();
+$candidatureController = new CandidatureController();
+$adminController = new AdminController();
+
 // Routeur simple
 $action = $_GET['action'] ?? 'offres';
 
 try {
     switch ($action) {
         case 'connexion':
-            $controller = new AuthController();
-            $controller->connexion();
+            $authController->connexion();
             break;
             
         case 'deconnexion':
-            $controller = new AuthController();
-            $controller->deconnexion();
+            $authController->deconnexion();
             break;
             
         case 'offres':
-            $controller = new OffreController();
-            $controller->liste();
+            $offreController->liste();
             break;
             
         case 'details-offre':
-            $controller = new OffreController();
-            $controller->details();
+            $offreController->details();
             break;
             
         case 'poster-offre':
-            $controller = new OffreController();
-            $controller->poster();
+            $offreController->poster();
             break;
             
         case 'mes-offres':
-            $controller = new OffreController();
-            $controller->mesOffres();
+            $offreController->mesOffres();
             break;
 
         case 'modifier-offre':
-            $controller = new OffreController();
-            $controller->modifier();
+            $offreController->modifier();
             break;
 
         case 'supprimer-offre':
-            $controller = new OffreController();
-            $controller->supprimer();
+            $offreController->supprimer();
             break;
 
         case 'gestion-offre':
-            $controller = new OffreController();
-            $controller->gestion();
+            $offreController->gestion();
             break;
             
         case 'postuler':
-            $controller = new CandidatureController();
-            $controller->postuler();
+            $candidatureController->postuler();
             break;
 
         case 'mes-candidatures':
-            $controller = new CandidatureController();
-            $controller->mesCandidatures();
+            $candidatureController->mesCandidatures();
             break;
 
+        // Routes Admin
+        case 'admin-dashboard':
+            $adminController->dashboard();
+            break;
 
-case 'admin-dashboard':
-    require_once 'controllers/AdminController.php';
-    $controller = new AdminController();
-    $controller->dashboard();
-    break;
+        case 'admin-gestion-offres':
+            $adminController->gestionOffres();
+            break;
 
-case 'admin-gestion-offres':
-    require_once 'controllers/AdminController.php';
-    $controller = new AdminController();
-    $controller->gestionOffres();
-    break;
+        case 'admin-voir-offre':
+            $adminController->voirOffre();
+            break;
 
-case 'admin-voir-offre':
-    require_once 'controllers/AdminController.php';
-    $controller = new AdminController();
-    $controller->voirOffre();
-    break;
+        case 'admin-modifier-offre':
+            $adminController->modifierOffre();
+            break;
 
-case 'admin-modifier-offre':
-    require_once 'controllers/AdminController.php';
-    $controller = new AdminController();
-    $controller->modifierOffre();
-    break;
+        case 'admin-supprimer-offre':
+            $adminController->supprimerOffre();
+            break;
 
-case 'admin-supprimer-offre':
-    require_once 'controllers/AdminController.php';
-    $controller = new AdminController();
-    $controller->supprimerOffre();
-    break;
+        case 'admin-gestion-candidatures':
+            $adminController->gestionCandidatures();
+            break;
 
-case 'admin-gestion-candidatures':
-    require_once 'controllers/AdminController.php';
-    $controller = new AdminController();
-    $controller->gestionCandidatures();
-    break;
+        case 'admin-gestion-utilisateurs':
+            $adminController->gestionUtilisateurs();
+            break;
 
-case 'admin-gestion-utilisateurs':
-    require_once 'controllers/AdminController.php';
-    $controller = new AdminController();
-    $controller->gestionUtilisateurs();
-    break;
-
-case 'admin-voir-candidature':
-    $adminController = new AdminController();
-    $adminController->voirCandidature();
-    break;
+        case 'admin-voir-candidature':
+            $adminController->voirCandidature();
+            break;
             
+        case 'admin-modifier-candidature':
+            $adminController->modifierCandidature();
+            break;
+            
+        case 'admin-modifier-candidature-traitement':
+            $adminController->modifierCandidatureTraitement();
+            break;
+            
+        case 'admin-supprimer-candidature':
+            $adminController->supprimerCandidature();
+            break; 
+
+case 'admin-candidatures-offre':
+    $adminController->candidaturesOffre();
+    break;        
             
         default:
-            $controller = new OffreController();
-            $controller->liste();
+            $offreController->liste();
             break;
     }
+    
 } catch (Exception $e) {
     echo "Une erreur est survenue. Veuillez réessayer.";
     error_log("Erreur dans le routeur: " . $e->getMessage());

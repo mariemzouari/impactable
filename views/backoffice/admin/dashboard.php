@@ -109,10 +109,7 @@
                 <i class="fas fa-file-alt"></i>
                 Gérer les candidatures
             </a>
-            <a href="index.php?action=admin-gestion-utilisateurs" class="btn primary" style="justify-content: center;">
-                <i class="fas fa-users"></i>
-                Gérer les utilisateurs
-            </a>
+
             <a href="index.php?action=offres" class="btn secondary" style="justify-content: center;" target="_blank">
                 <i class="fas fa-external-link-alt"></i>
                 Voir le site

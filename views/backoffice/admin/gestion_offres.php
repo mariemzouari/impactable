@@ -154,6 +154,29 @@
 .admin-table thead {
     background: linear-gradient(135deg, var(--light-sage) 0%, rgba(169,185,125,0.3) 100%);
 }
+/* Style pour le lien candidatures */
+.candidature-link {
+    text-decoration: none;
+    transition: all var(--ease-s);
+}
+
+.candidature-link:hover {
+    transform: scale(1.05);
+}
+
+.candidature-link .badge {
+    transition: all var(--ease-s);
+}
+
+.candidature-link:hover .badge-warning {
+    background: var(--brown);
+    color: var(--white);
+}
+
+.candidature-link:hover .badge-secondary {
+    background: var(--copper);
+    color: var(--white);
+}
 
 .admin-table th {
     padding: 1rem 1.5rem;
@@ -434,114 +457,130 @@
             </div>
         <?php endif; ?>
 
-        <div class="gestion-card card-shine">
-            <div class="card-header">
-                <h6><i class="fas fa-list-alt"></i>Liste des Offres</h6>
-                <span class="badge badge-primary">
-                    <i class="fas fa-briefcase"></i>
-                    <?= count($offres) ?> offre(s)
-                </span>
-            </div>
-            <div class="card-body p-0">
-                <?php if (!empty($offres)): ?>
-                    <div class="table-container">
-                        <table class="admin-table">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Titre</th>
-                                    <th>Type</th>
-                                    <th>Créateur</th>
-                                    <th>Date Publication</th>
-                                    <th>Date Expiration</th>
-                                    <th>Accessible</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($offres as $offre): ?>
-                                    <tr>
-                                        <td>
-                                            <span class="text-muted">#<?= $offre['Id_offre'] ?></span>
-                                        </td>
-                                        <td>
-                                            <strong><?= htmlspecialchars($offre['titre']) ?></strong>
-                                        </td>
-                                        <td>
-                                            <span class="badge badge-info">
-                                                <i class="fas fa-tag"></i>
-                                                <?= $offre['type_offre'] ?>
+<div class="gestion-card card-shine">
+    <div class="card-header">
+        <h6><i class="fas fa-list-alt"></i>Liste des Offres</h6>
+        <span class="badge badge-primary">
+            <i class="fas fa-briefcase"></i>
+            <?= count($offres) ?> offre(s)
+        </span>
+    </div>
+    <div class="card-body p-0">
+        <?php if (!empty($offres)): ?>
+            <div class="table-container">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Titre</th>
+                            <th>Type</th>
+                            <th>Candidatures</th>
+                            <th>Créateur</th>
+                            <th>Date Publication</th>
+                            <th>Date Expiration</th>
+                            <th>Accessible</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($offres as $offre): ?>
+                            <tr>
+                                <td>
+                                    <span class="text-muted">#<?= $offre['Id_offre'] ?></span>
+                                </td>
+                                <td>
+                                    <strong><?= htmlspecialchars($offre['titre']) ?></strong>
+                                </td>
+                                <td>
+                                    <span class="badge badge-info">
+                                        <i class="fas fa-tag"></i>
+                                        <?= $offre['type_offre'] ?>
+                                    </span>
+                                </td>
+                                <td>
+                                    <?php 
+                                    $nbCandidatures = $this->candidatureManager->getCountByOffre($offre['Id_offre']);
+                                    ?>
+                                    <a href="index.php?action=admin-candidatures-offre&id=<?= $offre['Id_offre'] ?>" 
+                                       class="candidature-link" 
+                                       title="Voir les <?= $nbCandidatures ?> candidature(s)">
+                                        <span class="badge <?= $nbCandidatures > 0 ? 'badge-warning' : 'badge-secondary' ?>">
+                                            <i class="fas fa-users"></i>
+                                            <?= $nbCandidatures ?>
+                                        </span>
+                                    </a>
+                                </td>
+                                <td>
+                                    <?php 
+                                        $createur = $this->utilisateurManager->getById($offre['Id_utilisateur']);
+                                        echo htmlspecialchars($createur['prenom'] . ' ' . $createur['nom']);
+                                    ?>
+                                </td>
+                                <td>
+                                    <i class="fas fa-calendar text-muted mr-1"></i>
+                                    <?= date('d/m/Y', strtotime($offre['date_publication'])) ?>
+                                </td>
+                                <td>
+                                    <?php if ($offre['date_expiration']): ?>
+                                        <i class="fas fa-clock text-muted mr-1"></i>
+                                        <?= date('d/m/Y', strtotime($offre['date_expiration'])) ?>
+                                        <?php if (strtotime($offre['date_expiration']) < time()): ?>
+                                            <span class="badge badge-danger ml-1 expired-badge">
+                                                <i class="fas fa-exclamation-triangle"></i>Expiré
                                             </span>
-                                        </td>
-                                        <td>
-                                            <?php 
-                                                $createur = $this->utilisateurManager->getById($offre['Id_utilisateur']);
-                                                echo htmlspecialchars($createur['prenom'] . ' ' . $createur['nom']);
-                                            ?>
-                                        </td>
-                                        <td>
-                                            <i class="fas fa-calendar text-muted mr-1"></i>
-                                            <?= date('d/m/Y', strtotime($offre['date_publication'])) ?>
-                                        </td>
-                                        <td>
-                                            <?php if ($offre['date_expiration']): ?>
-                                                <i class="fas fa-clock text-muted mr-1"></i>
-                                                <?= date('d/m/Y', strtotime($offre['date_expiration'])) ?>
-                                                <?php if (strtotime($offre['date_expiration']) < time()): ?>
-                                                    <span class="badge badge-danger ml-1 expired-badge">
-                                                        <i class="fas fa-exclamation-triangle"></i>Expiré
-                                                    </span>
-                                                <?php endif; ?>
-                                            <?php else: ?>
-                                                <span class="text-muted">Non définie</span>
-                                            <?php endif; ?>
-                                        </td>
-                                        <td>
-                                            <?php if ($offre['disability_friendly']): ?>
-                                                <span class="badge badge-success">
-                                                    <i class="fas fa-check"></i>Oui
-                                                </span>
-                                            <?php else: ?>
-                                                <span class="badge badge-secondary">
-                                                    <i class="fas fa-times"></i>Non
-                                                </span>
-                                            <?php endif; ?>
-                                        </td>
-                                        <td>
-                                            <div class="actions-group">
-                                                <a href="index.php?action=admin-voir-offre&id=<?= $offre['Id_offre'] ?>" 
-                                                   class="action-btn view" 
-                                                   title="Voir les détails">
-                                                    <i class="fas fa-eye"></i>
-                                                </a>
-                                                <a href="index.php?action=admin-modifier-offre&id=<?= $offre['Id_offre'] ?>" 
-                                                   class="action-btn edit" 
-                                                   title="Modifier">
-                                                    <i class="fas fa-edit"></i>
-                                                </a>
-                                                <a href="index.php?action=admin-supprimer-offre&id=<?= $offre['Id_offre'] ?>" 
-                                                   class="action-btn delete" 
-                                                   onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette offre ?')"
-                                                   title="Supprimer">
-                                                    <i class="fas fa-trash"></i>
-                                                </a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    </div>
-                <?php else: ?>
-                    <div class="empty-state">
-                        <i class="fas fa-inbox"></i>
-                        <h4>Aucune offre trouvée</h4>
-                        <p>Il n'y a actuellement aucune offre à afficher.</p>
-                    </div>
-                <?php endif; ?>
+                                        <?php endif; ?>
+                                    <?php else: ?>
+                                        <span class="text-muted">Non définie</span>
+                                    <?php endif; ?>
+                                </td>
+                                <td>
+                                    <?php if ($offre['disability_friendly']): ?>
+                                        <span class="badge badge-success">
+                                            <i class="fas fa-check"></i>Oui
+                                        </span>
+                                    <?php else: ?>
+                                        <span class="badge badge-secondary">
+                                            <i class="fas fa-times"></i>Non
+                                        </span>
+                                    <?php endif; ?>
+                                </td>
+                                <td>
+                                    <div class="actions-group">
+                                        <a href="index.php?action=admin-voir-offre&id=<?= $offre['Id_offre'] ?>" 
+                                           class="action-btn view" 
+                                           title="Voir les détails">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a href="index.php?action=admin-modifier-offre&id=<?= $offre['Id_offre'] ?>" 
+                                           class="action-btn edit" 
+                                           title="Modifier">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a href="index.php?action=admin-candidatures-offre&id=<?= $offre['Id_offre'] ?>" 
+                                           class="action-btn view" 
+                                           title="Voir les candidatures">
+                                            <i class="fas fa-users"></i>
+                                        </a>
+                                        <a href="index.php?action=admin-supprimer-offre&id=<?= $offre['Id_offre'] ?>" 
+                                           class="action-btn delete" 
+                                           onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette offre ?')"
+                                           title="Supprimer">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
             </div>
-        </div>
+        <?php else: ?>
+            <div class="empty-state">
+                <i class="fas fa-inbox"></i>
+                <h4>Aucune offre trouvée</h4>
+                <p>Il n'y a actuellement aucune offre à afficher.</p>
+            </div>
+        <?php endif; ?>
     </div>
 </div>
-
 <?php require_once __DIR__ . '/../templates/footer.php'; ?>
