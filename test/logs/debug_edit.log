@@ -1,0 +1,41 @@
+DEBUG: POST received
+Data: {
+    "statut": "confirm\u00e9",
+    "prenom": "TestP",
+    "email": "test@ex.com",
+    "id": "18",
+    "nombre_accompagnants": "2",
+    "nom": "TestN"
+}
+Participation: {
+    "id": 18,
+    "id_evenement": 2,
+    "id_utilisateur": 7,
+    "statut": "",
+    "message": null,
+    "besoins_accessibilite": "aucun_besoin",
+    "nombre_accompagnants": 1,
+    "date_inscription": "2025-11-27 13:57:22"
+}
+Utilisateur BEFORE: {
+    "id": 7,
+    "nom": "TestPrenom TestNom",
+    "email": "testupd@example.com",
+    "password": "$2y$10$WidX.tb5SBtO6VNuSTFrk.TRUm7t6N0plndTJzTHU4oEteKqFGkH2",
+    "role": "user",
+    "created_at": "2025-11-27 13:57:22"
+}
+Extracted: prenom='TestP', nom='TestN', email='test@ex.com'
+Display name to save: 'TestP TestN'
+SQL: UPDATE `utilisateur` SET `nom` = ?, `email` = ? WHERE `id` = ?
+Params: ["TestP TestN","test@ex.com",7]
+Execute result: true
+Row count: 1
+Utilisateur AFTER: {
+    "id": 7,
+    "nom": "TestP TestN",
+    "email": "test@ex.com",
+    "password": "$2y$10$WidX.tb5SBtO6VNuSTFrk.TRUm7t6N0plndTJzTHU4oEteKqFGkH2",
+    "role": "user",
+    "created_at": "2025-11-27 13:57:22"
+}

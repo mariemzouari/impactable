@@ -1,0 +1,49 @@
+<?php
+require_once "../../config/Config.php";
+require_once "../../Model/EventModel.php";
+
+class EventController {
+    private $eventModel;
+
+    public function __construct() {
+        $Config = new Config();
+        $db = $Config->getPDO();
+        $this->eventModel = new EventModel($db);
+    }
+
+    // Liste tous les événements
+    public function index() {
+        $events = $this->eventModel->getAll(); // <-- définit la variable $events
+        include "../../View/Backoffice/header.php"; // <-- inclus la vue
+    }
+
+    // Création d'un événement
+    public function create() {
+        if($_SERVER['REQUEST_METHOD'] === 'POST'){
+            $this->eventModel->create($_POST);
+            header("Location: index.php");
+            exit;
+        }
+        $action = 'create';
+        include "../../View/Backoffice/form_events.php";
+    }
+
+    // Modification
+    public function edit($id) {
+        $event = $this->eventModel->getById($id);
+        if($_SERVER['REQUEST_METHOD'] === 'POST'){
+            $this->eventModel->update($id, $_POST);
+            header("Location: index.php");
+            exit;
+        }
+        $action = 'edit';
+        include "../../View/Backoffice/form_events.php";
+    }
+
+    // Suppression
+    public function delete($id) {
+        $this->eventModel->delete($id);
+        header("Location: index.php");
+        exit;
+    }
+}
