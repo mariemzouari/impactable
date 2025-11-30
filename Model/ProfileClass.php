@@ -61,21 +61,4 @@ class Profil {
 
 
 
-    public function toArray(): array
-{
-    return [
-        "Id_profil" => $this->Id_profil,
-        "Id_utilisateur" => $this->Id_utilisateur,
-        "photo_profil" => $this->photo_profil,
-        "bio" => $this->bio,
-        "ville" => $this->ville,
-        "pays" => $this->pays,
-        "profession" => $this->profession,
-        "competences" => $this->competences,
-        "linkedin" => $this->linkedin,
-        "date_creation" => $this->date_creation,
-        "date_modification" => $this->date_modification
-    ];
-}
-
 }

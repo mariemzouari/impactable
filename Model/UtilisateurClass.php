@@ -62,21 +62,4 @@ class Utilisateur {
 
 
 
-    public function toArray(): array
-{
-    return [
-        "Id_utilisateur" => $this->Id_utilisateur,
-        "nom" => $this->nom,
-        "prenom" => $this->prenom,
-        "genre" => $this->genre,
-        "date_naissance" => $this->date_naissance,
-        "email" => $this->email,
-        "numero_tel" => $this->numero_tel,
-        "mot_de_passe" => $this->mot_de_passe,
-        "role" => $this->role,
-        "type_handicap" => $this->type_handicap,
-        "date_inscription" => $this->date_inscription
-    ];
-}
-
 }

@@ -8,9 +8,8 @@ class UtilisateurController {
     // lister les utilisateurs
  
     public function listUsers() {
-        $sql = "SELECT u.*, p.photo_profil
-        FROM utilisateur u
-        LEFT JOIN profil p ON p.Id_utilisateur = u.Id_utilisateur";
+        $sql = "SELECT u.*, p.photo_profil FROM utilisateur u
+        LEFT JOIN profil p ON p.Id_utilisateur = u.Id_utilisateur"; //jointure pour lister dans backoffice
         $db = config::getConnexion();
         try {
             $list = $db->query($sql);
@@ -35,7 +34,7 @@ class UtilisateurController {
         }
     }
 
- 
+    // add user 
     public function addUser(Utilisateur $user) {
 
     
@@ -60,7 +59,7 @@ class UtilisateurController {
         ]);
 
         
-        // CHANGEMENT ICI: Retourner l'ID pas resultat
+        // retourne l'id instead of user pour la creation de profil avec le signup
         if ($result) {
             return $db->lastInsertId(); 
         } else {
@@ -147,8 +146,28 @@ class UtilisateurController {
         throw new Exception("Erreur de connexion: " . $e->getMessage());
     }
 }
-    
 
+
+
+    // vérifier que email existe
+    public function verifyEmail($email) {
+    $sql = "SELECT * FROM utilisateur WHERE email = :email";
+    $db = config::getConnexion();
+    try {
+        $query = $db->prepare($sql);
+        $query->execute(['email' => $email]);
+        $user = $query->fetch();
+        
+        if ($user) {
+            return $user;
+        }
+        return false;
+        
+    } catch (Exception $e) {
+        throw new Exception("Erreur de connexion: " . $e->getMessage());
+    }
+
+}
 }
 
 ?>

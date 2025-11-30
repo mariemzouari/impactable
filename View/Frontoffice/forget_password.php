@@ -1,63 +1,116 @@
-<?php  
-session_start();
+<?php 
 require_once __DIR__ . '/../../Controller/UtilisateurController.php';
+require_once __DIR__ . '/../../Controller/OtpController.php';
+require_once __DIR__ . '/../../Model/OtpClass.php';
 
-$error = "";
-$userC = new UtilisateurController();
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && 
-    isset($_POST['email']) && 
-    isset($_POST['password'])){
-     
-        if (!empty($_POST['email']) && 
-            !empty($_POST['password'])){
+require_once __DIR__ . '/../../vendor/autoload.php';
 
-             $email = $_POST['email'];
-             $password = $_POST['password'];
-             try{
-             $user = $userC->verifyLogin($email, $password); 
-              if($user){
-                $_SESSION['user_id'] = $user['Id_utilisateur'];
-                $_SESSION['user_role'] = $user['role'];
-                
-                if($_SESSION['user_role'] == "user"){
-                header('Location: Profile.php');
-                exit;}       
-                
-                else {
-                header('Location: ../Backoffice/index.php');
-                exit;}
+$erreur = "";
+$userC = new UtilisateurController;
+$otpC = new OtpController;
+
+if (isset($_POST['email'])){
+   if (!empty($_POST['email'])){
+    
+    $email = $_POST ['email'];
+    $user = $userC->verifyEmail($email);
 
 
-              }   
-              else { $error = "Email ou mot de passe incorrect"; }
+    if ($user){
+    // géneration du code
+    $code = random_int(100000, 999999);
+    $user_id = $user['Id_utilisateur'];
+    $expires_at = date('Y-m-d H:i:s', time() + 600); // 10 mins
+
+    $otp = new OTP([
+    'Id_utilisateur' => $user_id ,
+    'code' => $code,
+    'expires_at' => $expires_at ,
+    ]);
+    
+    $otpC->addOTP($otp);
+
+    
+    // email sending 
+    
+    $mail = new PHPMailer(true);
+
+            try {
+                $mail->isSMTP();
+                $mail->Host = 'smtp.gmail.com';
+                $mail->SMTPAuth = true;
+
+                // my email
+                $mail->Username = 'mariemzouari014@gmail.com';
+                // generated code from google settings
+                $mail->Password = 'wseqzosmnorbobqm';
+
+                $mail->SMTPSecure = 'tls';
+                $mail->Port = 587;
+
+                // sender
+                $mail->setFrom('mariemzouari014@gmail.com', 'Impactable');
+
+                // receiver
+                $mail->addAddress($email);
+
+                // email content
+                $mail->isHTML(true);
+                $mail->Subject = 'Password Reset Code';
+                $mail->Body = "
+                    <p>Hello,</p>
+                    <p>Your password reset code is: <b>$code</b></p>
+                    <p>It will expire in 10 minutes.</p>
+                ";
+
+                $mail->send();
+
+     header("location: reset_code.php?email=$email"); 
+     exit;
+     }
+    catch(Exception $e) {
+     $erreur = "Erreur: " . $e->getMessage();
+
+      }
 
 
-             }
-             catch(Exception $e){
-             $error = "Erreur: " . $e->getMessage();
+    }
+    else {
+      $erreur = "L'email n'existe pas.";
+    }
 
-             }
-     
-     
- } 
+   }
+  else {
+   $erreur ="Veuillez remplir tous les champs";
 
-else {$error = "Veuillez remplir tous les champs";}
+  }
 
 }
+
+
+
 ?>
+
+
+
 
 <!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login</title>
+  <title>Mot de passe oublié </title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="assets/css/style.css">
   <link rel="stylesheet" href="assets/css/style_mariem.css">
+  <link rel="stylesheet" href="assets/css/style.css">
+  
+
 </head>
 <body>
+
   <div class="container"> 
     <!-- Header -->
     <header class="site-header" role="banner">
@@ -75,7 +128,10 @@ else {$error = "Veuillez remplir tous les champs";}
         <a href="signup.php" class="btn primary" id="signupBtn">S'inscrire</a>
       </div>
     </header>
-        <!-- Side Panel Navigation -->
+
+
+
+     <!-- Side Panel Navigation -->
     <div class="side-panel" id="sidePanel">
       <div class="panel-header">
          <div class="logo">
@@ -133,58 +189,49 @@ else {$error = "Veuillez remplir tous les champs";}
     
     <div class="panel-overlay" id="panelOverlay"></div>
 
-    <!-- Modal de connexion -->
-    <div class="modal-backdrop" id="loginModal" style="display: block;">
+    <!-- Main Content -->
+     
+    <main class="modal-backdrop"  style="display: block;">
+
       <div class="modal">
+
+
         <div class="auth-decoration">
           <div class="auth-icon">
-            <i class="fas fa-sign-in-alt"></i>
+            <i class="fas fa-key"></i>
           </div>
         </div>
         <div class="modal-body">
-          <h2 class="auth-title">Connexion</h2>
-          <p class="auth-subtitle">Accédez à votre compte ImpactAble</p>
-          
-          <?php if (!empty($error)): ?>
-            <div class="alert-error" style="background: #fee; color: #c33; padding: 10px; border-radius: 5px; margin-bottom: 15px;">
-              <?php echo $error; ?>
-            </div>
-          <?php endif; ?>
-          
-          <form method="POST" action="login.php"  id= "loginForm">
-            <div class="form-group">
-              <label for="login-email">
-                <i class="fas fa-envelope"></i>
-                E‑mail
-              </label>
-              <input id="login-email" name="email" class="input" type="text" placeholder="votremail@email.com" >
-              <span id="login-email-error" class="controle-saisie"></span>
-            </div>
-            <div class="form-group">
-              <label for="login-password">
-                <i class="fas fa-lock"></i>
-                Mot de passe
-              </label>
-              <input id="login-password" name="password" class="input" type="password" placeholder="Votre mot de passe" >
-              <span id="login-password-error" class="controle-saisie"></span>
-            </div>
-             
-
-            <div class="form-footer">
-              <div class="form-links">
-                <a href="forget_password.php">Mot de passe oublié?</a>
-              </div>
-              <button class="btn primary" type="submit">Se connecter</button>
-            </div>
-          </form>
-          <div class="text-center mt-24">
-            <p class="text-muted">Pas encore de compte? <a href="signup.php" id="switchToSignup">S'inscrire</a></p>
-          </div>
+        <div class="form-header">
+          <h2>Mot de passe oublié</h2>
+          <p>Entrez votre email pour recevoir un code de réinitialisation</p>
         </div>
-      </div>
-    </div>
 
-    <!-- Footer-->
+        <form id="forgotPasswordForm" method="post" action="">
+          <div class="form-group">
+            <label for="forget-email">
+              <i class="fas fa-envelope"></i>
+              Adresse email *
+            </label>
+            <input id="forget-email" name="email" class="input" type="text" placeholder="example@email.com" >
+           <span id="forget-email-error" class="controle-saisie"></span>
+          </div>
+
+          <div class="form-footer">
+            <button type="submit" class="btn primary">Envoyer le code</button>
+            <div class="form-links">
+              <a href="login.php"><i class="fas fa-arrow-left"></i> Retour à la connexion</a>
+            </div>
+          </div>
+        </form>
+        </div>
+
+
+
+      </div>
+    </main>
+
+    <!-- Footer -->
     <footer class="site-footer">
       <div class="container">
         <div class="footer-content">
@@ -236,6 +283,5 @@ else {$error = "Veuillez remplir tous les champs";}
 
   <script src="assets/js/script.js"></script>
    <script src="assets\js\controle_saisie_user.js"> </script>
-
 </body>
 </html>

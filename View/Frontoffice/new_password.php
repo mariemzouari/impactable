@@ -1,63 +1,79 @@
-<?php  
-session_start();
+
+<?php 
 require_once __DIR__ . '/../../Controller/UtilisateurController.php';
-
-$error = "";
-$userC = new UtilisateurController();
-
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && 
-    isset($_POST['email']) && 
-    isset($_POST['password'])){
-     
-        if (!empty($_POST['email']) && 
-            !empty($_POST['password'])){
-
-             $email = $_POST['email'];
-             $password = $_POST['password'];
-             try{
-             $user = $userC->verifyLogin($email, $password); 
-              if($user){
-                $_SESSION['user_id'] = $user['Id_utilisateur'];
-                $_SESSION['user_role'] = $user['role'];
-                
-                if($_SESSION['user_role'] == "user"){
-                header('Location: Profile.php');
-                exit;}       
-                
-                else {
-                header('Location: ../Backoffice/index.php');
-                exit;}
+require_once __DIR__ . '/../../Model/UtilisateurClass.php';
 
 
-              }   
-              else { $error = "Email ou mot de passe incorrect"; }
+$erreur = "";
+$userC = new UtilisateurController;
+
+if (isset($_GET['email'])){
+$user = $userC->verifyEmail($_GET['email']);}
 
 
-             }
-             catch(Exception $e){
-             $error = "Erreur: " . $e->getMessage();
+if ($user){
+$user_id = $user['Id_utilisateur'];
 
-             }
-     
-     
- } 
+if (isset($_POST['password']) &&
+isset($_POST['confirm']) ){
+  if (!empty($_POST['password']) &&
+  !empty($_POST['confirm']) ){
+    
+  $password = $_POST['password'];
 
-else {$error = "Veuillez remplir tous les champs";}
+  $user = new Utilisateur([
+                    'Id_utilisateur' => $user_id,
+                    'nom' => $user['nom'],
+                    'prenom' => $user['prenom'],
+                    'email' => $user['email'],
+                    'numero_tel' => $user['numero_tel'],
+                    'date_naissance' => $user['date_naissance'],
+                    'genre' => $user['genre'],
+                    'role' => $user['role'], 
+                    'type_handicap' => $user['type_handicap'],
+                    'mot_de_passe' => password_hash($password, PASSWORD_DEFAULT) 
+
+            ]);
+
+
+  try{
+          $userC->updateUser($user, $user_id); 
+          header('Location: login.php');
+          exit;   
+
+         }
+         catch(Exception $e) {
+                   $erreur = "Erreur lors de la modification: " . $e->getMessage();
+               }
+
+
+  }
+  else { $erreur =" Veuillez remplir tout les champs.";}
+  
 
 }
+
+}
+else  { $erreur =" Utilisateur non trouvé.";}
+
+
 ?>
+
+
 
 <!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login</title>
+  <title>Nouveau mot de passe</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="assets/css/style.css">
   <link rel="stylesheet" href="assets/css/style_mariem.css">
+
 </head>
 <body>
+
   <div class="container"> 
     <!-- Header -->
     <header class="site-header" role="banner">
@@ -133,58 +149,53 @@ else {$error = "Veuillez remplir tous les champs";}
     
     <div class="panel-overlay" id="panelOverlay"></div>
 
-    <!-- Modal de connexion -->
-    <div class="modal-backdrop" id="loginModal" style="display: block;">
+    <!-- Main Content -->
+    <main class="modal-backdrop"  style="display: block;">
+
       <div class="modal">
+
         <div class="auth-decoration">
           <div class="auth-icon">
-            <i class="fas fa-sign-in-alt"></i>
+            <i class="fas fa-lock-open"></i>
           </div>
         </div>
         <div class="modal-body">
-          <h2 class="auth-title">Connexion</h2>
-          <p class="auth-subtitle">Accédez à votre compte ImpactAble</p>
-          
-          <?php if (!empty($error)): ?>
-            <div class="alert-error" style="background: #fee; color: #c33; padding: 10px; border-radius: 5px; margin-bottom: 15px;">
-              <?php echo $error; ?>
-            </div>
-          <?php endif; ?>
-          
-          <form method="POST" action="login.php"  id= "loginForm">
-            <div class="form-group">
-              <label for="login-email">
-                <i class="fas fa-envelope"></i>
-                E‑mail
-              </label>
-              <input id="login-email" name="email" class="input" type="text" placeholder="votremail@email.com" >
-              <span id="login-email-error" class="controle-saisie"></span>
-            </div>
-            <div class="form-group">
-              <label for="login-password">
-                <i class="fas fa-lock"></i>
-                Mot de passe
-              </label>
-              <input id="login-password" name="password" class="input" type="password" placeholder="Votre mot de passe" >
-              <span id="login-password-error" class="controle-saisie"></span>
-            </div>
-             
+        <div class="form-header">
+          <h2>Nouveau mot de passe</h2>
+          <p>Créez votre nouveau mot de passe</p>
+        </div>
 
-            <div class="form-footer">
-              <div class="form-links">
-                <a href="forget_password.php">Mot de passe oublié?</a>
-              </div>
-              <button class="btn primary" type="submit">Se connecter</button>
-            </div>
-          </form>
-          <div class="text-center mt-24">
-            <p class="text-muted">Pas encore de compte? <a href="signup.php" id="switchToSignup">S'inscrire</a></p>
+        <form id="newPasswordForm" method="post" action="">
+          <div class="form-group">
+            <label for="new-password">
+              <i class="fas fa-lock"></i>
+              Nouveau mot de passe * <span id="strength-new" style="margin-left: 40%;"></span>
+            </label>
+            <input id="new-password" name="password" class="input" type="password" placeholder="Créez un nouveau mot de passe" >
+             <span id="new-password-error" class="controle-saisie"></span>
           </div>
+
+          <div class="form-group">
+            <label for="confirm-new-password">
+              <i class="fas fa-lock"></i>
+              Confirmer le nouveau mot de passe *
+            </label>
+            <input id="confirm-new-password" name="confirm" class="input" type="password" placeholder="Confirmez votre nouveau mot de passe" >
+             <span id="confirm-new-password-error" class="controle-saisie"></span>
+          </div>
+
+          <div class="form-footer">
+            <button type="submit" class="btn primary">Réinitialiser le mot de passe</button>
+            <div class="form-links">
+              <a href="login.php"><i class="fas fa-arrow-left"></i> Retour à la connexion</a>
+            </div>
+          </div>
+        </form>
         </div>
       </div>
-    </div>
+    </main>
 
-    <!-- Footer-->
+    <!-- Footer -->
     <footer class="site-footer">
       <div class="container">
         <div class="footer-content">
@@ -235,7 +246,7 @@ else {$error = "Veuillez remplir tous les champs";}
   </div>
 
   <script src="assets/js/script.js"></script>
-   <script src="assets\js\controle_saisie_user.js"> </script>
-
+  <script src="assets/js/controle_saisie_user.js"></script>
+  <script>passwordStrong("new-password", "strength-new");</script>
 </body>
 </html>

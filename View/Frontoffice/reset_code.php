@@ -1,63 +1,78 @@
-<?php  
-session_start();
+<?php 
 require_once __DIR__ . '/../../Controller/UtilisateurController.php';
+require_once __DIR__ . '/../../Controller/OtpController.php';
 
-$error = "";
-$userC = new UtilisateurController();
-
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && 
-    isset($_POST['email']) && 
-    isset($_POST['password'])){
-     
-        if (!empty($_POST['email']) && 
-            !empty($_POST['password'])){
-
-             $email = $_POST['email'];
-             $password = $_POST['password'];
-             try{
-             $user = $userC->verifyLogin($email, $password); 
-              if($user){
-                $_SESSION['user_id'] = $user['Id_utilisateur'];
-                $_SESSION['user_role'] = $user['role'];
-                
-                if($_SESSION['user_role'] == "user"){
-                header('Location: Profile.php');
-                exit;}       
-                
-                else {
-                header('Location: ../Backoffice/index.php');
-                exit;}
+$erreur = "";
+$userC = new UtilisateurController;
+$otpC = new OtpController;
 
 
-              }   
-              else { $error = "Email ou mot de passe incorrect"; }
+if (isset($_GET['email'])){
+$email = $_GET['email'];
+$user = $userC->verifyEmail($email);}
+
+if ($user){
+  $user_id = $user['Id_utilisateur'];
+  $otp = $otpC->showOTP($user_id);
+  $otp_id = $otp['Id_password'];
+
+  if (isset($_POST['reset_code'])){
+   if (!empty($_POST['reset_code'])){
+    $code = $otp['code'];
+    $now = new DateTime();
+    $expireTime = new DateTime($otp['expires_at']);
+
+    if($expireTime >= $now && !$otp['used'] ){
+
+      if ($code == $_POST['reset_code']){
+
+      try {  
+      $otpC->updateOTP($otp_id); // used =1
+      header("location: new_password.php?email=$email"); 
+      exit;
+     }
+     catch(Exception $e) {
+     $erreur = "Erreur: " . $e->getMessage();
+
+      }
+
+      }
+      else {  $erreur =" Incorrect code or code already used." ; }
 
 
-             }
-             catch(Exception $e){
-             $error = "Erreur: " . $e->getMessage();
+    }
+    else { $erreur =" Your code has expired, please generate another one." ; }
 
-             }
-     
-     
- } 
+    }
+    else {$erreur =" PLease write the code sent to your email." ;}
 
-else {$error = "Veuillez remplir tous les champs";}
+
+  }
 
 }
+else{
+$erreur ="User not found" ;
+}
+
+
+
+
 ?>
+
+
 
 <!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login</title>
+  <title>Vérification du code </title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="assets/css/style.css">
   <link rel="stylesheet" href="assets/css/style_mariem.css">
 </head>
 <body>
+
   <div class="container"> 
     <!-- Header -->
     <header class="site-header" role="banner">
@@ -75,7 +90,7 @@ else {$error = "Veuillez remplir tous les champs";}
         <a href="signup.php" class="btn primary" id="signupBtn">S'inscrire</a>
       </div>
     </header>
-        <!-- Side Panel Navigation -->
+      <!-- Side Panel Navigation -->
     <div class="side-panel" id="sidePanel">
       <div class="panel-header">
          <div class="logo">
@@ -133,58 +148,45 @@ else {$error = "Veuillez remplir tous les champs";}
     
     <div class="panel-overlay" id="panelOverlay"></div>
 
-    <!-- Modal de connexion -->
-    <div class="modal-backdrop" id="loginModal" style="display: block;">
+    <!-- Main Content -->
+<main class="modal-backdrop"  style="display: block;">
+
       <div class="modal">
         <div class="auth-decoration">
           <div class="auth-icon">
-            <i class="fas fa-sign-in-alt"></i>
+            <i class="fas fa-shield-alt"></i>
           </div>
         </div>
         <div class="modal-body">
-          <h2 class="auth-title">Connexion</h2>
-          <p class="auth-subtitle">Accédez à votre compte ImpactAble</p>
-          
-          <?php if (!empty($error)): ?>
-            <div class="alert-error" style="background: #fee; color: #c33; padding: 10px; border-radius: 5px; margin-bottom: 15px;">
-              <?php echo $error; ?>
-            </div>
-          <?php endif; ?>
-          
-          <form method="POST" action="login.php"  id= "loginForm">
-            <div class="form-group">
-              <label for="login-email">
-                <i class="fas fa-envelope"></i>
-                E‑mail
-              </label>
-              <input id="login-email" name="email" class="input" type="text" placeholder="votremail@email.com" >
-              <span id="login-email-error" class="controle-saisie"></span>
-            </div>
-            <div class="form-group">
-              <label for="login-password">
-                <i class="fas fa-lock"></i>
-                Mot de passe
-              </label>
-              <input id="login-password" name="password" class="input" type="password" placeholder="Votre mot de passe" >
-              <span id="login-password-error" class="controle-saisie"></span>
-            </div>
-             
-
-            <div class="form-footer">
-              <div class="form-links">
-                <a href="forget_password.php">Mot de passe oublié?</a>
-              </div>
-              <button class="btn primary" type="submit">Se connecter</button>
-            </div>
-          </form>
-          <div class="text-center mt-24">
-            <p class="text-muted">Pas encore de compte? <a href="signup.php" id="switchToSignup">S'inscrire</a></p>
+        <div class="form-header">
+          <h2>Vérification du code</h2>
+          <p>Entrez le code de réinitialisation envoyé à votre email</p>
+        </div>
+    <?php if(!empty($erreur)) : ?>
+    <div style="background: #fee; color: #c33; padding: 10px; border-radius: 5px; margin-bottom: 15px;"><?= $erreur ?></div>
+    <?php endif; ?>
+        <form id="resetCodeForm" method="post" action="">
+          <div class="form-group">
+            <label for="reset-code">
+              <i class="fas fa-lock"></i>
+              Code de réinitialisation *
+            </label>
+            <input id="reset-code" name="reset_code" class="input" type="text" placeholder="Entrez le code à 6 chiffres">
+            <span id="reset-code-error" class="controle-saisie"></span>
           </div>
+
+          <div class="form-footer">
+            <button type="submit" class="btn primary">Vérifier le code</button>
+            <div class="form-links">
+              <a href="forget_password.php"><i class="fas fa-arrow-left"></i> Renvoyer le code</a>
+            </div>
+          </div>
+        </form>
         </div>
       </div>
-    </div>
+    </main>
 
-    <!-- Footer-->
+    <!-- Footer -->
     <footer class="site-footer">
       <div class="container">
         <div class="footer-content">
@@ -235,7 +237,6 @@ else {$error = "Veuillez remplir tous les champs";}
   </div>
 
   <script src="assets/js/script.js"></script>
-   <script src="assets\js\controle_saisie_user.js"> </script>
-
+  <script src="assets/js/controle_saisie_user.js"> </script>
 </body>
 </html>

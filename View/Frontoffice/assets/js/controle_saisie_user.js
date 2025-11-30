@@ -1,7 +1,5 @@
 
 // mot de passe strong, weak 
-
-
 function passwordStrong(idPass, idStrength) {
   const password = document.getElementById(idPass);
   const strength = document.getElementById(idStrength);
@@ -361,6 +359,150 @@ if (profileForm) {
 
 
 
+// forget password
+const forgotPasswordForm = document.getElementById("forgotPasswordForm");
+if (forgotPasswordForm) {
+    forgotPasswordForm.addEventListener("submit", function(event) {
+       
+        const email = document.getElementById("forget-email").value.trim();    
+        
+        var isValid = true;
+       
+        
+        // Fonction pour afficher les messages
+        function displayMessage(id, message) {
+        var element = document.getElementById(id + "-error");
+        element.style.display = "block";
+        element.innerHTML= '<i class="fas fa-exclamation-triangle"></i> '+ message;
+        }
+
+        //function for display none
+        function displaynone(id){
+            var element = document.getElementById(id + "-error");
+             element.style.display = "none";
+        }
+        
+
+        if (!email){
+            displayMessage("forget-email", "Veuillez entrer votre e-mail." );
+            isValid =false;
+        }
+        else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+            displayMessage("forget-email", "Veuillez entrer un e-mail valide." );
+            isValid =false;
+        }
+        else displaynone("forget-email");
+
+        
+         if (!isValid){
+        event.preventDefault();
+       }
+
+
+    });
+}
+
+// code reset 
+const resetCodeForm = document.getElementById("resetCodeForm");
+if (resetCodeForm) {
+    resetCodeForm.addEventListener("submit", function(event) {
+       
+        const code = document.getElementById("reset-code").value.trim();    
+        
+        var isValid = true;
+       
+        
+        // Fonction pour afficher les messages
+        function displayMessage(id, message) {
+        var element = document.getElementById(id + "-error");
+        element.style.display = "block";
+        element.innerHTML= '<i class="fas fa-exclamation-triangle"></i> '+ message;
+        }
+
+        //function for display none
+        function displaynone(id){
+            var element = document.getElementById(id + "-error");
+             element.style.display = "none";
+        }
+        
+
+        if (!code){
+            displayMessage("reset-code", "Veuillez entrer le code envoyé sur votre email." );
+            isValid =false;
+        }
+        else if (code.length != 6){
+            displayMessage("reset-code", "Le code doit contenir 6 chiffres." );
+            isValid =false;
+        }
+        else displaynone("reset-code");
+
+        
+         if (!isValid){
+        event.preventDefault();
+       }
+
+
+    });
+}
+
+
+
+
+
+//  password resret
+const newPasswordForm = document.getElementById("newPasswordForm");
+if (newPasswordForm) {
+    newPasswordForm.addEventListener("submit", function(event) {
+            
+        const password = document.getElementById("new-password").value.trim();     
+        const confirm = document.getElementById("confirm-new-password").value.trim();     
+        
+        var isValid = true;
+       
+        
+        // Fonction pour afficher les messages
+        function displayMessage(id, message) {
+        var element = document.getElementById(id + "-error");
+        element.style.display = "block";
+        element.innerHTML= '<i class="fas fa-exclamation-triangle"></i> '+ message;
+        }
+
+        //function for display none
+        function displaynone(id){
+            var element = document.getElementById(id + "-error");
+             element.style.display = "none";
+        }
+
+
+       
+       if (!password){
+            displayMessage("new-password", "Veuillez créer un mot de passe." );
+            isValid =false;
+        }
+        else if (password.length < 8) {
+            displayMessage("new-password", "Le mot de passe doit contenir au moins 8 caractères." );
+            isValid =false;
+        }
+        else displaynone("new-password");
+
+
+        if (!confirm){
+            displayMessage("confirm-new-password", "Veuillez confirmer votre mot de passe." );
+            isValid =false; 
+        }
+        else if (confirm !== password){
+            displayMessage("confirm-new-password", "Les mots de passe ne correspondent pas." );
+            isValid =false; 
+        }
+        else displaynone("confirm-new-password");
+
+       if (!isValid){
+        event.preventDefault();
+       }
+
+        
+    });
+}
 
 
 

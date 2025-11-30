@@ -473,7 +473,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'){
 
   <script src="assets/js/script.js"></script>
   <script src="assets/js/controle_saisie_user.js"></script>
-  <script>// Profile picture preview only (no validation needed)
+
+
+  <script>
+  // profile picture preview 
 document.addEventListener('DOMContentLoaded', function() {
     const avatarInput = document.getElementById('avatarInput');
     const avatarPreview = document.getElementById('avatarPreview');
@@ -490,5 +493,10 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });</script>
+
+
+
+
+
 </body>
 </html>
