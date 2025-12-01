@@ -592,7 +592,7 @@ require_once __DIR__ . '/../templates/header.php';
                                 <span>En attente de réponse</span>
                             </div>
                         <?php else: ?>
-                            <a href="index.php?action=postuler&offre_id=<?= $offre['Id_offre'] ?>" 
+                            <a href="index.php?action=postuler&id=<?php echo $offre['Id_offre'];?>" 
                                class="btn action-btn action-btn-primary w-100">
                                 <i class="fas fa-paper-plane me-2"></i>Postuler maintenant
                             </a>
@@ -610,16 +610,7 @@ require_once __DIR__ . '/../templates/header.php';
                             </button>
                         </div>
                         
-                        <div class="social-stats">
-                            <div>
-                                <div class="stat-number"><?= rand(50, 200) ?></div>
-                                <div class="stat-label">Vues</div>
-                            </div>
-                            <div>
-                                <div class="stat-number"><?= rand(5, 30) ?></div>
-                                <div class="stat-label">Candidatures</div>
-                            </div>
-                        </div>
+
                     <?php else: ?>
                         <div class="text-center">
                             <div class="company-avatar">

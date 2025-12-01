@@ -78,9 +78,7 @@ $dernieres_candidatures = $this->candidatureManager->getRecentCandidatures(5);
         
         require_once __DIR__ . '/../views/backoffice/admin/gestion_offres.php';
     }
-    /**
- * Voir une candidature spécifique en détail
- */
+
 
     /**
      * Voir une offre spécifique
@@ -166,12 +164,7 @@ $dernieres_candidatures = $this->candidatureManager->getRecentCandidatures(5);
     /**
      * Voir une candidature spécifique
      */
-/**
- * Voir une candidature spécifique en détail
- */
-/**
- * Voir une candidature spécifique en détail
- */
+
 public function voirCandidature() {
     $user = $this->checkAdmin();
     
