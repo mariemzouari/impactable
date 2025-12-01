@@ -1,1095 +1,628 @@
 <?php
-// VÉRIFICATION RENFORCÉE DES VARIABLES
+// Démarrer la session si pas déjà fait
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+if (!isset($_SESSION['user_id'])) {
+    $_SESSION['user_id'] = 0;
+    $_SESSION['user_name'] = 'Visiteur';
+    $_SESSION['is_admin'] = false;
+}
+
+$user_id = $_SESSION['user_id'] ?? 0;
+$user_name = $_SESSION['user_name'] ?? 'Visiteur';
+$is_admin = $_SESSION['is_admin'] ?? false;
+$is_logged_in = ($user_id > 0);
+
+// Vérifier si les posts sont définis, sinon rediriger
 if (!isset($posts)) {
     header('Location: ../controller/control.php?action=list');
     exit;
 }
 
-// S'assurer que les variables utilisateur sont bien définies
-$user_id = $user_id ?? $_SESSION['user_id'] ?? 0;
-$user_name = $user_name ?? $_SESSION['user_name'] ?? 'Visiteur';
-$is_admin = $is_admin ?? $_SESSION['is_admin'] ?? false;
+// Récupérer la catégorie active
+$current_category = $_GET['category'] ?? '';
 
-// Debug temporaire - à retirer après test
-error_log("Forum - User ID: $user_id, Admin: " . ($is_admin ? 'YES' : 'NO'));
+// Debug: Vérifier le nombre de posts
+error_log("=== FORUM.PHP ===");
+error_log("Nombre de posts reçus: " . count($posts));
+foreach ($posts as $index => $post) {
+    error_log("Post $index - ID: {$post['Id_post']}, Titre: {$post['titre']}");
+}
 ?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ImpactAble – Forum</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <script src="../assets/js/validation.js"></script>
-    <style>
-        :root {
-            --brown: #4b2e16;
-            --copper: #b47b47;
-            --moss: #5e6d3b;
-            --sage: #a9b97d;
-            --sand: #f4ecdd;
-            --white: #fffaf5;
-            --light-sage: #e1e8c9;
-            --dark-green: #3a4a2a;
-            --brown-600: rgba(75,46,22,0.9);
-            --brown-300: rgba(75,46,22,0.2);
-            --muted: #6b4b44;
-            --card-bg: #ffffff;
-            --radius: 16px;
-            --radius-sm: 10px;
-            --shadow: 0 8px 22px rgba(75,46,22,0.08);
-            --shadow-lg: 0 12px 30px rgba(75,46,22,0.12);
-            --maxw: 1100px;
-            --focus: 0 0 0 3px rgba(180,123,71,0.18);
-            --input-height: 48px;
-            --gap: 1rem;
-            --ease-s: 200ms cubic-bezier(.2,.9,.2,1);
-            --ease-l: 350ms cubic-bezier(.2,.9,.2,1);
-            --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-        }
-
-        * { 
-            box-sizing: border-box; 
-            margin: 0;
-            padding: 0;
-        }
-        
-        html, body { 
-            height: 100%; 
-            overflow-x: hidden;
-        }
-        
-        body {
-            background: var(--sand);
-            color: var(--brown);
-            line-height: 1.6;
-            font-size: 15px;
-            -webkit-font-smoothing: antialiased;
-            font-family: var(--font-sans);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        a { 
-            color: inherit; 
-            text-decoration: none;
-        }
-        
-        img { 
-            max-width: 100%; 
-            display: block; 
-            height: auto;
-        }
-        
-        button { 
-            font-family: inherit; 
-            cursor: pointer;
-            border: none;
-            background: none;
-        }
-        
-        ul, ol {
-            list-style: none;
-        }
-
-        .main-container {
-            flex: 1;
-            width: 100%;
-            max-width: var(--maxw);
-            margin: 0 auto;
-            padding: 0 15px;
-        }
-
-        .site-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 0;
-            background: var(--white);
-            box-shadow: var(--shadow);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            margin-bottom: 15px;
-        }
-
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .nav-toggle {
-            font-size: 1.2rem;
-            color: var(--brown);
-            padding: 6px;
-            border-radius: var(--radius-sm);
-            transition: all var(--ease-s);
-        }
-
-        .nav-toggle:hover {
-            background: var(--brown-300);
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-weight: 700;
-            font-size: 1.2rem;
-            color: var(--moss);
-        }
-
-        .logo-image {
-            height: 32px;
-            width: auto;
-            object-fit: contain;
-        }
-
-        .header-actions {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-        }
-
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 7px 14px;
-            border-radius: 8px;
-            font-weight: 600;
-            text-decoration: none;
-            cursor: pointer;
-            transition: all var(--ease-s);
-            border: none;
-            gap: 5px;
-            font-size: 0.85rem;
-            white-space: nowrap;
-        }
-
-        .btn.primary {
-            background: var(--sage);
-            color: var(--brown);
-        }
-
-        .btn.primary:hover {
-            background: var(--moss);
-            color: #fff;
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .btn.admin {
-            background: var(--copper);
-            color: white;
-        }
-
-        .btn.admin:hover {
-            background: #a56a3a;
-        }
-
-        .side-panel {
-            position: fixed;
-            top: 0;
-            left: -280px;
-            width: 280px;
-            height: 100vh;
-            background: var(--white);
-            box-shadow: var(--shadow-lg);
-            z-index: 1000;
-            transition: left var(--ease-l);
-            display: flex;
-            flex-direction: column;
-        }
-
-        .side-panel.active {
-            left: 0;
-        }
-
-        .panel-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 14px 18px;
-            border-bottom: 1px solid var(--brown-300);
-        }
-
-        .panel-close {
-            font-size: 1.1rem;
-            color: var(--brown);
-            padding: 6px;
-            border-radius: var(--radius-sm);
-            transition: all var(--ease-s);
-        }
-
-        .panel-close:hover {
-            background: var(--brown-300);
-        }
-
-        .panel-nav {
-            flex: 1;
-            padding: 18px 0;
-            overflow-y: auto;
-        }
-
-        .nav-section {
-            margin-bottom: 18px;
-        }
-
-        .nav-title {
-            padding: 0 18px 6px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: var(--muted);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .nav-link {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 9px 18px;
-            color: var(--brown);
-            transition: all var(--ease-s);
-            font-weight: 500;
-            font-size: 0.9rem;
-        }
-
-        .nav-link:hover, .nav-link.active {
-            background: var(--sage);
-            color: var(--brown);
-        }
-
-        .nav-link i {
-            width: 18px;
-            text-align: center;
-            font-size: 0.9rem;
-        }
-
-        .panel-footer {
-            padding: 14px 18px;
-            border-top: 1px solid var(--brown-300);
-        }
-
-        .user-profile {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .user-avatar {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: var(--copper);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            font-size: 0.85rem;
-        }
-
-        .user-info h4 {
-            font-size: 0.85rem;
-            margin-bottom: 2px;
-        }
-
-        .user-info p {
-            font-size: 0.75rem;
-            color: var(--muted);
-        }
-
-        .panel-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 999;
-            opacity: 0;
-            visibility: hidden;
-            transition: all var(--ease-l);
-        }
-
-        .panel-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .section {
-            padding: 25px 0;
-        }
-
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 18px;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-
-        .section-header h2 {
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: var(--brown);
-        }
-
-        .section-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            padding: 7px 12px;
-            background: var(--sage);
-            color: var(--brown);
-            border-radius: var(--radius-sm);
-            font-weight: 600;
-            transition: all var(--ease-s);
-            font-size: 0.85rem;
-        }
-
-        .section-link:hover {
-            background: var(--moss);
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .forum-container {
-            display: grid;
-            grid-template-columns: 1fr 260px;
-            gap: 18px;
-        }
-
-        .forum-card {
-            background: var(--white);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            overflow: hidden;
-            margin-bottom: 18px;
-        }
-
-        .forum-header {
-            padding: 14px 18px;
-            border-bottom: 1px solid var(--brown-300);
-        }
-
-        .forum-header h3 {
-            font-size: 1rem;
-            font-weight: 600;
-        }
-
-        .forum-body {
-            padding: 18px;
-        }
-
-        .post {
-            background: var(--white);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            overflow: hidden;
-            margin-bottom: 18px;
-            transition: transform var(--ease-s);
-        }
-
-        .post:hover {
-            transform: translateY(-2px);
-        }
-
-        .post-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            padding: 14px 18px;
-            border-bottom: 1px solid var(--brown-300);
-        }
-
-        .post-author {
-            display: flex;
-            align-items: flex-start;
-            gap: 8px;
-            flex: 1;
-        }
-
-        .post-actions-menu {
-            display: flex;
-            align-items: center;
-        }
-
-        .post-menu-btn {
-            color: var(--muted);
-            padding: 5px;
-            border-radius: var(--radius-sm);
-            transition: all var(--ease-s);
-            font-size: 0.9rem;
-        }
-
-        .post-menu-btn:hover {
-            background: var(--brown-300);
-        }
-
-        .post-content {
-            padding: 14px 18px;
-        }
-
-        .post-text h3 {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: var(--brown);
-        }
-
-        .post-text p {
-            margin-bottom: 8px;
-            color: var(--muted);
-            line-height: 1.6;
-            font-size: 0.9rem;
-        }
-
-        .post-image {
-            width: 100%;
-            border-radius: var(--radius-sm);
-            margin-top: 10px;
-        }
-
-        .post-stats {
-            display: flex;
-            gap: 12px;
-            padding: 0 18px 8px;
-            border-bottom: 1px solid var(--brown-300);
-        }
-
-        .post-stat {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            font-size: 0.8rem;
-            color: var(--muted);
-        }
-
-        .post-interactions {
-            display: flex;
-            padding: 10px 18px;
-            flex-wrap: wrap;
-            gap: 4px;
-        }
-
-        .interaction-btn {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            padding: 5px 10px;
-            color: var(--muted);
-            font-weight: 500;
-            transition: all var(--ease-s);
-            font-size: 0.8rem;
-            border-radius: 6px;
-            text-decoration: none;
-        }
-
-        .interaction-btn:hover {
-            background: var(--brown-300);
-            color: var(--brown);
-        }
-
-        .forum-sidebar {
-            display: flex;
-            flex-direction: column;
-            gap: 18px;
-        }
-
-        .forum-categories {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .category {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 0;
-            border-bottom: 1px solid var(--brown-300);
-        }
-
-        .category:last-child {
-            border-bottom: none;
-        }
-
-        .category-info {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .category-icon {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            background: var(--sage);
-            color: var(--brown);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.75rem;
-        }
-
-        .category-name {
-            font-weight: 500;
-            font-size: 0.85rem;
-        }
-
-        .category-count {
-            font-size: 0.75rem;
-            color: var(--muted);
-        }
-
-        .top-contributors {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .contributor {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .contributor-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: var(--copper);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            font-size: 0.75rem;
-        }
-
-        .contributor-info {
-            flex: 1;
-        }
-
-        .contributor-name {
-            font-weight: 600;
-            font-size: 0.8rem;
-        }
-
-        .contributor-stats {
-            font-size: 0.7rem;
-            color: var(--muted);
-        }
-
-        .contributor-points {
-            font-weight: 600;
-            color: var(--copper);
-            font-size: 0.75rem;
-        }
-
-        .site-footer {
-            background: var(--dark-green);
-            color: white;
-            padding: 25px 0 12px;
-            margin-top: 35px;
-        }
-
-        .footer-content {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-            gap: 22px;
-            margin-bottom: 22px;
-        }
-
-        .footer-column h3 {
-            font-size: 1rem;
-            margin-bottom: 10px;
-        }
-
-        .text-muted {
-            color: rgba(255,255,255,0.7);
-            margin-bottom: 10px;
-            font-size: 0.85rem;
-        }
-
-        .social-links {
-            display: flex;
-            gap: 6px;
-        }
-
-        .social-links a {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.1);
-            transition: all var(--ease-s);
-            font-size: 0.9rem;
-        }
-
-        .social-links a:hover {
-            background: var(--sage);
-            color: var(--brown);
-        }
-
-        .footer-links {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-
-        .footer-links a {
-            color: rgba(255,255,255,0.7);
-            transition: all var(--ease-s);
-            font-size: 0.85rem;
-        }
-
-        .footer-links a:hover {
-            color: white;
-        }
-
-        .footer-bottom {
-            text-align: center;
-            padding-top: 12px;
-            border-top: 1px solid rgba(255,255,255,0.1);
-            color: rgba(255,255,255,0.7);
-            font-size: 0.8rem;
-        }
-
-        @media (max-width: 1024px) {
-            .forum-container {
-                grid-template-columns: 1fr;
-                gap: 15px;
-            }
-            
-            .forum-sidebar {
-                order: -1;
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-                gap: 15px;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .main-container {
-                padding: 0 12px;
-            }
-
-            .site-header {
-                padding: 8px 0;
-                margin-bottom: 12px;
-            }
-
-            .section-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 8px;
-            }
-            
-            .post-interactions {
-                flex-direction: column;
-            }
-            
-            .interaction-btn {
-                justify-content: flex-start;
-            }
-            
-            .footer-content {
-                grid-template-columns: 1fr;
-                gap: 18px;
-            }
-
-            .header-actions {
-                flex-direction: column;
-                gap: 6px;
-            }
-
-            .btn {
-                width: 100%;
-                justify-content: center;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .main-container {
-                padding: 0 10px;
-            }
-
-            .brand {
-                gap: 6px;
-            }
-
-            .logo {
-                font-size: 1rem;
-            }
-
-            .logo-image {
-                height: 28px;
-            }
-
-            .section-header h2 {
-                font-size: 1.2rem;
-            }
-
-            .forum-sidebar {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ImpactAble – Forum</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="../View/assets/css/style.css">
 </head>
 <body>
 
-<div class="main-container">
+<div class="container">  
+    <!-- Header -->
     <header class="site-header" role="banner">
-        <div class="brand">
-            <button class="nav-toggle" id="navToggle" aria-label="Ouvrir le menu">
-                <i class="fas fa-bars"></i>
-            </button>
-            <div class="logo">
-                <img src="../view/assets/images/logo.png" alt="ImpactAble" class="logo-image">
-            </div>
+      <div class="brand">
+        <button class="nav-toggle" id="navToggle" aria-label="Ouvrir le menu">
+          <i class="fas fa-bars"></i>
+        </button>
+        <div class="logo">
+          <img src="../View/assets/images/logo.png" alt="ImpactAble" class="logo-image">
         </div>
+      </div>
 
-        <div class="header-actions">
-            <a href="../controller/control.php?action=create" class="btn primary">
-                <i class="fas fa-plus"></i> Créer un Post
-            </a>
-            <?php if ($is_admin): ?>
-            <a href="../controller/control.php?action=admin" class="btn admin">
-                <i class="fas fa-cog"></i> Admin
-            </a>
-            <?php endif; ?>
-        </div>
+      <div class="header-actions">
+        <button class="btn ghost" onclick="window.location.href='../controller/control.php?action=create'">
+          <i class="fas fa-plus"></i> Créer un Post
+        </button>
+        
+        <?php if ($is_logged_in): ?>
+          <button class="btn secondary" onclick="window.location.href='../controller/control.php?action=logout'">
+            <i class="fas fa-sign-out-alt"></i> Déconnexion
+          </button>
+        <?php else: ?>
+          <button class="btn ghost" onclick="window.location.href='../controller/control.php?action=login'">
+            <i class="fas fa-sign-in-alt"></i> Se connecter
+          </button>
+          <button class="btn primary" onclick="window.location.href='../controller/control.php?action=register'">
+            <i class="fas fa-user-plus"></i> S'inscrire
+          </button>
+        <?php endif; ?>
+      </div>
     </header>
 
+    <!-- Side Panel Navigation -->
     <div class="side-panel" id="sidePanel">
-        <div class="panel-header">
-            <div class="logo">
-                <img src="../view/assets/images/logo.png" alt="ImpactAble" class="logo-image">
-            </div>
-            <button class="panel-close" id="panelClose">
-                <i class="fas fa-times"></i>
-            </button>
+      <div class="panel-header">
+        <div class="logo">
+          <img src="../View/assets/images/logo.png" alt="ImpactAble" class="logo-image">
         </div>
-        
+        <button class="panel-close" id="panelClose">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      
        <nav class="panel-nav">
-    <div class="nav-section">
-        <div class="nav-title">Navigation</div>
-        <a href="../controller/control.php?action=list" class="nav-link active">
+        <div class="nav-section">
+          <div class="nav-title">Navigation</div>
+          <a href="#home" class="nav-link active">
             <i class="fas fa-home"></i>
             <span>Accueil</span>
-        </a>
-        <a href="../controller/control.php?action=create" class="nav-link">
-            <i class="fas fa-plus"></i>
-            <span>Créer un Post</span>
-        </a>
-        <?php if ($is_admin): ?>
-            <a href="../controller/control.php?action=admin" class="nav-link">
-                <i class="fas fa-cog"></i>
-                <span>Admin</span>
-            </a>
-        <?php endif; ?>
-    </div>
-    
-    <div class="nav-section">
-        <div class="nav-title">Catégories</div>
-        <a href="../controller/control.php?action=filter&category=opportunites" class="nav-link">
+          </a>
+          <a href="#opportunities" class="nav-link">
             <i class="fas fa-briefcase"></i>
             <span>Opportunités</span>
-        </a>
-        <a href="../controller/control.php?action=filter&category=campagnes" class="nav-link">
-            <i class="fas fa-lightbulb"></i>
-            <span>Campagnes</span>
-        </a>
-        <a href="../controller/control.php?action=filter&category=ressources" class="nav-link">
-            <i class="fas fa-hand-holding-heart"></i>
-            <span>Ressources</span>
-        </a>
-        <a href="../controller/control.php?action=filter&category=evenements" class="nav-link">
+          </a>
+          <a href="#events" class="nav-link">
             <i class="fas fa-calendar-alt"></i>
             <span>Événements</span>
-        </a>
-        <a href="../controller/control.php?action=filter&category=questions" class="nav-link">
-            <i class="fas fa-question-circle"></i>
-            <span>Questions</span>
-        </a>
-    </div>
-</nav>
-        
-        <div class="panel-footer">
-            <div class="user-profile">
-                <div class="user-avatar"><?= isset($user_name) ? strtoupper(substr($user_name, 0, 1)) : 'VS' ?></div>
-                <div class="user-info">
-                    <h4><?= isset($user_name) ? htmlspecialchars($user_name) : 'Visiteur' ?></h4>
-                    <p><?= isset($user_name) ? 'Connecté' : 'Connectez-vous pour plus de fonctionnalités' ?></p>
-                </div>
-            </div>
+          </a>
+          <a href="#donations" class="nav-link">
+            <i class="fas fa-hand-holding-heart"></i>
+            <span>Campagnes</span>
+          </a>
+          <a href="#resources" class="nav-link">
+            <i class="fas fa-book"></i>
+            <span>Ressources</span>
+          </a>
+          <a href="#forum" class="nav-link">
+            <i class="fas fa-comments"></i>
+            <span>Forum</span>
+          </a>
+          <a href="#reclamations" class="nav-link">
+            <i class="fas fa-comment-alt"></i>
+            <span>Réclamations</span>
+          </a>
+        </div> 
+  
+        <?php if ($is_admin): ?>
+        <div class="nav-section">
+          <div class="nav-title">Administration</div>
+          <a href="../controller/control.php?action=admin" class="nav-link">
+            <i class="fas fa-cog"></i>
+            <span>Tableau de bord</span>
+          </a>
         </div>
+        <?php endif; ?>
+      </nav>
+      
+      <div class="panel-footer">
+        <div class="user-profile">
+          <div class="user-avatar"><?= strtoupper(substr($user_name, 0, 1)) ?></div>
+          <div class="user-info">
+            <h4><?= htmlspecialchars($user_name) ?></h4>
+            <p><?= $is_logged_in ? 'Connecté' : 'Connectez-vous pour plus de fonctionnalités' ?></p>
+          </div>
+        </div>
+        
+        <?php if (!$is_logged_in): ?>
+        <div style="margin-top: 16px; display: flex; flex-direction: column; gap: 8px;">
+          <a href="../controller/control.php?action=login" class="btn ghost" style="width: 100%;">
+            <i class="fas fa-sign-in-alt"></i> Se connecter
+          </a>
+          <a href="../controller/control.php?action=register" class="btn primary" style="width: 100%;">
+            <i class="fas fa-user-plus"></i> S'inscrire
+          </a>
+        </div>
+        <?php endif; ?>
+      </div>
     </div>
     
     <div class="panel-overlay" id="panelOverlay"></div>
 
-    <section class="section">
-      <div class="section-header">
-        <h2>Forum Communautaire</h2>
-      </div>
-        
-        <div class="forum-container">
-            <div class="forum-main">
-                <div class="forum-posts">
-                    <?php if (empty($posts)): ?>
-                        <div class="forum-card">
-                            <div class="forum-body">
-                                <p style="text-align: center; color: var(--muted);">Aucun post pour le moment. Soyez le premier à partager !</p>
-                            </div>
-                        </div>
-                    <?php else: ?>
-                        <?php foreach ($posts as $post): ?>
-                        <div class="post">
-                            <div class="post-header">
-                                <div class="post-author">
-                                    <div class="user-avatar"><?= strtoupper(substr($post['auteur'] ?? 'U', 0, 1)) ?></div>
-                                    <div class="author-info">
-                                        <div class="author-name"><?= htmlspecialchars($post['auteur'] ?? 'Utilisateur') ?></div>
-                                        <div class="post-time"><?= date('d/m/Y à H:i', strtotime($post['date_creation'])) ?></div>
-                                    </div>
-                                </div>
-                                <div class="post-actions-menu">
-                                    <button class="post-menu-btn">
-                                        <i class="fas fa-ellipsis-h"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            
-                            <div class="post-content">
-                                <div class="post-text">
-                                    <h3><?= htmlspecialchars($post['titre']) ?></h3>
-                                    <p><?= nl2br(htmlspecialchars($post['contenu'])) ?></p>
-                                </div>
-                                <?php if (!empty($post['piece_jointe'])): ?>
-                                    <img src="../<?= $post['piece_jointe'] ?>" class="post-image" alt="Image du post">
-                                <?php endif; ?>
-                            </div>
-                            
-                            <div class="post-stats">
-                                <div class="post-stat">
-                                    <i class="fas fa-heart"></i>
-                                    <span><?= $post['likes'] ?> j'aime</span>
-                                </div>
-                                <div class="post-stat">
-                                    <i class="fas fa-tag"></i>
-                                    <span><?= ucfirst($post['categorie']) ?></span>
-                                </div>
-                            </div>
-                            
-                            <div class="post-interactions">
-                                <a href="../controller/control.php?action=view&id=<?= $post['Id_post'] ?>" class="interaction-btn">
-                                    <i class="fas fa-eye"></i>
-                                    <span>Voir & Commenter</span>
-                                </a>
-                                
-                                <?php if ($post['Id_utilisateur'] == $user_id || $is_admin): ?>
-                                    <a href="../controller/control.php?action=edit&id=<?= $post['Id_post'] ?>" class="interaction-btn">
-                                        <i class="fas fa-edit"></i>
-                                        <span>Modifier</span>
-                                    </a>
-                                    <a href="../controller/control.php?action=delete&id=<?= $post['Id_post'] ?>" 
-                                       class="interaction-btn" 
-                                       onclick="return confirm('Supprimer ce post ?')">
-                                        <i class="fas fa-trash"></i>
-                                        <span>Supprimer</span>
-                                    </a>
-                                <?php endif; ?>
-                            </div>
-                        </div>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
-                </div>
-            </div>
-            
-            <div class="forum-sidebar">
-                <div class="forum-card">
-                    <div class="forum-header">
-                        <h3>Catégories</h3>
-                    </div>
-                    <div class="forum-body">
-                        <div class="forum-categories">
-                            <div class="category">
-                                <div class="category-info">
-                                    <div class="category-icon">
-                                        <i class="fas fa-briefcase"></i>
-                                    </div>
-                                    <div class="category-name">Opportunités</div>
-                                </div>
-                                <div class="category-count">42</div>
-                            </div>
-                            <div class="category">
-                                <div class="category-info">
-                                    <div class="category-icon">
-                                        <i class="fas fa-calendar-alt"></i>
-                                    </div>
-                                    <div class="category-name">Événements</div>
-                                </div>
-                                <div class="category-count">15</div>
-                            </div>
-                            <div class="category">
-                                <div class="category-info">
-                                    <div class="category-icon">
-                                        <i class="fas fa-lightbulb"></i>
-                                    </div>
-                                    <div class="category-name">Campagnes</div>
-                                </div>
-                                <div class="category-count">28</div>
-                            </div>
-                            <div class="category">
-                                <div class="category-info">
-                                    <div class="category-icon">
-                                        <i class="fas fa-question-circle"></i>
-                                    </div>
-                                    <div class="category-name">Questions</div>
-                                </div>
-                                <div class="category-count">33</div>
-                            </div>
-                            <div class="category">
-                                <div class="category-info">
-                                    <div class="category-icon">
-                                        <i class="fas fa-hand-holding-heart"></i>
-                                    </div>
-                                    <div class="category-name">Ressources</div>
-                                </div>
-                                <div class="category-count">19</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="forum-card">
-                    <div class="forum-header">
-                        <h3>Top Contributeurs</h3>
-                    </div>
-                    <div class="forum-body">
-                        <div class="top-contributors">
-                            <div class="contributor">
-                                <div class="contributor-avatar">SM</div>
-                                <div class="contributor-info">
-                                    <div class="contributor-name">Sarah Martin</div>
-                                    <div class="contributor-stats">8 posts, 142 likes</div>
-                                </div>
-                                <div class="contributor-points">285</div>
-                            </div>
-                            <div class="contributor">
-                                <div class="contributor-avatar">MD</div>
-                                <div class="contributor-info">
-                                    <div class="contributor-name">Marina Dubois</div>
-                                    <div class="contributor-stats">6 posts, 98 likes</div>
-                                </div>
-                                <div class="contributor-points">187</div>
-                            </div>
-                            <div class="contributor">
-                                <div class="contributor-avatar">TL</div>
-                                <div class="contributor-info">
-                                    <div class="contributor-name">Thomas Leroy</div>
-                                    <div class="contributor-stats">5 posts, 76 likes</div>
-                                </div>
-                                <div class="contributor-points">154</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="forum-card">
-                    <div class="forum-header">
-                        <h3>Règles du Forum</h3>
-                    </div>
-                    <div class="forum-body">
-                        <div style="font-size: 0.8rem; color: var(--muted); line-height: 1.5;">
-                            <p>• Respectez tous les membres</p>
-                            <p>• Partagez des contenus pertinents</p>
-                            <p>• Utilisez un langage inclusif</p>
-                            <p>• Citez vos sources</p>
-                            <p>• Signalez les contenus inappropriés</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+    <!-- Forum Section -->
+    <div class="forum-container">
+      <div class="forum-main">
+        <!-- Create Post Card -->
+        <?php if ($is_logged_in): ?>
+        <div class="forum-card">
+          <div class="forum-body">
+            <div class="create-post">
+              <div class="user-avatar"><?= strtoupper(substr($user_name, 0, 1)) ?></div>
+              <div class="post-input">
+                <!-- Formulaire de création de post rapide -->
+                <form action="../controller/control.php?action=create" method="POST" enctype="multipart/form-data" id="quickPostForm">
+                  <textarea name="contenu" placeholder="Partagez vos idées, questions ou expériences avec la communauté..." 
+                            id="quickPostContent" required></textarea>
+                  
+                  <!-- Prévisualisation média -->
+                  <div id="mediaPreview" style="display: none; margin-top: 10px;">
+                    <img id="imagePreview" src="" alt="Aperçu" style="max-width: 200px; max-height: 150px; border-radius: 8px; display: none;">
+                    <video id="videoPreview" controls style="max-width: 200px; max-height: 150px; border-radius: 8px; display: none;"></video>
+                  </div>
 
-    <footer class="site-footer">
-        <div class="main-container">
-            <div class="footer-content">
-                <div class="footer-column">
-                    <h3>ImpactAble</h3>
-                    <p class="text-muted">Plateforme dédiée à l'inclusion et à l'impact social.</p>
-                    <div class="social-links">
-                        <a href="#"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
+                  <div class="post-actions">
+                    <div class="post-options">
+                      <!-- Option Image -->
+                      <label for="imageUpload" class="post-option" style="cursor: pointer;">
+                        <i class="fas fa-image"></i>
+                        <span>Image</span>
+                      </label>
+                      <input type="file" id="imageUpload" name="piece_jointe" accept="image/*" style="display: none;" onchange="previewMedia(this, 'image')">
+                      
+                      <!-- Option Vidéo -->
+                      <label for="videoUpload" class="post-option" style="cursor: pointer;">
+                        <i class="fas fa-video"></i>
+                        <span>Vidéo</span>
+                      </label>
+                      <input type="file" id="videoUpload" name="video" accept="video/*" style="display: none;" onchange="previewMedia(this, 'video')">
+                      
+                      <!-- Option Lien -->
+                      <button type="button" class="post-option" onclick="addLink()">
+                        <i class="fas fa-link"></i>
+                        <span>Lien</span>
+                      </button>
                     </div>
-                </div>
-                <div class="footer-column">
-                    <h3>Navigation</h3>
-                    <div class="footer-links">
-                        <a href="../controller/control.php?action=list">Accueil</a>
-                        <a href="../controller/control.php?action=create">Créer un Post</a>
-                        <?php if ($is_admin): ?>
-                            <a href="../controller/control.php?action=admin">Admin</a>
-                        <?php endif; ?>
-                    </div>
-                </div>
-                <div class="footer-column">
-                    <h3>Légal</h3>
-                    <div class="footer-links">
-                        <a href="#">Mentions légales</a>
-                        <a href="#">Politique de confidentialité</a>
-                        <a href="#">Conditions d'utilisation</a>
-                        <a href="#">Accessibilité</a>
-                    </div>
-                </div>
-                <div class="footer-column">
-                    <h3>Contact</h3>
-                    <div class="footer-links">
-                        <a href="mailto:contact@impactable.org">contact@impactable.org</a>
-                        <a href="tel:+21612345678">+216 12 345 678</a>
-                        <a href="#">Tunis, Tunisia</a>
-                    </div>
-                </div>
+                    <button type="submit" class="btn primary" id="publishBtn">
+                      <i class="fas fa-paper-plane"></i> Publier
+                    </button>
+                  </div>
+
+                  <!-- Champs cachés pour le formulaire rapide -->
+                  <input type="hidden" name="titre" id="quickPostTitle" value="Post rapide">
+                  <input type="hidden" name="categorie" id="quickPostCategory" value="autre">
+                </form>
+              </div>
             </div>
-            <div class="footer-bottom">
-                <p>© <span id="year"><?= date('Y') ?></span> ImpactAble – Tous droits réservés.</p>
-            </div>
+          </div>
         </div>
-    </footer>
+        <?php endif; ?>
+        
+        <!-- Indicateur de filtre actif -->
+        <?php if (!empty($current_category)): ?>
+        <div class="forum-card" style="margin-bottom: 20px;">
+          <div class="forum-body">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <h3 style="margin: 0; color: var(--moss);">
+                  <i class="fas fa-filter"></i>
+                  Filtre actif : <?= htmlspecialchars($current_category) ?>
+                </h3>
+                <p style="margin: 5px 0 0 0; color: var(--muted); font-size: 0.9rem;">
+                  Affichage des posts de la catégorie "<?= htmlspecialchars($current_category) ?>"
+                </p>
+              </div>
+              <a href="../controller/control.php?action=list" class="btn ghost">
+                <i class="fas fa-times"></i> Supprimer le filtre
+              </a>
+            </div>
+          </div>
+        </div>
+        <?php endif; ?>
+        
+        <!-- Forum Posts -->
+        <div class="forum-posts">
+          <?php if (empty($posts)): ?>
+            <div class="post">
+              <div class="post-content">
+                <p style="text-align: center; padding: 40px; color: var(--muted);">
+                  <?php if (!empty($current_category)): ?>
+                    Aucun post dans la catégorie "<?= htmlspecialchars($current_category) ?>". 
+                    <a href="../controller/control.php?action=create" style="color: var(--copper);">Soyez le premier à partager !</a>
+                  <?php else: ?>
+                    Aucun post pour le moment. 
+                    <a href="../controller/control.php?action=create" style="color: var(--copper);">Soyez le premier à partager !</a>
+                  <?php endif; ?>
+                </p>
+              </div>
+            </div>
+          <?php else: ?>
+            <?php foreach ($posts as $post): ?>
+            <div class="post" data-post-id="<?= $post['Id_post'] ?>">
+              <!-- En-tête du post -->
+              <div class="post-header">
+                <div class="post-author">
+                  <div class="user-avatar"><?= strtoupper(substr($post['auteur'] ?? 'U', 0, 1)) ?></div>
+                  <div class="author-info">
+                    <div class="author-name"><?= htmlspecialchars($post['auteur'] ?? 'Utilisateur') ?></div>
+                    <div class="post-time">
+                      <?= date('d/m/Y à H:i', strtotime($post['date_creation'])) ?> · 
+                      <span class="badge"><?= ucfirst($post['categorie']) ?></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Contenu du post -->
+              <div class="post-content">
+                <div class="post-text">
+                  <h3><?= htmlspecialchars($post['titre']) ?></h3>
+                  <p><?= nl2br(htmlspecialchars($post['contenu'])) ?></p>
+                </div>
+                <?php if (!empty($post['piece_jointe'])): ?>
+                <div class="post-image">
+                  <img src="../<?= $post['piece_jointe'] ?>" alt="Image du post" 
+                       onclick="openModal('../<?= $post['piece_jointe'] ?>')" style="cursor: zoom-in;">
+                </div>
+                <?php endif; ?>
+              </div>
+              
+              <!-- Statistiques et interactions -->
+              <div class="post-stats">
+                <div class="post-stat like-btn" onclick="toggleLike(this, <?= $post['Id_post'] ?>)">
+                  <i class="fas fa-heart <?= $post['user_liked'] ? 'liked' : '' ?>" 
+                     style="<?= $post['user_liked'] ? 'color: #e74c3c;' : '' ?>"></i>
+                  <span class="likes-count"><?= $post['likes_count'] ?> j'aime</span>
+                </div>
+                <div class="post-stat" onclick="window.location.href='../controller/control.php?action=view&id=<?= $post['Id_post'] ?>'">
+                  <i class="fas fa-comment"></i>
+                  <span><?= $post['comments_count'] ?? 0 ?> commentaires</span>
+                </div>
+                <div class="post-stat" onclick="sharePost(<?= $post['Id_post'] ?>)">
+                  <i class="fas fa-share"></i>
+                  <span>Partager</span>
+                </div>
+              </div>
+              
+              <!-- Boutons d'action sur la même ligne -->
+               <div class="post-interactions">
+                <button class="interaction-btn" onclick="window.location.href='../controller/control.php?action=view&id=<?= $post['Id_post'] ?>'">
+                  <i class="far fa-eye"></i>
+                  <span>Voir & Commenter</span>
+                </button>
+                
+                <?php if ($post['Id_utilisateur'] == $user_id || $is_admin): ?>
+                <button class="interaction-btn" onclick="window.location.href='../controller/control.php?action=edit&id=<?= $post['Id_post'] ?>'">
+                  <i class="far fa-edit"></i>
+                  <span>Modifier</span>
+                </button>
+                <button class="interaction-btn" onclick="if(confirm('Supprimer ce post ?')) window.location.href='../controller/control.php?action=delete&id=<?= $post['Id_post'] ?>'">
+                  <i class="fas fa-trash"></i>
+                  <span>Supprimer</span>
+                </button>
+                <?php endif; ?>
+              </div>
+            </div>
+            <?php endforeach; ?>
+          <?php endif; ?>
+        </div>
+      </div>
+      
+      <!-- Forum Sidebar -->
+      <div class="forum-sidebar">
+       <!-- Categories -->
+<div class="forum-card">
+    <div class="forum-header">
+        <h3>Catégories</h3>
+        <?php if (!empty($current_category)): ?>
+          <a href="../controller/control.php?action=list" class="btn ghost small" title="Voir tous les posts">
+            <i class="fas fa-times"></i>
+          </a>
+        <?php endif; ?>
+    </div>
+    <div class="forum-body">
+        <div class="forum-categories">
+            <?php
+            $categories = [
+                'Opportunités' => 'briefcase',
+                'Événements' => 'calendar-alt',
+                'Idées & Projets' => 'lightbulb',
+                'Questions' => 'question-circle',
+                'Ressources' => 'hand-holding-heart'
+            ];
+            
+            // Compter les posts par catégorie pour tous les posts (pas seulement ceux filtrés)
+            $allPosts = $this->postModel->all();
+            $categoryCounts = [];
+            foreach ($categories as $category => $icon) {
+                $count = 0;
+                foreach ($allPosts as $post) {
+                    if ($post['categorie'] === $category) {
+                        $count++;
+                    }
+                }
+                $categoryCounts[$category] = $count;
+            }
+            
+            foreach ($categories as $category => $icon):
+                $is_active = ($current_category === $category);
+            ?>
+            <a href="../controller/control.php?action=list&category=<?= urlencode($category) ?>" 
+               class="category <?= $is_active ? 'active' : '' ?>">
+                <div class="category-info">
+                    <div class="category-icon">
+                        <i class="fas fa-<?= $icon ?>"></i>
+                    </div>
+                    <div class="category-name"><?= $category ?></div>
+                </div>
+                <div class="category-count"><?= $categoryCounts[$category] ?></div>
+            </a>
+            <?php endforeach; ?>
+            
+            <!-- Lien pour voir tous les posts -->
+            <a href="../controller/control.php?action=list" class="category <?= empty($current_category) ? 'active' : '' ?>" style="border-top: 1px solid rgba(75,46,22,0.1); margin-top: 10px; padding-top: 10px;">
+                <div class="category-info">
+                    <div class="category-icon">
+                        <i class="fas fa-layer-group"></i>
+                    </div>
+                    <div class="category-name">Tous les posts</div>
+                </div>
+                <div class="category-count"><?= count($allPosts) ?></div>
+            </a>
+        </div>
+    </div>
+</div>
+        
+        <!-- Top Contributors -->
+        <div class="forum-card">
+          <div class="forum-header">
+            <h3>Top Contributeurs</h3>
+          </div>
+          <div class="forum-body">
+            <div class="top-contributors">
+              <!-- Cette section peut être dynamisée avec des données de la BD -->
+              <div class="contributor">
+                <div class="contributor-avatar">MZ</div>
+                <div class="contributor-info">
+                  <div class="contributor-name">Mariem Zouari</div>
+                  <div class="contributor-stats">42 posts, 128 likes</div>
+                </div>
+                <div class="contributor-points">570</div>
+              </div>
+              <div class="contributor">
+                <div class="contributor-avatar">AD</div>
+                <div class="contributor-info">
+                  <div class="contributor-name">Ahmed Dridi</div>
+                  <div class="contributor-stats">38 posts, 96 likes</div>
+                </div>
+                <div class="contributor-points">485</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Forum Rules -->
+        <div class="forum-card">
+          <div class="forum-header">
+            <h3>Règles du Forum</h3>
+          </div>
+          <div class="forum-body">
+            <div style="font-size: 0.9rem; color: var(--muted); line-height: 1.5;">
+              <p>• Respectez tous les membres</p>
+              <p>• Partagez des contenus pertinents</p>
+              <p>• Utilisez un langage inclusif</p>
+              <p>• Citez vos sources</p>
+              <p>• Signalez les contenus inappropriés</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+
+<!-- Modal pour l'image -->
+<div id="imageModal" class="modal-backdrop" style="display: none;">
+  <div class="modal" style="max-width: 90%; max-height: 90%;">
+    <div class="modal-header">
+      <button class="modal-close" onclick="closeModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="modal-body" style="text-align: center;">
+      <img id="modalImage" src="" alt="Image agrandie" style="max-width: 100%; max-height: 80vh;">
+    </div>
+  </div>
 </div>
 
 <script>
-    document.getElementById('navToggle').addEventListener('click', function() {
-        document.getElementById('sidePanel').classList.add('active');
-        document.getElementById('panelOverlay').classList.add('active');
-    });
+// Navigation panel
+document.getElementById('navToggle').addEventListener('click', function() {
+    document.getElementById('sidePanel').classList.add('active');
+    document.getElementById('panelOverlay').classList.add('active');
+});
 
-    document.getElementById('panelClose').addEventListener('click', function() {
-        document.getElementById('sidePanel').classList.remove('active');
-        document.getElementById('panelOverlay').classList.remove('active');
-    });
+document.getElementById('panelClose').addEventListener('click', function() {
+    document.getElementById('sidePanel').classList.remove('active');
+    document.getElementById('panelOverlay').classList.remove('active');
+});
 
-    document.getElementById('panelOverlay').addEventListener('click', function() {
-        document.getElementById('sidePanel').classList.remove('active');
-        this.classList.remove('active');
-    });
+document.getElementById('panelOverlay').addEventListener('click', function() {
+    document.getElementById('sidePanel').classList.remove('active');
+    this.classList.remove('active');
+});
 
-    document.getElementById('year').textContent = new Date().getFullYear();
+// Fonction pour prévisualiser les médias
+function previewMedia(input, type) {
+    const preview = document.getElementById('mediaPreview');
+    const imagePreview = document.getElementById('imagePreview');
+    const videoPreview = document.getElementById('videoPreview');
+    
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+            if (type === 'image') {
+                imagePreview.src = e.target.result;
+                imagePreview.style.display = 'block';
+                videoPreview.style.display = 'none';
+            } else if (type === 'video') {
+                videoPreview.src = e.target.result;
+                videoPreview.style.display = 'block';
+                imagePreview.style.display = 'none';
+            }
+            preview.style.display = 'block';
+        };
+        
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+// Fonction pour ajouter un lien
+function addLink() {
+    const url = prompt('Entrez l\'URL du lien:');
+    if (url) {
+        const textarea = document.getElementById('quickPostContent');
+        const currentText = textarea.value;
+        textarea.value = currentText + ' ' + url;
+    }
+}
+
+// Fonction pour partager un post
+function sharePost(postId) {
+    const url = window.location.origin + '/controller/control.php?action=view&id=' + postId;
+    
+    if (navigator.share) {
+        navigator.share({
+            title: 'ImpactAble - Post',
+            url: url
+        });
+    } else {
+        // Fallback pour les navigateurs qui ne supportent pas l'API Web Share
+        navigator.clipboard.writeText(url).then(function() {
+            alert('Lien copié dans le presse-papier !');
+        });
+    }
+}
+
+// Modal pour les images
+function openModal(imageSrc) {
+    document.getElementById('modalImage').src = imageSrc;
+    document.getElementById('imageModal').style.display = 'flex';
+}
+
+function closeModal() {
+    document.getElementById('imageModal').style.display = 'none';
+}
+
+// Fermer le modal en cliquant à l'extérieur
+document.getElementById('imageModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeModal();
+    }
+});
+
+// Système de likes avec base de données
+function toggleLike(element, postId) {
+    // Vérifier si l'utilisateur est connecté
+    <?php if (!$is_logged_in): ?>
+        alert('Vous devez être connecté pour liker un post');
+        return;
+    <?php endif; ?>
+
+    const heartIcon = element.querySelector('i.fa-heart');
+    const likesCount = element.querySelector('.likes-count');
+    
+    // Animation immédiate pour l'UX
+    const isCurrentlyLiked = heartIcon.classList.contains('liked');
+    
+    if (!isCurrentlyLiked) {
+        heartIcon.classList.add('liked');
+        heartIcon.style.color = '#e74c3c';
+        heartIcon.style.transform = 'scale(1.3)';
+        setTimeout(() => {
+            heartIcon.style.transform = 'scale(1)';
+        }, 300);
+    } else {
+        heartIcon.classList.remove('liked');
+        heartIcon.style.color = '';
+    }
+    
+    // Appel AJAX vers le serveur
+    fetch('../controller/control.php?action=toggle_like', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'post_id=' + postId
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Mettre à jour l'interface avec les vraies données
+            likesCount.textContent = data.likes_count + ' j\'aime';
+            
+            if (data.user_liked) {
+                heartIcon.classList.add('liked');
+                heartIcon.style.color = '#e74c3c';
+            } else {
+                heartIcon.classList.remove('liked');
+                heartIcon.style.color = '';
+            }
+        } else {
+            // Revenir à l'état précédent en cas d'erreur
+            if (!isCurrentlyLiked) {
+                heartIcon.classList.remove('liked');
+                heartIcon.style.color = '';
+            } else {
+                heartIcon.classList.add('liked');
+                heartIcon.style.color = '#e74c3c';
+            }
+            alert(data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Erreur:', error);
+        // Revenir à l'état précédent en cas d'erreur
+        if (!isCurrentlyLiked) {
+            heartIcon.classList.remove('liked');
+            heartIcon.style.color = '';
+        } else {
+            heartIcon.classList.add('liked');
+            heartIcon.style.color = '#e74c3c';
+        }
+    });
+}
+
+// Validation du formulaire rapide
+document.getElementById('quickPostForm').addEventListener('submit', function(e) {
+    const content = document.getElementById('quickPostContent').value.trim();
+    
+    if (!content) {
+        e.preventDefault();
+        alert('Veuillez écrire quelque chose avant de publier');
+        return;
+    }
+    
+    // Si le contenu est trop long, on le met dans le titre
+    if (content.length > 100) {
+        document.getElementById('quickPostTitle').value = content.substring(0, 50) + '...';
+    } else {
+        document.getElementById('quickPostTitle').value = content;
+    }
+});
 </script>
 
 </body>

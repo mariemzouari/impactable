@@ -10,11 +10,25 @@ class Post {
 
     public function all() {
         try {
+            // VERSION ULTRA-SIMPLE pour debug
             $sql = "SELECT p.*, CONCAT(u.prenom, ' ', u.nom) AS auteur 
                     FROM post p 
-                    JOIN utilisateur u ON p.Id_utilisateur = u.Id_utilisateur
+                    INNER JOIN utilisateur u ON p.Id_utilisateur = u.Id_utilisateur
                     ORDER BY p.date_creation DESC";
-            return $this->pdo->query($sql)->fetchAll();
+            
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute();
+            $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            // DEBUG: Log pour vérifier
+            error_log("=== DEBUG all() ===");
+            error_log("Nombre de posts récupérés: " . count($results));
+            foreach ($results as $post) {
+                error_log("Post ID: {$post['Id_post']} - Titre: {$post['titre']}");
+            }
+            error_log("==================");
+            
+            return $results;
         } catch (PDOException $e) {
             error_log("Erreur all posts: " . $e->getMessage());
             return [];
@@ -26,7 +40,24 @@ class Post {
             $sql = "INSERT INTO post (Id_utilisateur, titre, categorie, contenu, piece_jointe, date_creation) 
                     VALUES (?, ?, ?, ?, ?, NOW())";
             $stmt = $this->pdo->prepare($sql);
-            return $stmt->execute([$id_utilisateur, $titre, $categorie, $contenu, $piece_jointe]);
+            $result = $stmt->execute([$id_utilisateur, $titre, $categorie, $contenu, $piece_jointe]);
+            
+            if ($result) {
+                $newId = $this->pdo->lastInsertId();
+                error_log("✅ Post créé avec succès - ID: $newId");
+                
+                // VERIFICATION: Le post existe-t-il vraiment ?
+                $verify = $this->pdo->prepare("SELECT Id_post, titre FROM post WHERE Id_post = ?");
+                $verify->execute([$newId]);
+                $created = $verify->fetch(PDO::FETCH_ASSOC);
+                if ($created) {
+                    error_log("✅ Vérification OK: Post ID $newId existe dans la BD");
+                } else {
+                    error_log("❌ ERREUR: Post ID $newId n'existe PAS dans la BD !");
+                }
+            }
+            
+            return $result;
         } catch (PDOException $e) {
             error_log("Erreur création post: " . $e->getMessage());
             return false;
@@ -37,11 +68,11 @@ class Post {
         try {
             $sql = "SELECT p.*, CONCAT(u.prenom, ' ', u.nom) AS auteur 
                     FROM post p 
-                    JOIN utilisateur u ON p.Id_utilisateur = u.Id_utilisateur
+                    INNER JOIN utilisateur u ON p.Id_utilisateur = u.Id_utilisateur
                     WHERE p.Id_post = ?";
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute([$id]);
-            return $stmt->fetch();
+            return $stmt->fetch(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
             error_log("Erreur findById: " . $e->getMessage());
             return false;
@@ -61,6 +92,14 @@ class Post {
 
     public function delete($id) {
         try {
+            $sql_comments = "DELETE FROM commentaire WHERE Id_post = ?";
+            $stmt_comments = $this->pdo->prepare($sql_comments);
+            $stmt_comments->execute([$id]);
+            
+            $sql_likes = "DELETE FROM likes WHERE Id_post = ?";
+            $stmt_likes = $this->pdo->prepare($sql_likes);
+            $stmt_likes->execute([$id]);
+            
             $sql = "DELETE FROM post WHERE Id_post = ?";
             $stmt = $this->pdo->prepare($sql);
             return $stmt->execute([$id]);
@@ -120,7 +159,7 @@ class Post {
             $tableExists = $this->pdo->query("SHOW TABLES LIKE 'utilisateur'")->rowCount() > 0;
             
             if (!$tableExists) {
-                error_log("❌ Table utilisateur n'existe pas");
+                error_log("⚠ Table utilisateur n'existe pas");
                 return false;
             }
             
@@ -131,19 +170,8 @@ class Post {
                 $sql = "INSERT INTO utilisateur (nom, prenom, email, mot_de_passe, role) VALUES (?, ?, ?, ?, ?)";
                 $stmt = $this->pdo->prepare($sql);
                 
-                $nom = "Admin";
-                $prenom = "ImpactAble";
-                $email = "admin@impactable.org";
-                $mot_de_passe = password_hash("admin123", PASSWORD_DEFAULT);
-                $role = "admin";
-                
-                if ($stmt->execute([$nom, $prenom, $email, $mot_de_passe, $role])) {
-                    $newId = $this->pdo->lastInsertId();
-                    error_log("✅ Utilisateur admin créé avec ID: $newId");
-                    return $newId;
-                } else {
-                    error_log("❌ Échec exécution requête création utilisateur");
-                    return false;
+                if ($stmt->execute(["Admin", "ImpactAble", "admin@impactable.org", password_hash("admin123", PASSWORD_DEFAULT), "admin"])) {
+                    return $this->pdo->lastInsertId();
                 }
             }
             
@@ -158,7 +186,7 @@ class Post {
             return $result ? $result['Id_utilisateur'] : false;
             
         } catch (PDOException $e) {
-            error_log("❌ Erreur createDefaultUser: " . $e->getMessage());
+            error_log("⚠ Erreur createDefaultUser: " . $e->getMessage());
             return false;
         }
     }
@@ -166,7 +194,7 @@ class Post {
     public function getAllUsers() {
         try {
             $sql = "SELECT Id_utilisateur, nom, prenom, email, role FROM utilisateur";
-            return $this->pdo->query($sql)->fetchAll();
+            return $this->pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
             error_log("Erreur getAllUsers: " . $e->getMessage());
             return [];
@@ -211,11 +239,11 @@ class Post {
         try {
             $sql = "SELECT c.*, CONCAT(u.prenom, ' ', u.nom) AS auteur, c.Id_utilisateur
                     FROM commentaire c 
-                    JOIN utilisateur u ON c.Id_utilisateur = u.Id_utilisateur 
+                    INNER JOIN utilisateur u ON c.Id_utilisateur = u.Id_utilisateur 
                     WHERE c.Id_commentaire = ?";
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute([$comment_id]);
-            return $stmt->fetch();
+            return $stmt->fetch(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
             error_log("Erreur getCommentById: " . $e->getMessage());
             return false;
@@ -226,19 +254,18 @@ class Post {
         try {
             $sql = "SELECT c.*, CONCAT(u.prenom, ' ', u.nom) AS auteur, c.Id_utilisateur
                     FROM commentaire c 
-                    JOIN utilisateur u ON c.Id_utilisateur = u.Id_utilisateur 
+                    INNER JOIN utilisateur u ON c.Id_utilisateur = u.Id_utilisateur 
                     WHERE c.Id_post = ? 
                     ORDER BY c.date_creation ASC";
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute([$post_id]);
-            return $stmt->fetchAll();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
             error_log("Erreur getCommentsByPostId: " . $e->getMessage());
             return [];
         }
     }
 
-    // NOUVELLES MÉTHODES POUR ADMIN
     public function getAllComments() {
         try {
             $sql = "SELECT c.*, 
@@ -246,10 +273,10 @@ class Post {
                            CONCAT(u.prenom, ' ', u.nom) AS auteur,
                            u.Id_utilisateur
                     FROM commentaire c 
-                    JOIN post p ON c.Id_post = p.Id_post
-                    JOIN utilisateur u ON c.Id_utilisateur = u.Id_utilisateur
+                    INNER JOIN post p ON c.Id_post = p.Id_post
+                    INNER JOIN utilisateur u ON c.Id_utilisateur = u.Id_utilisateur
                     ORDER BY c.date_creation DESC";
-            return $this->pdo->query($sql)->fetchAll();
+            return $this->pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
             error_log("Erreur getAllComments: " . $e->getMessage());
             return [];
@@ -311,7 +338,7 @@ class Post {
             $errors[] = "Le contenu doit contenir au moins 10 caractères";
         }
 
-        $categoriesValides = ['opportunites', 'evenements', 'campagnes', 'questions', 'ressources', 'autre'];
+        $categoriesValides = ['Opportunités', 'Événements', 'Idées & Projets', 'Questions','Ressources'];
         if (empty($categorie)) {
             $errors[] = "La catégorie est obligatoire";
         } elseif (!in_array($categorie, $categoriesValides)) {
@@ -328,14 +355,11 @@ class Post {
             $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
             $maxFileSize = 5 * 1024 * 1024;
             
-            $fileType = $file['type'];
-            $fileSize = $file['size'];
-            
-            if (!in_array($fileType, $allowedTypes)) {
+            if (!in_array($file['type'], $allowedTypes)) {
                 $errors[] = "Type de fichier non autorisé. Formats acceptés: JPG, PNG, GIF, WebP";
             }
             
-            if ($fileSize > $maxFileSize) {
+            if ($file['size'] > $maxFileSize) {
                 $errors[] = "Le fichier est trop volumineux (max 5MB)";
             }
         }
@@ -347,13 +371,17 @@ class Post {
         try {
             $sql = "SELECT p.*, CONCAT(u.prenom, ' ', u.nom) AS auteur 
                     FROM post p 
-                    JOIN utilisateur u ON p.Id_utilisateur = u.Id_utilisateur
+                    INNER JOIN utilisateur u ON p.Id_utilisateur = u.Id_utilisateur
                     WHERE p.categorie = ?
                     ORDER BY p.date_creation DESC";
             
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute([$category]);
-            return $stmt->fetchAll();
+            $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            error_log("Posts filtrés par '{$category}': " . count($results));
+            
+            return $results;
         } catch (PDOException $e) {
             error_log("Erreur filterByCategory: " . $e->getMessage());
             return [];
@@ -364,14 +392,14 @@ class Post {
         try {
             $sql = "SELECT p.*, CONCAT(u.prenom, ' ', u.nom) AS auteur 
                     FROM post p 
-                    JOIN utilisateur u ON p.Id_utilisateur = u.Id_utilisateur
+                    INNER JOIN utilisateur u ON p.Id_utilisateur = u.Id_utilisateur
                     WHERE p.titre LIKE ? OR p.contenu LIKE ?
                     ORDER BY p.date_creation DESC";
             
             $stmt = $this->pdo->prepare($sql);
             $searchTerm = '%' . $query . '%';
             $stmt->execute([$searchTerm, $searchTerm]);
-            return $stmt->fetchAll();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
             error_log("Erreur search: " . $e->getMessage());
             return [];
