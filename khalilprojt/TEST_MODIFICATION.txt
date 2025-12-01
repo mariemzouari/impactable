@@ -1,0 +1,9 @@
+CECI EST UN TEST DE MODIFICATION DIRECTE
+
+Date: 30/11/2024
+Heure: Maintenant
+
+Si vous voyez ce fichier dans VS Code après avoir actualisé,
+cela prouve que mes modifications fonctionnent !
+
+Kiro IDE peut modifier directement vos fichiers.
