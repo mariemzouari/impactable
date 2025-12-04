@@ -1,6 +1,6 @@
 <?php
 // FrontCampagneController.php - Version CORRIGÉE
-include __DIR__ . '/../config.php';
+include_once __DIR__ . '/../config.php';
 
 class FrontCampagneController {
     private $db;
@@ -61,7 +61,7 @@ class FrontCampagneController {
         }
     }
 
-    // MÉTHODE CORRIGÉE : Actualiser le montant d'une campagne
+    
     public function actualiserMontantCampagne($id_campagne) {
         try {
             // Calculer la somme des dons CONFIRMÉS pour cette campagne
@@ -112,6 +112,71 @@ class FrontCampagneController {
             
         } catch (PDOException $e) {
             error_log("❌ Erreur actualiserTousLesMontants: " . $e->getMessage());
+        }
+    }
+    // FrontCampagneController.php - Ajouter cette méthode
+
+
+    public function getCampagnesAvecProblemes() {
+    try {
+        // D'abord actualiser tous les montants
+        $this->actualiserTousLesMontants();
+        
+        $query = "SELECT * FROM campagnecollecte 
+                 WHERE date_fin < CURDATE() 
+                 AND montant_actuel < objectif_montant
+                 AND statut NOT IN ('terminée', 'objectif_atteint')
+                 ORDER BY date_fin ASC";
+        
+        $stmt = $this->db->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        error_log("Erreur getCampagnesAvecProblemes: " . $e->getMessage());
+        return [];
+    }
+}
+
+// Méthode pour compter les campagnes problématiques
+
+    public function countCampagnesAvecProblemes() {
+    try {
+        $query = "SELECT COUNT(*) as count FROM campagnecollecte 
+                 WHERE date_fin < CURDATE() 
+                 AND montant_actuel < objectif_montant
+                 AND statut NOT IN ('terminée', 'objectif_atteint')";
+        
+        $stmt = $this->db->prepare($query);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result['count'];
+    } catch (PDOException $e) {
+        error_log("Erreur countCampagnesAvecProblemes: " . $e->getMessage());
+        return 0;
+    }
+}
+
+    // ✅ NOUVELLE MÉTHODE POUR JOINTURE
+    public function getDonsParCampagne($id_campagne) {
+        try {
+            // JOINTURE : Don + Utilisateur pour une campagne
+            $query = "SELECT 
+                        d.*,
+                        u.nom as donateur_nom,
+                        u.email as donateur_email
+                     FROM don d
+                     JOIN utilisateur u ON d.id_utilisateur = u.Id_utilisateur
+                     WHERE d.id_campagne = ?
+                     ORDER BY d.date_don DESC
+                     LIMIT 10"; // Limite à 10 derniers dons
+            
+            $stmt = $this->db->prepare($query);
+            $stmt->execute([$id_campagne]);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+        } catch (PDOException $e) {
+            error_log("Erreur getDonsParCampagne: " . $e->getMessage());
+            return [];
         }
     }
 }

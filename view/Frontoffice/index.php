@@ -190,7 +190,7 @@ $campagnesAccueil = array_slice($campagnes, 0, 2);
               </div>
               <p class="small text-muted mt-8"><?= number_format($progression, 1) ?>% collectés · <?= $jours_restants ?> jours restants</p>
               <div class="card-actions mt-16">
-                <a class="btn primary" href="Don.php?id_campagne=<?= $campagne['Id_campagne'] ?>">
+                <a class="btn primary" href="DonView.php?id_campagne=<?= $campagne['Id_campagne'] ?>">
                   Faire un don
                 </a>
                 <a class="btn ghost" href="listCampagnes.php">

@@ -201,7 +201,7 @@ foreach($campagnes as $campagne) {
             </div>
             
             <div class="card-footer">
-              <a href="Don.php?id_campagne=<?= $campagne['Id_campagne'] ?>" class="btn primary">
+              <a href="DonView?id_campagne=<?= $campagne['Id_campagne'] ?>" class="btn primary">
                 <i class="fas fa-heart"></i>
                 Faire un don
               </a>

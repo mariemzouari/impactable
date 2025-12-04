@@ -16,28 +16,28 @@ class CampagneController {
     }
 
     public function deleteCampagne($id) {
-    $db = config::getConnexion();
-    
-    try {
-        // D'abord supprimer tous les dons associés
-        $sqlDeleteDons = "DELETE FROM don WHERE Id_campagne = :id";
-        $reqDons = $db->prepare($sqlDeleteDons);
-        $reqDons->bindValue(':id', $id);
-        $reqDons->execute();
+        $db = config::getConnexion();
         
-        // Ensuite supprimer la campagne
-        $sqlDeleteCampagne = "DELETE FROM campagnecollecte WHERE Id_campagne = :id";
-        $reqCampagne = $db->prepare($sqlDeleteCampagne);
-        $reqCampagne->bindValue(':id', $id);
-        $reqCampagne->execute();
-        
-        return true;
-        
-    } catch (Exception $e) {
-        error_log('Error deleting campaign: ' . $e->getMessage());
-        return false;
+        try {
+            // D'abord supprimer tous les dons associés
+            $sqlDeleteDons = "DELETE FROM don WHERE Id_campagne = :id";
+            $reqDons = $db->prepare($sqlDeleteDons);
+            $reqDons->bindValue(':id', $id);
+            $reqDons->execute();
+            
+            // Ensuite supprimer la campagne
+            $sqlDeleteCampagne = "DELETE FROM campagnecollecte WHERE Id_campagne = :id";
+            $reqCampagne = $db->prepare($sqlDeleteCampagne);
+            $reqCampagne->bindValue(':id', $id);
+            $reqCampagne->execute();
+            
+            return true;
+            
+        } catch (Exception $e) {
+            error_log('Error deleting campaign: ' . $e->getMessage());
+            return false;
+        }
     }
-}
 
     public function addCampagne(Campagne $campagne) {
         $sql = "INSERT INTO campagnecollecte 
@@ -154,6 +154,30 @@ class CampagneController {
     // Get all campaigns (alias for listCampagnes)
     public function getAllCampagnes() {
         return $this->listCampagnes();
+    }
+    
+    // ✅ NOUVELLE MÉTHODE POUR JOINTURE
+    public function getAllCampagnesAvecCreateurs() {
+        try {
+            $db = config::getConnexion();
+            
+            // JOINTURE : Campagne + Utilisateur
+            $query = "SELECT 
+                        c.*,
+                        u.nom as createur_nom,
+                        u.email as createur_email
+                     FROM campagnecollecte c
+                     LEFT JOIN utilisateur u ON c.Id_utilisateur = u.Id_utilisateur
+                     ORDER BY c.date_debut DESC";
+            
+            $stmt = $db->prepare($query);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+        } catch (Exception $e) {
+            error_log('Error getAllCampagnesAvecCreateurs: ' . $e->getMessage());
+            return [];
+        }
     }
 }
 ?>

@@ -40,7 +40,7 @@ class EmailController {
         // Envoyer l'email (décommentez pour activer)
         // return mail($email, $sujet, $message, $headers);
         
-        return true; // Simulation
+        return mail($email, $sujet, $message, $headers);
     }
 }
 ?>

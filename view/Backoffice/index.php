@@ -1,4 +1,11 @@
 
+<?php
+// Inclure le contrôleur pour vérifier les campagnes problématiques
+include __DIR__ . '/../../controller/FrontCampagneController.php';
+$frontController = new FrontCampagneController();
+$campagnesProblemes = $frontController->getCampagnesAvecProblemes();
+$countProblemes = count($campagnesProblemes);
+?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -52,6 +59,11 @@
                         <span>Campagnes</span>
                     </a>
                 </div>
+                <a href="list-don.php" class="sidebar-link">
+    <i class="fas fa-donate"></i>
+    <span>Dons</span>
+</a>
+
                 <a href="#resources" class="sidebar-link">
             <i class="fas fa-book"></i>
             <span>Ressources</span>
@@ -138,6 +150,32 @@
                         <div class="stat-label">Objectifs Atteints</div>
                     </div>
                 </div>
+                <!-- Alertes pour campagnes problématiques -->
+<?php if ($countProblemes > 0): ?>
+<div class="content-card alert-warning">
+    <div class="card-header">
+        <h3><i class="fas fa-exclamation-triangle"></i> Alertes Campagnes</h3>
+    </div>
+    <div class="card-body">
+        <div class="alert-message">
+            <p><strong><?php echo $countProblemes; ?> campagne(s) nécessite(nt) votre attention :</strong></p>
+            <ul>
+                <?php foreach ($campagnesProblemes as $campagne): 
+                    $joursDepuisFin = floor((time() - strtotime($campagne['date_fin'])) / (60 * 60 * 24));
+                ?>
+                <li>
+                    <strong>"<?php echo htmlspecialchars($campagne['titre']); ?>"</strong> - 
+                    Date de fin dépassée depuis <?php echo $joursDepuisFin; ?> jour(s) - 
+                    <a href="update-camp.php?id=<?php echo $campagne['Id_campagne']; ?>" class="btn small primary">
+                        <i class="fas fa-edit"></i> Modifier la date
+                    </a>
+                </li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+    </div>
+</div>
+<?php endif; ?>
 
                 <!-- Actions rapides -->
                 <div class="content-card">

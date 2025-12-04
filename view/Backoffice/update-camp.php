@@ -220,6 +220,19 @@ if (
                                     <input type="date" class="input" id="date_fin" name="date_fin" 
                                            value="<?php echo $campagne['date_fin'] ?? ''; ?>" >
                                 </div>
+                                <?php 
+// Calculer une suggestion de nouvelle date (30 jours supplémentaires)
+$dateFinActuelle = $campagne['date_fin'];
+$nouvelleDateSuggestion = date('Y-m-d', strtotime($dateFinActuelle . ' + 30 days'));
+?>
+
+<?php if ($campagne['date_fin'] < date('Y-m-d') && $campagne['montant_actuel'] < $campagne['objectif_montant']): ?>
+<div class="alert warning">
+    <i class="fas fa-exclamation-triangle"></i>
+    <strong>Attention :</strong> Cette campagne a dépassé sa date de fin sans atteindre son objectif.
+    <br>Suggestion : Prolongez jusqu'au <strong><?php echo $nouvelleDateSuggestion; ?></strong>
+</div>
+<?php endif; ?>
 
                                 <!-- Description -->
                                 <div class="form-group full-width">
