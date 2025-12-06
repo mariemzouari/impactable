@@ -25,15 +25,26 @@ $reclamations = $reclamationController->listReclamations();
 <body>
     <div class="container">
         <header>
-            <div class="logo">
-                <div class="logo-icon">🎯</div>
-                <h1>Impactable</h1>
+            <div class="logo-brand">
+                <div class="logo-icon-box"><i class="fas fa-universal-access"></i></div>
+                <div class="logo-text-box">
+                    <span class="logo-name">ImpactAble</span>
+                    <span class="logo-slogan">Where Ability Meets Impact</span>
+                </div>
             </div>
             <h2>Système de Réclamations</h2>
             <p class="subtitle">Votre voix compte. Nous sommes là pour vous écouter.</p>
-            <a href="../backoffice/admin_dashboard.php" class="dashboard-btn-header">
-                <i class="fas fa-tachometer-alt"></i> Dashboard Admin
-            </a>
+            <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; margin-top: 20px;">
+                <a href="suivi_reclamation.php" class="dashboard-btn-header" style="background: linear-gradient(135deg, #4B2E16, #5E6D3B);">
+                    <i class="fas fa-search"></i> Suivre ma Réclamation
+                </a>
+                <a href="demo_ia.php" class="dashboard-btn-header" style="background: linear-gradient(135deg, #b47b47, #4B2E16);">
+                    <i class="fas fa-brain"></i> Démo IA
+                </a>
+                <a href="../backoffice/admin_dashboard.php" class="dashboard-btn-header">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard Admin
+                </a>
+            </div>
         </header>
 
         <!-- Navigation -->
@@ -155,7 +166,7 @@ $reclamations = $reclamationController->listReclamations();
 
                     <div class="form-group">
                         <label for="dateIncident">Date de l'incident <span class="required">*</span></label>
-                        <input type="text" id="dateIncident" name="dateIncident" placeholder="YYYY-MM-DD">
+                        <input type="date" id="dateIncident" name="dateIncident" max="<?= date('Y-m-d') ?>">
                     </div>
 
                     <div class="form-group">
@@ -241,6 +252,17 @@ $reclamations = $reclamationController->listReclamations();
                     <h3>Réclamation envoyée avec succès !</h3>
                     <p>Nous avons bien reçu votre réclamation.</p>
                     <p><strong>Numéro de suivi : <span id="trackingNumber"></span></strong></p>
+                    
+                    <!-- Analyse IA -->
+                    <div id="iaAnalysisResult" style="margin-top: 20px; background: rgba(255,255,255,0.2); padding: 15px; border-radius: 10px; display: none;">
+                        <h4 style="margin-bottom: 10px;"><i class="fas fa-brain"></i> Analyse Intelligente</h4>
+                        <p><strong>Priorité détectée :</strong> <span id="iaPriorite"></span></p>
+                        <p><strong>Niveau de confiance :</strong> <span id="iaConfiance"></span>%</p>
+                    </div>
+                    
+                    <a href="suivi_reclamation.php" id="suiviLink" class="submit-btn" style="margin-top: 20px; text-decoration: none; display: inline-block;">
+                        <i class="fas fa-search"></i> Suivre ma réclamation
+                    </a>
                 </div>
 
             </form>

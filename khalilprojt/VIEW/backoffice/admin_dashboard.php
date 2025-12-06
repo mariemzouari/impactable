@@ -33,10 +33,13 @@ if (isset($_GET['delete'])) {
                 <a href="admin_dashboard.php" class="active">
                     <i class="fas fa-tachometer-alt"></i> Dashboard
                 </a>
+                <a href="statistiques_avancees.php">
+                    <i class="fas fa-chart-line"></i> Statistiques IA
+                </a>
                 <a href="gestion_reclamation/addReclamation.php">
                     <i class="fas fa-file-alt"></i> Réclamations
                 </a>
-                <a href="reponsecrud/liste_reponses.php?reclamation_id=1">
+                <a href="reponsecrud/toutes_reponses.php">
                     <i class="fas fa-comments"></i> Réponses
                 </a>
                 <a href="../frontoffice/index.php" target="_blank">

@@ -126,12 +126,8 @@ function validateReclamationForm() {
     
     // Validation date incident
     const dateIncident = document.getElementById('dateIncident');
-    const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
-    if (!dateIncident || !dateIncident.value.trim()) {
-        errors.push('La date de l\'incident est requise (format: YYYY-MM-DD)');
-        if (dateIncident) dateIncident.style.borderColor = '#D32F2F';
-    } else if (!dateRegex.test(dateIncident.value.trim())) {
-        errors.push('La date doit être au format YYYY-MM-DD (ex: 2025-11-30)');
+    if (!dateIncident || !dateIncident.value) {
+        errors.push('La date de l\'incident est requise');
         if (dateIncident) dateIncident.style.borderColor = '#D32F2F';
     } else if (dateIncident) {
         dateIncident.style.borderColor = '#A9B97D';
@@ -213,6 +209,30 @@ if (reclamationForm) {
                     successMessage.classList.add('show');
                 }
                 
+                // Afficher l'analyse IA si disponible
+                if (data.analyse_ia) {
+                    const iaResult = document.getElementById('iaAnalysisResult');
+                    const iaPriorite = document.getElementById('iaPriorite');
+                    const iaConfiance = document.getElementById('iaConfiance');
+                    const suiviLink = document.getElementById('suiviLink');
+                    
+                    if (iaResult && iaPriorite && iaConfiance) {
+                        // Afficher la priorité avec un emoji
+                        let prioriteEmoji = '🟢';
+                        if (data.analyse_ia.priorite_finale === 'Urgente') prioriteEmoji = '🔴';
+                        else if (data.analyse_ia.priorite_finale === 'Moyenne') prioriteEmoji = '🟠';
+                        
+                        iaPriorite.textContent = prioriteEmoji + ' ' + data.analyse_ia.priorite_finale;
+                        iaConfiance.textContent = data.analyse_ia.confiance;
+                        iaResult.style.display = 'block';
+                    }
+                    
+                    // Mettre à jour le lien de suivi
+                    if (suiviLink && data.id) {
+                        suiviLink.href = 'suivi_reclamation.php?id=' + data.id;
+                    }
+                }
+                
                 // Réinitialiser le formulaire
                 reclamationForm.reset();
                 if (charCount) charCount.textContent = '0';
@@ -224,13 +244,7 @@ if (reclamationForm) {
                     successMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 }
                 
-                // Masquer le message après 10 secondes (optionnel)
-                setTimeout(() => {
-                    if (successMessage) {
-                        successMessage.style.display = 'none';
-                        successMessage.classList.remove('show');
-                    }
-                }, 10000);
+                // Ne pas masquer automatiquement pour permettre à l'utilisateur de voir l'analyse IA
             } else {
                 // Afficher un message d'erreur détaillé
                 const errorMsg = data.message || 'Une erreur inconnue est survenue.';
