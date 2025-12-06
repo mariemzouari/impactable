@@ -31,19 +31,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['texte'])) {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 12px;
+            gap: 15px;
             margin-bottom: 25px;
         }
         .logo-icon-box {
+            position: relative;
+            width: 55px;
+            height: 55px;
             background: #1a1a1a;
-            color: white;
-            width: 45px;
-            height: 45px;
-            border-radius: 8px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5em;
+        }
+        .logo-icon-box::before {
+            content: '';
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 18px;
+            height: 18px;
+            background: #F4ECDD;
+            border-radius: 0 8px 0 50%;
+        }
+        .logo-icon-box i {
+            font-size: 1.4em;
+            color: white;
+            z-index: 1;
         }
         .logo-text-box {
             display: flex;
@@ -51,16 +65,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['texte'])) {
             align-items: flex-start;
         }
         .logo-name {
-            font-size: 1.8em;
+            font-size: 2.2em;
             font-weight: 700;
             color: #1a1a1a;
             line-height: 1;
+            letter-spacing: -1px;
         }
         .logo-slogan {
-            font-size: 0.75em;
-            color: #555;
+            font-size: 0.85em;
+            color: #1a1a1a;
             font-style: italic;
-            margin-top: 2px;
+            margin-top: 3px;
         }
         .demo-container {
             max-width: 1000px;
@@ -403,7 +418,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['texte'])) {
     <div class="container demo-container">
         <header>
             <div class="logo-brand">
-                <div class="logo-icon-box"><i class="fas fa-universal-access"></i></div>
+                <div class="logo-icon-box"><i class="fas fa-compress-arrows-alt"></i></div>
                 <div class="logo-text-box">
                     <span class="logo-name">ImpactAble</span>
                     <span class="logo-slogan">Where Ability Meets Impact</span>
