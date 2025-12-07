@@ -5,8 +5,8 @@
  */
 class ChatBot {
     
-    private static $botName = "ImpactBot";
-    private static $botAvatar = "🤖";
+    private static $botName = "Khalil";
+    private static $botAvatar = "images/khalil.jpg";
     
     // Base de connaissances enrichie du chatbot
     private static $knowledgeBase = [
@@ -15,10 +15,10 @@ class ChatBot {
         'salutations' => [
             'keywords' => ['bonjour', 'salut', 'hello', 'hi', 'bonsoir', 'hey', 'coucou', 'salam', 'bsr', 'bjr', 'cc'],
             'responses' => [
-                "Bonjour ! 👋 Je suis **ImpactBot**, votre assistant virtuel dédié à l'accessibilité.\n\nComment puis-je vous aider aujourd'hui ?\n\n• 📝 Créer une réclamation\n• 🔍 Suivre un dossier\n• ❓ Poser une question",
-                "Salut ! 😊 Bienvenue sur ImpactAble !\n\nJe suis là pour vous accompagner dans toutes vos démarches. Que souhaitez-vous faire ?",
-                "Bienvenue ! 🌟 Je suis ImpactBot, votre assistant personnel.\n\n**'Where Ability Meets Impact'** - Ensemble, faisons la différence !",
-                "Hello ! 👋 Ravi de vous voir sur ImpactAble !\n\nJe peux vous aider à :\n• Déposer une réclamation\n• Suivre votre dossier\n• Répondre à vos questions\n\nQue puis-je faire pour vous ?"
+                "Bonjour ! 👋 Je suis **Khalil**, votre assistant virtuel dédié à l'accessibilité.\n\nComment puis-je vous aider aujourd'hui ?\n\n• 📝 Créer une réclamation\n• 🔍 Suivre un dossier\n• ❓ Poser une question",
+                "Salut ! 😊 Bienvenue sur ImpactAble !\n\nJe suis Khalil, là pour vous accompagner dans toutes vos démarches. Que souhaitez-vous faire ?",
+                "Bienvenue ! 🌟 Je suis Khalil, votre assistant personnel.\n\n**'Where Ability Meets Impact'** - Ensemble, faisons la différence !",
+                "Hello ! 👋 Ravi de vous voir sur ImpactAble !\n\nJe suis Khalil, je peux vous aider à :\n• Déposer une réclamation\n• Suivre votre dossier\n• Répondre à vos questions\n\nQue puis-je faire pour vous ?"
             ]
         ],
         
@@ -103,7 +103,7 @@ class ChatBot {
             'keywords' => ['ia', 'intelligence', 'artificielle', 'automatique', 'robot', 'bot', 'machine', 'algorithme', 'comment ça marche', 'technologie'],
             'responses' => [
                 "🧠 **Notre Intelligence Artificielle expliquée :**\n\n**Comment ça marche ?**\n\n1️⃣ **Analyse sémantique** : L'IA lit votre texte\n2️⃣ **Détection de mots-clés** : 150+ mots analysés\n3️⃣ **Scoring** : Points attribués selon la gravité\n4️⃣ **Priorisation** : Suggestion automatique\n\n**Mots détectés automatiquement :**\n• 🔴 \"urgent\", \"bloqué\", \"danger\", \"accident\"\n• 🟠 \"problème\", \"aide\", \"difficulté\"\n• 🟢 \"suggestion\", \"amélioration\"\n\n🎯 Testez sur la page **'Démo IA'** !",
-                "**Je suis ImpactBot, votre assistant IA !** 🤖\n\n**Mes capacités :**\n• Comprendre vos questions en langage naturel\n• Analyser la priorité des réclamations\n• Guider pas à pas\n• Répondre 24h/24\n\n**Ce que je ne peux PAS faire :**\n• Traiter directement votre dossier\n• Accéder à vos données personnelles\n• Remplacer un agent humain\n\nMais je fais de mon mieux pour vous aider ! 💪"
+                "**Je suis Khalil, votre assistant IA !** 🤖\n\n**Mes capacités :**\n• Comprendre vos questions en langage naturel\n• Analyser la priorité des réclamations\n• Guider pas à pas\n• Répondre 24h/24\n\n**Ce que je ne peux PAS faire :**\n• Traiter directement votre dossier\n• Accéder à vos données personnelles\n• Remplacer un agent humain\n\nMais je fais de mon mieux pour vous aider ! 💪"
             ]
         ],
         
@@ -258,7 +258,7 @@ class ChatBot {
             'comment' => "🤔 Que voulez-vous savoir exactement ? Je peux vous expliquer :\n• Comment faire une réclamation\n• Comment suivre un dossier\n• Comment fonctionne l'IA",
             'pourquoi' => "🤔 Bonne question ! Pouvez-vous préciser ce que vous voulez comprendre ?",
             'quoi' => "❓ Que souhaitez-vous savoir ? Je suis là pour répondre à vos questions sur ImpactAble !",
-            'qui' => "🤖 Je suis ImpactBot, votre assistant virtuel ! Et vous, comment puis-je vous aider ?",
+            'qui' => "👋 Je suis Khalil, votre assistant virtuel ! Et vous, comment puis-je vous aider ?",
             '?' => "❓ Vous avez une question ? N'hésitez pas à la poser clairement, je ferai de mon mieux pour y répondre !",
             'test' => "✅ Test reçu ! Je fonctionne correctement. Comment puis-je vous aider ? 🤖",
         ];
@@ -341,7 +341,7 @@ class ChatBot {
         $greeting = $hour < 12 ? "Bonjour" : ($hour < 18 ? "Bon après-midi" : "Bonsoir");
         
         $messages = [
-            "$greeting ! 👋 Je suis **ImpactBot**, votre assistant virtuel.\n\n🎯 Je peux vous aider à :\n• Créer une réclamation\n• Suivre votre dossier\n• Répondre à vos questions\n\n*'Where Ability Meets Impact'* ✨\n\nComment puis-je vous aider ?",
+            "$greeting ! 👋 Je suis **Khalil**, votre assistant virtuel.\n\n🎯 Je peux vous aider à :\n• Créer une réclamation\n• Suivre votre dossier\n• Répondre à vos questions\n\n*'Where Ability Meets Impact'* ✨\n\nComment puis-je vous aider ?",
         ];
         
         return [
