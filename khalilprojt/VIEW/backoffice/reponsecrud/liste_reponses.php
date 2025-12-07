@@ -36,8 +36,11 @@ $totalReponses = count($reponses);
         <div class="header">
             <h1><i class="fas fa-comments"></i> Réponses - Réclamation #<?= $reclamationId ?></h1>
             <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <a href="ajouter_reponse_ia.php?reclamation_id=<?= $reclamationId ?>" class="btn btn-primary" style="background: linear-gradient(135deg, #5E6D3B, #A9B97D);">
+                    <i class="fas fa-robot"></i> Réponse IA
+                </a>
                 <a href="ajouter_reponse.php?reclamation_id=<?= $reclamationId ?>" class="btn btn-primary">
-                    <i class="fas fa-plus"></i> Ajouter une Réponse
+                    <i class="fas fa-plus"></i> Réponse Manuelle
                 </a>
                 <a href="../admin_dashboard.php" class="btn btn-secondary">
                     <i class="fas fa-arrow-left"></i> Retour Dashboard
@@ -116,9 +119,14 @@ $totalReponses = count($reponses);
                     <i class="fas fa-inbox"></i>
                     <h3>Aucune réponse pour le moment</h3>
                     <p>Soyez le premier à répondre à cette réclamation !</p>
-                    <a href="ajouter_reponse.php?reclamation_id=<?= $reclamationId ?>" class="btn btn-primary" style="margin-top: 20px;">
-                        <i class="fas fa-plus"></i> Ajouter une Réponse
-                    </a>
+                    <div style="display: flex; gap: 10px; margin-top: 20px; justify-content: center; flex-wrap: wrap;">
+                        <a href="ajouter_reponse_ia.php?reclamation_id=<?= $reclamationId ?>" class="btn btn-primary" style="background: linear-gradient(135deg, #5E6D3B, #A9B97D);">
+                            <i class="fas fa-robot"></i> Répondre avec l'IA
+                        </a>
+                        <a href="ajouter_reponse.php?reclamation_id=<?= $reclamationId ?>" class="btn btn-secondary">
+                            <i class="fas fa-edit"></i> Réponse Manuelle
+                        </a>
+                    </div>
                 </div>
             <?php else: ?>
                 <?php foreach ($reponses as $index => $rep): ?>

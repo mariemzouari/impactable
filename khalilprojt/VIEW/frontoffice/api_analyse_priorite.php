@@ -103,3 +103,7 @@ function getInterpretation($resultat) {
 }
 ?>
 
+
+
+
+

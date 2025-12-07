@@ -28,3 +28,7 @@ ALTER TABLE `reclamation` ADD COLUMN IF NOT EXISTS `solutionSouhaitee` TEXT DEFA
 -- Afficher la structure finale de la table
 DESCRIBE `reclamation`;
 
+
+
+
+

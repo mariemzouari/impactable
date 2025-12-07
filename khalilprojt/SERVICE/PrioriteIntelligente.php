@@ -329,3 +329,7 @@ class PrioriteIntelligente {
 }
 ?>
 
+
+
+
+

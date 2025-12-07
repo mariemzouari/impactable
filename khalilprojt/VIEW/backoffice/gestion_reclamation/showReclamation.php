@@ -1,9 +1,11 @@
 <?php
 require_once(__DIR__ . '/../../../controller/ReclamationController.php');
 require_once(__DIR__ . '/../../../CONFIGRRATION/config.php');
+require_once(__DIR__ . '/../../../SERVICE/EmotionDetector.php');
 
 $controller = new ReclamationController();
 $reclamation = null;
+$emotionAnalysis = null;
 
 if (isset($_GET['id'])) {
     $reclamation = $controller->showReclamationById($_GET['id']);
@@ -11,6 +13,10 @@ if (isset($_GET['id'])) {
     // Récupérer les informations de l'utilisateur
     $user = null;
     if ($reclamation) {
+        // Analyser l'émotion du texte
+        $texteComplet = ($reclamation['sujet'] ?? '') . ' ' . ($reclamation['description'] ?? '');
+        $emotionAnalysis = EmotionDetector::analyser($texteComplet);
+        
         try {
             $db = config::getConnexion();
             // Vérifier si la table utilisateur existe
@@ -83,6 +89,61 @@ if (isset($_GET['id'])) {
                     <?= nl2br(htmlspecialchars($reclamation['description'])) ?>
                 </div>
             </div>
+
+            <!-- 🧠 SECTION ANALYSE ÉMOTIONNELLE -->
+            <?php if ($emotionAnalysis): ?>
+            <div class="info-section" style="background: <?= $emotionAnalysis['couleur_bg'] ?>; border-left: 5px solid <?= $emotionAnalysis['couleur'] ?>;">
+                <h3 style="color: <?= $emotionAnalysis['couleur'] ?>;">
+                    <i class="fas fa-brain"></i> Analyse Émotionnelle IA
+                </h3>
+                
+                <div style="display: flex; align-items: center; gap: 20px; margin: 15px 0; flex-wrap: wrap;">
+                    <div style="font-size: 3em;"><?= $emotionAnalysis['emoji'] ?></div>
+                    <div>
+                        <div style="font-size: 1.5em; font-weight: 700; color: <?= $emotionAnalysis['couleur'] ?>;">
+                            <?= $emotionAnalysis['label'] ?>
+                        </div>
+                        <div style="color: #5E6D3B;">Intensité : <?= $emotionAnalysis['intensite'] ?> (Score: <?= $emotionAnalysis['score'] ?>)</div>
+                    </div>
+                    <div style="flex: 1; min-width: 200px;">
+                        <div style="background: rgba(255,255,255,0.5); border-radius: 10px; height: 15px; overflow: hidden;">
+                            <div style="height: 100%; width: <?= $emotionAnalysis['intensite_pourcent'] ?>%; background: <?= $emotionAnalysis['couleur'] ?>; border-radius: 10px;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <?php if (!empty($emotionAnalysis['mots_detectes'])): ?>
+                <p><strong>Mots-clés détectés :</strong></p>
+                <div style="display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0;">
+                    <?php foreach ($emotionAnalysis['mots_detectes'] as $mot): ?>
+                        <span style="background: white; color: <?= $emotionAnalysis['couleur'] ?>; padding: 5px 12px; border-radius: 20px; font-size: 0.9em; font-weight: 500;">
+                            <i class="fas fa-tag"></i> <?= htmlspecialchars($mot) ?>
+                        </span>
+                    <?php endforeach; ?>
+                </div>
+                <?php endif; ?>
+
+                <div style="background: white; padding: 15px; border-radius: 10px; margin-top: 15px;">
+                    <p style="margin: 0 0 10px 0;"><strong><?= $emotionAnalysis['conseil_agent']['icon'] ?> <?= $emotionAnalysis['conseil_agent']['titre'] ?></strong></p>
+                    <p style="margin: 5px 0; color: #5E6D3B;"><i class="fas fa-lightbulb"></i> <?= $emotionAnalysis['conseil_agent']['conseil'] ?></p>
+                    <?php if ($emotionAnalysis['conseil_agent']['a_eviter'] !== '-'): ?>
+                        <p style="margin: 5px 0; color: #B47B47; font-size: 0.9em;"><i class="fas fa-exclamation-triangle"></i> À éviter : <?= $emotionAnalysis['conseil_agent']['a_eviter'] ?></p>
+                    <?php endif; ?>
+                </div>
+
+                <div style="background: linear-gradient(135deg, #5E6D3B, #4B2E16); color: white; padding: 15px; border-radius: 10px; margin-top: 15px;">
+                    <p style="margin: 0 0 8px 0; font-weight: 600;"><i class="fas fa-robot"></i> Suggestion de réponse :</p>
+                    <p style="margin: 0; font-style: italic; opacity: 0.95;">"<?= $emotionAnalysis['reponse_auto'] ?>"</p>
+                </div>
+
+                <p style="margin-top: 15px;">
+                    <strong>Priorité suggérée par l'IA :</strong>
+                    <span class="badge priority-<?= $emotionAnalysis['priorite_suggeree'] ?>" style="margin-left: 10px;">
+                        <?= $emotionAnalysis['priorite_suggeree'] ?>
+                    </span>
+                </p>
+            </div>
+            <?php endif; ?>
 
             <div class="info-section">
                 <h3><i class="fas fa-user-tie"></i> Agent Attribué</h3>

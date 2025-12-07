@@ -35,7 +35,10 @@ $reclamations = $reclamationController->listReclamations();
                     <i class="fas fa-search"></i> Suivre ma Réclamation
                 </a>
                 <a href="demo_ia.php" class="dashboard-btn-header" style="background: linear-gradient(135deg, #b47b47, #4B2E16);">
-                    <i class="fas fa-brain"></i> Démo IA
+                    <i class="fas fa-brain"></i> Démo Priorité IA
+                </a>
+                <a href="demo_reponse_ia.php" class="dashboard-btn-header" style="background: linear-gradient(135deg, #5E6D3B, #A9B97D);">
+                    <i class="fas fa-robot"></i> Réponse IA
                 </a>
                 <a href="../backoffice/admin_dashboard.php" class="dashboard-btn-header">
                     <i class="fas fa-tachometer-alt"></i> Dashboard Admin
@@ -131,6 +134,9 @@ $reclamations = $reclamationController->listReclamations();
                         <textarea id="description" name="description" placeholder="Décrivez votre réclamation en détail..."></textarea>
                         <div class="char-counter"><span id="charCount">0</span> / 2000 caractères</div>
                     </div>
+
+                    <!-- 🧠 Widget de Détection d'Émotion en Temps Réel -->
+                    <?php include('emotion_widget.php'); ?>
 
                     <div class="form-group">
                         <label>Priorité <span class="required">*</span></label>

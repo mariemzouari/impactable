@@ -93,8 +93,7 @@ class ReponseController {
      */
     public function updateReponse(Reponse $reponse, $id) {
         $sql = "UPDATE reponse SET 
-                message = :contenu,
-                dernier_update = :dernierUpdate
+                message = :contenu
                 WHERE Id_reponse = :id";
         
         $db = config::getConnexion();
@@ -103,8 +102,7 @@ class ReponseController {
             $query = $db->prepare($sql);
             $query->execute([
                 'id' => $id,
-                'contenu' => $reponse->getContenu(),
-                'dernierUpdate' => (new DateTime())->format('Y-m-d H:i:s')
+                'contenu' => $reponse->getContenu()
             ]);
             
             return true;
