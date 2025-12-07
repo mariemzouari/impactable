@@ -1,7 +1,7 @@
 <!-- Widget Chatbot ImpactAble -->
 <div id="chatbot-widget" class="chatbot-widget">
     <button id="chatbot-toggle" class="chatbot-toggle" onclick="toggleChatbot()">
-        <img src="images/khalil.jpg" alt="Khalil" class="chatbot-toggle-img">
+        <span class="chatbot-toggle-avatar">K</span>
         <span class="chatbot-close">✕</span>
         <span class="chatbot-notification" id="chatbot-notification">1</span>
     </button>
@@ -9,7 +9,7 @@
     <div id="chatbot-window" class="chatbot-window">
         <div class="chatbot-header">
             <div class="chatbot-header-info">
-                <img src="images/khalil.jpg" alt="Khalil" class="chatbot-avatar-img">
+                <div class="chatbot-avatar-circle">K</div>
                 <div class="chatbot-header-text">
                     <span class="chatbot-name">Khalil - Assistant</span>
                     <span class="chatbot-status"><span class="status-dot"></span> En ligne</span>
@@ -63,15 +63,20 @@
 
 .chatbot-toggle:hover { transform: scale(1.1); }
 
-.chatbot-toggle-img {
+.chatbot-toggle-avatar {
     width: 100%;
     height: 100%;
-    border-radius: 50%;
-    object-fit: cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2em;
+    font-weight: 700;
+    color: white;
+    text-transform: uppercase;
 }
 .chatbot-close { font-size: 1.5em; color: white; display: none; position: absolute; }
 
-.chatbot-widget.open .chatbot-toggle-img { display: none; }
+.chatbot-widget.open .chatbot-toggle-avatar { display: none; }
 .chatbot-widget.open .chatbot-close { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; }
 
 .chatbot-notification {
@@ -138,12 +143,18 @@
     border-radius: 50%;
 }
 
-.chatbot-avatar-img {
+.chatbot-avatar-circle {
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    object-fit: cover;
+    background: linear-gradient(135deg, #A9B97D, #5E6D3B);
     border: 3px solid rgba(255,255,255,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5em;
+    font-weight: 700;
+    color: white;
 }
 
 .chatbot-header-text { display: flex; flex-direction: column; }
@@ -227,7 +238,13 @@
     width: 24px;
     height: 24px;
     border-radius: 50%;
-    object-fit: cover;
+    background: linear-gradient(135deg, #A9B97D, #5E6D3B);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7em;
+    font-weight: 700;
+    color: white;
 }
 
 .typing-indicator {
@@ -374,7 +391,7 @@ function addBotMessage(message) {
         const formattedMessage = message.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
         
         messageDiv.innerHTML = `
-            <div class="message-header"><img src="images/khalil.jpg" alt="Khalil" class="msg-avatar"> Khalil</div>
+            <div class="message-header"><span class="msg-avatar">K</span> Khalil</div>
             <div class="message-content">${formattedMessage}</div>
         `;
         
