@@ -10,6 +10,7 @@ require_once 'controllers/AuthController.php';
 require_once 'controllers/OffreController.php';
 require_once 'controllers/CandidatureController.php';
 require_once 'controllers/AdminController.php';
+  require_once 'controllers/ChatbotController.php';
 
 // Démarrer la session
 if (session_status() === PHP_SESSION_NONE) {
@@ -70,6 +71,12 @@ try {
         case 'mes-candidatures':
             $candidatureController->mesCandidatures();
             break;
+
+case 'chatbot':
+    require_once 'controllers/ChatbotController.php';
+    $chatbotController = new ChatbotController();
+    $chatbotController->processMessage();
+    break;
 
         // Routes Admin
         case 'admin-dashboard':

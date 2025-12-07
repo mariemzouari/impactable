@@ -9,6 +9,9 @@ class Config {
     const SITE_NAME = 'ImpactAble';
     const SITE_URL = 'http://localhost/offre2';
     
+    const OPENROUTER_API_KEY = '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'; 
+    const CHATBOT_ENABLED = true;
+    
     public static function getBaseUrl() {
         return self::SITE_URL;
     }
@@ -26,5 +29,13 @@ class Config {
         ];
         
         return new PDO($dsn, self::DB_USER, self::DB_PASS, $options);
+    }
+    
+    public static function getOpenRouterKey() {
+        return self::OPENROUTER_API_KEY;
+    }
+    
+    public static function isChatbotEnabled() {
+        return self::CHATBOT_ENABLED;
     }
 }

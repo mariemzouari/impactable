@@ -1,7 +1,11 @@
-    </div>
     <script src="<?php echo Config::getBaseUrl(); ?>/assets/js/script.js"></script>
     
-        <footer class="site-footer">
+    <!-- Include Chatbot Component -->
+    <?php if (Config::isChatbotEnabled()): ?>
+        <?php require_once __DIR__ . '/../../components/chatbot.php'; ?>
+    <?php endif; ?>
+    
+    <footer class="site-footer">
       <div class="container">
         <div class="footer-content">
           <div class="footer-column">
@@ -40,6 +44,9 @@
               <a href="mailto:contact@impactable.org">contact@impactable.org</a>
               <a href="tel:+21612345678">+216 12 345 678</a>
               <a href="#">Tunis, Tunisia</a>
+              <a href="javascript:void(0);" onclick="openImpactBot('Comment contacter le support ?')">
+                <i class="fas fa-robot"></i> Support en ligne
+              </a>
             </div>
           </div>
         </div>
