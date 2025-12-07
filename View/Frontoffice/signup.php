@@ -7,7 +7,23 @@ require_once __DIR__ . '/../../Model/ProfileClass.php';
 
 
 $erreur = "";
-$userC = new UtilisateurController();
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+if (empty($_POST['g-recaptcha-response'])) {
+    $erreur = "Veuillez valider le CAPTCHA.";
+} else {
+    $recaptcha_secret = "6LdJECQsAAAAALfsHfSigYmiWZZq9_3_E-H2EPzG";
+    $recaptcha_response = $_POST['g-recaptcha-response'];
+
+    $response = file_get_contents(
+        "https://www.google.com/recaptcha/api/siteverify?secret=$recaptcha_secret&response=$recaptcha_response"
+    );
+    $response_keys = json_decode($response, true);
+
+    if (!$response_keys["success"]) {
+        $erreur = "CAPTCHA invalide. Veuillez réessayer.";
+    } else {
+        // CAPTCHA validé 
+        $userC = new UtilisateurController();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST'){
  if ( isset($_POST['last']) &&
@@ -89,6 +105,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'){
 
 }
 
+    }
+}
+
+
+
+}
+
+
 
 ?>
 
@@ -101,6 +125,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'){
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="assets/css/style.css">
   <link rel="stylesheet" href="assets/css/style_mariem.css">
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
 </head>
 <body>
 
@@ -182,9 +208,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'){
     <div class="panel-overlay" id="panelOverlay"></div>
     
 
-    <?php if(!empty($erreur)) : ?>
-    <div style="color:red;"><?= $erreur ?></div>
-    <?php endif; ?>
+    
     <!-- Signup Modal -->
     <div class="modal-backdrop" id="signupModal">
       <div class="modal">
@@ -200,6 +224,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'){
 
 
           <form id="signupForm" method="post" action="signup.php">
+
+              <?php if(!empty($erreur)) : ?>
+    <div  class="alert-error" style="background: #fee; color: #c33; padding: 10px; border-radius: 5px; margin-bottom: 15px;"><?= $erreur ?></div>
+    <?php endif; ?>
+
+
+
             <div class="form-group">
               <label for="signup-name">
                 <i class="fas fa-user"></i>
@@ -308,7 +339,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'){
         
               </div>
             </div>
-
+            <div class="form-group">
+  <div class="g-recaptcha" data-sitekey="6LdJECQsAAAAANFvaMuPSiJI-qj3qrq5NTmw3FX9"></div>
+</div>
 
             <div class="form-footer">
               <button class="btn primary" type="submit">S'inscrire</button>

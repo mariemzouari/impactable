@@ -12,6 +12,7 @@ class Utilisateur {
     private ?string $mot_de_passe;
     private string $role;
     private string $type_handicap;
+    private int $blocked;
     private string $date_inscription;
 
 
@@ -30,6 +31,7 @@ class Utilisateur {
     $this->mot_de_passe     = $data['mot_de_passe'] ?? null; // obligatoire
     $this->role             = $data['role'] ?? 'user';
     $this->type_handicap    = $data['type_handicap'] ?? 'aucun';
+    $this->blocked          = $data['blocked'] ?? 0;
     $this->date_inscription = $data['date_inscription'] ?? date("Y-m-d H:i:s");
 }
 
@@ -44,6 +46,7 @@ class Utilisateur {
     public function getMot_de_passe() { return $this->mot_de_passe; }
     public function getRole() { return $this->role; }
     public function getType_handicap() { return $this->type_handicap; }
+    public function getBlocked() { return $this->blocked; }
     public function getDate_inscription() { return $this->date_inscription; }
 
     // setters
@@ -57,6 +60,7 @@ class Utilisateur {
     public function setMot_de_passe($mdp) { $this->mot_de_passe = $mdp; }
     public function setRole($role) { $this->role = $role; }
     public function setType_handicap($type) { $this->type_handicap = $type; }
+    public function setBlocked($blocked) { $this->blocked = $blocked; }
     public function setDate_inscription($date) { $this->date_inscription = $date; }
 
 

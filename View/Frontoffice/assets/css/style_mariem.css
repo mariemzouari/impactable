@@ -170,3 +170,206 @@ body .form-container {
   opacity: 1;
 }
 
+
+/* Styles pour le bouton Google dans votre formulaire de connexion */
+.btn-google {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  padding: 14px 24px;
+  background: var(--white);
+  color: var(--brown);
+  border: 1px solid rgba(75, 46, 22, 0.15);
+  border-radius: var(--radius);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--ease-s);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  margin: 16px 0;
+  position: relative;
+}
+
+.btn-google:hover {
+  background: rgba(169, 185, 125, 0.05);
+  border-color: var(--copper);
+  color: var(--copper);
+  box-shadow: 0 4px 12px rgba(192, 121, 95, 0.15);
+  transform: translateY(-2px);
+}
+
+.btn-google:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.btn-google:focus {
+  outline: none;
+  border-color: var(--copper);
+  box-shadow: 0 0 0 3px rgba(192, 121, 95, 0.2);
+}
+
+/* Icône Google personnalisée avec votre palette */
+.google-icon {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.google-icon::before {
+  content: '';
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  background: conic-gradient(
+    from -45deg,
+    #ea4335 110deg,
+    #4285f4 90deg 180deg,
+    #34a853 180deg 270deg,
+    #fbbc05 270deg
+  );
+  border-radius: 50%;
+}
+
+.google-icon::after {
+  content: '';
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: white;
+  border-radius: 50%;
+}
+
+/* Alternative avec Font Awesome */
+.btn-google i.fab.fa-google {
+  color: var(--copper);
+  font-size: 1.1rem;
+}
+
+.btn-google:hover i.fab.fa-google {
+  color: var(--brown);
+}
+
+/* Version avec séparateur */
+.google-separator {
+  display: flex;
+  align-items: center;
+  margin: 24px 0;
+  color: var(--muted);
+}
+
+.google-separator::before,
+.google-separator::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(75, 46, 22, 0.1);
+}
+
+.google-separator span {
+  padding: 0 16px;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+/* Style pour le conteneur du bouton Google */
+.form-group .btn-google {
+  margin-top: 8px;
+  margin-bottom: 16px;
+}
+
+/* Pour l'alignement dans le formulaire */
+.form-group:has(.btn-google) {
+  text-align: center;
+}
+
+/* Style pour le texte du bouton */
+.btn-google span {
+  font-family: inherit;
+  font-weight: 600;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .btn-google {
+    padding: 12px 20px;
+    font-size: 0.95rem;
+  }
+  
+  .google-icon {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .btn-google i.fab.fa-google {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .btn-google {
+    padding: 10px 16px;
+    font-size: 0.9rem;
+  }
+  
+  .btn-google {
+    gap: 10px;
+  }
+  
+  .google-separator {
+    margin: 20px 0;
+  }
+}
+
+/* Animation de chargement pour le bouton Google */
+.btn-google.loading {
+  position: relative;
+  color: transparent;
+}
+
+.btn-google.loading::after {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(75, 46, 22, 0.1);
+  border-top-color: var(--copper);
+  border-radius: 50%;
+  animation: google-spin 0.8s linear infinite;
+}
+
+@keyframes google-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Style pour la section de connexion sociale */
+.social-login-section {
+  margin: 24px 0;
+  text-align: center;
+}
+
+.social-login-section .btn-google {
+  margin: 0 auto;
+}
+
+/* Si vous voulez une version avec fond coloré */
+.btn-google-colored {
+  background: var(--copper);
+  color: var(--white);
+  border: none;
+}
+
+.btn-google-colored:hover {
+  background: var(--brown);
+  color: var(--white);
+  border: none;
+}
+
+.btn-google-colored i.fab.fa-google {
+  color: var(--white);
+}

@@ -2,50 +2,61 @@
 session_start();
 require_once __DIR__ . '/../../Controller/UtilisateurController.php';
 
-$error = "";
-$userC = new UtilisateurController();
+$error = ""; 
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && 
-    isset($_POST['email']) && 
-    isset($_POST['password'])){
-     
-        if (!empty($_POST['email']) && 
-            !empty($_POST['password'])){
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-             $email = $_POST['email'];
-             $password = $_POST['password'];
-             try{
-             $user = $userC->verifyLogin($email, $password); 
-              if($user){
-                $_SESSION['user_id'] = $user['Id_utilisateur'];
-                $_SESSION['user_role'] = $user['role'];
-                
-                if($_SESSION['user_role'] == "user"){
-                header('Location: Profile.php');
-                exit;}       
-                
-                else {
-                header('Location: ../Backoffice/index.php');
-                exit;}
+    // Vérif CAPTCHA 
+    if (empty($_POST['g-recaptcha-response'])) {
+        $error = "Veuillez valider le CAPTCHA.";
+    } else {
+        $recaptcha_secret = "6LdJECQsAAAAALfsHfSigYmiWZZq9_3_E-H2EPzG";
+        $recaptcha_response = $_POST['g-recaptcha-response'];
 
+        $response = file_get_contents(
+            "https://www.google.com/recaptcha/api/siteverify?secret=$recaptcha_secret&response=$recaptcha_response"
+        );
+        $response_keys = json_decode($response, true);
 
-              }   
-              else { $error = "Email ou mot de passe incorrect"; }
+        if (!$response_keys["success"]) {
+            $error = "CAPTCHA invalide. Veuillez réessayer.";
+        } 
+    }
 
+    // if CAPTCHA valide 
+    if (empty($error)) {
+        $userC = new UtilisateurController();
 
-             }
-             catch(Exception $e){
-             $error = "Erreur: " . $e->getMessage();
+        if (!empty($_POST['email']) && !empty($_POST['password'])) {
+            $email = $_POST['email'];
+            $password = $_POST['password'];
 
-             }
-     
-     
- } 
+            try {
+                $user = $userC->verifyLogin($email, $password); 
+                if ($user) {
+                    $_SESSION['user_id'] = $user['Id_utilisateur'];
+                    $_SESSION['user_role'] = $user['role'];
 
-else {$error = "Veuillez remplir tous les champs";}
-
+                    if ($_SESSION['user_role'] == "user") {
+                        header('Location: Profile.php');
+                        exit;
+                    } else {
+                        header('Location: ../Backoffice/index.php');
+                        exit;
+                    }
+                } else {
+                    $error = "Email ou mot de passe incorrect";
+                }
+            } catch(Exception $e) {
+                $error = "Erreur: " . $e->getMessage();
+            }
+        } else {
+            $error = "Veuillez remplir tous les champs";
+        }
+    }
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="fr">
@@ -54,8 +65,11 @@ else {$error = "Veuillez remplir tous les champs";}
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="assets/css/style.css">
   <link rel="stylesheet" href="assets/css/style_mariem.css">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
+  
 </head>
 <body>
   <div class="container"> 
@@ -168,7 +182,23 @@ else {$error = "Veuillez remplir tous les champs";}
               <input id="login-password" name="password" class="input" type="password" placeholder="Votre mot de passe" >
               <span id="login-password-error" class="controle-saisie"></span>
             </div>
+
+
+<div class="form-group">
+  <div class="google-separator">
+    <span>ou connectez-vous avec</span>
+  </div>
+  
+  <a href="google_login.php" type="button" class="btn-google" id="googleSignIn">
+    <i class="fab fa-google"></i>
+    Continuer avec Google
+  </a>
+</div>
+
              
+<div class="form-group">
+  <div class="g-recaptcha" data-sitekey="6LdJECQsAAAAANFvaMuPSiJI-qj3qrq5NTmw3FX9"></div>
+</div>
 
             <div class="form-footer">
               <div class="form-links">

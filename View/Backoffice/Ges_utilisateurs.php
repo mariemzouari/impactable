@@ -9,11 +9,22 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
+
+
+if (isset($_GET['search']) && !empty($_GET['search'])){
+$search = $_GET['search'];}
+else { $search = "";  }
+
+
 $userC = new UtilisateurController();
 $profileC = new ProfileController();
 
+
+
+
+
 //recuperer users and profiles
-$users = $userC->listUsers();
+$users = $userC->listUsers($search);
 
 // recuperer l'utilisateur de la session et son profil pour la photo
 $user_id = $_SESSION['user_id'];
@@ -156,10 +167,14 @@ if (isset($_GET['delete_id'])) {
           <div class="content-card">
             <div class="card-header">
               <h3>Liste des Utilisateurs</h3>
+              <form method="get"  action="">
               <div class="search-bar">
                 <i class="fas fa-search"></i>
-                <input type="text" placeholder="Rechercher un utilisateur...">
+                <input type="text" name="search" placeholder="Rechercher un utilisateur...">
+                
               </div>
+              <button type="submit" hidden> search </button>
+              </form>
             </div>
             
             <div class="card-body">
@@ -170,6 +185,7 @@ if (isset($_GET['delete_id'])) {
                 <div class="activity-item">
                   <div class="activity-icon">
                     <div class="user-avatar-small">
+                     
                 <!-- photo ici a faire-->
                     <img src="../../uploads/<?php echo $user['photo_profil'] ?> " alt="poto" style="border-radius: 50%;s">
                     </div>
@@ -190,6 +206,10 @@ if (isset($_GET['delete_id'])) {
                       </a>
                       <a href="Ges_utilisateurs.php?delete_id=<?php echo $user['Id_utilisateur']; ?>" class="btn ghost small">
                         <i class="fas fa-trash"></i>
+                      </a>
+
+                      <a href="" class="btn ghost small">
+                        <i class="fas fa-ban"></i>
                       </a>
                     </div>
                   </div>
@@ -215,10 +235,6 @@ if (isset($_GET['delete_id'])) {
                 <button class="btn secondary">
                   <i class="fas fa-download"></i>
                   <span>Exporter la liste</span>
-                </button>
-                <button class="btn secondary">
-                  <i class="fas fa-filter"></i>
-                  <span>Filtres avancés</span>
                 </button>
                 <button class="btn secondary">
                   <i class="fas fa-sync-alt"></i>

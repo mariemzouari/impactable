@@ -7,7 +7,25 @@ class UtilisateurController {
  
     // lister les utilisateurs
  
-    public function listUsers() {
+    public function listUsers($search) {
+
+        if (!empty($search)){
+            $sql = "SELECT u.*, p.photo_profil FROM utilisateur u
+            LEFT JOIN profil p ON p.Id_utilisateur = u.Id_utilisateur 
+            WHERE LOWER(u.nom) LIKE LOWER(:search) OR LOWER(u.prenom) LIKE LOWER(:search)";
+            $db = config::getConnexion();
+            
+            try {
+            $query = $db->prepare($sql);
+            $query->execute(['search' => '%' . $search . '%']);
+            return $query->fetchAll();
+             } 
+            catch (Exception $e) {
+            die('Error: ' . $e->getMessage());
+             }
+        }
+        else {
+
         $sql = "SELECT u.*, p.photo_profil FROM utilisateur u
         LEFT JOIN profil p ON p.Id_utilisateur = u.Id_utilisateur"; //jointure pour lister dans backoffice
         $db = config::getConnexion();
@@ -16,7 +34,8 @@ class UtilisateurController {
             return $list;
         } catch (Exception $e) {
             die('Error: ' . $e->getMessage());
-        }
+        }}
+
     }
 
  
