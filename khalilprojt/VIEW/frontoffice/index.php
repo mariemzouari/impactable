@@ -440,5 +440,8 @@ $reclamations = $reclamationController->listReclamations();
     <!-- JS EXTERNE -->
     <script src="script.js"></script>
 
+    <!-- Chatbot Widget -->
+    <?php include 'chatbot_widget.php'; ?>
+
 </body>
 </html>

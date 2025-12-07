@@ -755,6 +755,9 @@ function getStatutClass($statut) {
     </div>
 
     <script src="script.js"></script>
+
+    <!-- Chatbot Widget -->
+    <?php include 'chatbot_widget.php'; ?>
 </body>
 </html>
 

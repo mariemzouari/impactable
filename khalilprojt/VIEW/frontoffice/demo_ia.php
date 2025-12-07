@@ -593,6 +593,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['texte'])) {
             document.querySelector('.demo-form').scrollIntoView({ behavior: 'smooth' });
         }
     </script>
+
+    <!-- Chatbot Widget -->
+    <?php include 'chatbot_widget.php'; ?>
 </body>
 </html>
 
