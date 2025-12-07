@@ -79,7 +79,6 @@ try {
         
         // ==================== TRAITEMENT MESSAGE ====================
         case 'message':
-        default:
             $message = '';
             
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
