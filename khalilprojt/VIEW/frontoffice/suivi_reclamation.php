@@ -545,11 +545,7 @@ function getStatutClass($statut) {
     <div class="container tracking-container">
         <header>
             <div class="logo-brand">
-                <div class="logo-icon-box"><i class="fas fa-compress-arrows-alt"></i></div>
-                <div class="logo-text-box">
-                    <span class="logo-name">ImpactAble</span>
-                    <span class="logo-slogan">Where Ability Meets Impact</span>
-                </div>
+                <img src="images/logo.png" alt="ImpactAble - Where Ability Meets Impact" class="logo-img">
             </div>
             <h2>Suivi de Réclamation</h2>
             <p class="subtitle">Suivez l'avancement de votre réclamation en temps réel</p>

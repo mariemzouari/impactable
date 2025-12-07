@@ -418,11 +418,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['texte'])) {
     <div class="container demo-container">
         <header>
             <div class="logo-brand">
-                <div class="logo-icon-box"><i class="fas fa-compress-arrows-alt"></i></div>
-                <div class="logo-text-box">
-                    <span class="logo-name">ImpactAble</span>
-                    <span class="logo-slogan">Where Ability Meets Impact</span>
-                </div>
+                <img src="images/logo.png" alt="ImpactAble - Where Ability Meets Impact" class="logo-img">
             </div>
         </header>
 

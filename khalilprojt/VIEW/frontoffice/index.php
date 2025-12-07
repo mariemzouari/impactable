@@ -26,11 +26,7 @@ $reclamations = $reclamationController->listReclamations();
     <div class="container">
         <header>
             <div class="logo-brand">
-                <div class="logo-icon-box"><i class="fas fa-compress-arrows-alt"></i></div>
-                <div class="logo-text-box">
-                    <span class="logo-name">ImpactAble</span>
-                    <span class="logo-slogan">Where Ability Meets Impact</span>
-                </div>
+                <img src="images/logo.png" alt="ImpactAble - Where Ability Meets Impact" class="logo-img">
             </div>
             <h2>Système de Réclamations</h2>
             <p class="subtitle">Votre voix compte. Nous sommes là pour vous écouter.</p>

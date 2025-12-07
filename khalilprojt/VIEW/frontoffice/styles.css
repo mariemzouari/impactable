@@ -36,10 +36,20 @@ header {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 15px;
     margin-bottom: 25px;
 }
 
+.logo-img {
+    max-width: 350px;
+    height: auto;
+    transition: transform 0.3s ease;
+}
+
+.logo-img:hover {
+    transform: scale(1.02);
+}
+
+/* Fallback pour ancien style si pas d'image */
 .logo-icon-box {
     position: relative;
     width: 55px;
