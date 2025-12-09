@@ -38,28 +38,30 @@ $totalReponses = count($toutesReponses);
     <link rel="stylesheet" href="../assets/admin-style.css">
 </head>
 <body class="with-sidebar">
-    <aside class="sidebar">
+    <aside class="sidebar" style="background: linear-gradient(180deg, #4a5a2f 0%, #3d4a27 100%) !important;">
         <div>
-            <div class="logo">ImpactAble</div>
-            <nav class="nav-links">
-                <a href="../admin_dashboard.php">
+            <div class="logo-container" style="padding: 25px 20px; text-align: center;">
+                <img src="../assets/logo-white.png" alt="ImpactAble" class="sidebar-logo" style="max-width: 200px;">
+            </div>
+            <nav class="nav-links" style="padding: 0 15px;">
+                <a href="../admin_dashboard.php" style="color: rgba(255,255,255,0.85); padding: 14px 20px; border-radius: 10px; margin-bottom: 5px; display: flex; align-items: center; gap: 12px; text-decoration: none;">
                     <i class="fas fa-tachometer-alt"></i> Dashboard
                 </a>
-                <a href="../statistiques_avancees.php">
-                    <i class="fas fa-chart-line"></i> Statistiques IA
+                <a href="../statistiques_pro.php" style="color: rgba(255,255,255,0.85); padding: 14px 20px; border-radius: 10px; margin-bottom: 5px; display: flex; align-items: center; gap: 12px; text-decoration: none;">
+                    <i class="fas fa-chart-line"></i> Analytics Pro
                 </a>
-                <a href="../gestion_reclamation/addReclamation.php">
+                <a href="../gestion_reclamation/addReclamation.php" style="color: rgba(255,255,255,0.85); padding: 14px 20px; border-radius: 10px; margin-bottom: 5px; display: flex; align-items: center; gap: 12px; text-decoration: none;">
                     <i class="fas fa-file-alt"></i> Réclamations
                 </a>
-                <a href="toutes_reponses.php" class="active">
+                <a href="toutes_reponses.php" class="active" style="background: rgba(255,255,255,0.2); color: white; padding: 14px 20px; border-radius: 10px; margin-bottom: 5px; display: flex; align-items: center; gap: 12px; text-decoration: none; font-weight: 600;">
                     <i class="fas fa-comments"></i> Réponses
                 </a>
-                <a href="../../frontoffice/index.php" target="_blank">
+                <a href="../../frontoffice/index.php" target="_blank" style="color: rgba(255,255,255,0.85); padding: 14px 20px; border-radius: 10px; margin-bottom: 5px; display: flex; align-items: center; gap: 12px; text-decoration: none;">
                     <i class="fas fa-external-link-alt"></i> Front Office
                 </a>
             </nav>
         </div>
-        <footer>© 2025 ImpactAble</footer>
+        <footer style="color: rgba(255,255,255,0.5); text-align: center; padding: 20px; font-size: 12px; border-top: 1px solid rgba(255,255,255,0.1);">© 2025 ImpactAble</footer>
     </aside>
 
     <main>
@@ -120,20 +122,21 @@ $totalReponses = count($toutesReponses);
                                     </div>
                                     <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
                                         <a href="liste_reponses.php?reclamation_id=<?= $rep['reclamation_id'] ?>" 
-                                           class="btn btn-info" style="padding: 5px 12px; font-size: 0.85em;">
+                                           style="background: linear-gradient(135deg, #5e6d3b, #4b2e16); color: white; padding: 6px 14px; font-size: 0.85em; border-radius: 20px; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">
                                             <i class="fas fa-hashtag"></i> Réclamation #<?= $rep['reclamation_id'] ?>
                                         </a>
                                         <div class="reponse-date">
                                             <i class="fas fa-clock"></i>
                                             <?= date('d/m/Y à H:i', strtotime($rep['date_reponse'])) ?>
                                         </div>
-                                        <div class="reponse-actions">
+                                        <div class="reponse-actions" style="display: flex; gap: 8px;">
                                             <a href="modifier_reponse.php?id=<?= $rep['Id_reponse'] ?>&reclamation_id=<?= $rep['reclamation_id'] ?>" 
-                                               class="btn-edit-reponse" title="Modifier">
+                                               style="background: linear-gradient(135deg, #b47b47, #8b5a2b); color: white; padding: 8px 12px; border-radius: 8px; text-decoration: none; transition: all 0.3s;"
+                                               title="Modifier">
                                                 <i class="fas fa-edit"></i>
                                             </a>
                                             <a href="supprimer_reponse.php?id=<?= $rep['Id_reponse'] ?>&reclamation_id=<?= $rep['reclamation_id'] ?>" 
-                                               class="btn-delete-reponse" 
+                                               style="background: linear-gradient(135deg, #8b4513, #5c2e0e); color: white; padding: 8px 12px; border-radius: 8px; text-decoration: none; transition: all 0.3s;"
                                                onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette réponse ?')"
                                                title="Supprimer">
                                                 <i class="fas fa-trash"></i>

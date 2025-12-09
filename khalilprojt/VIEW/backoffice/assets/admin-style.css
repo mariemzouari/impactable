@@ -35,10 +35,10 @@ body.without-sidebar {
 
 /* SIDEBAR */
 .sidebar {
-  width: 250px;
-  background: var(--white);
+  width: 280px;
+  background: linear-gradient(180deg, #4a5a2f 0%, #3d4a27 100%);
   box-shadow: var(--shadow);
-  padding: 24px 0;
+  padding: 0;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -48,23 +48,39 @@ body.without-sidebar {
   font-size: 20px;
   font-weight: 700;
   text-align: center;
-  color: var(--brown);
+  color: white;
   margin-bottom: 30px;
   padding: 0 20px;
+}
+
+.logo-container {
+  text-align: center;
+  padding: 25px 20px;
+  margin-bottom: 10px;
+  background: rgba(0,0,0,0.1);
+}
+
+.sidebar-logo {
+  max-width: 200px;
+  height: auto;
+  filter: brightness(0) invert(1);
 }
 
 .nav-links {
   display: flex;
   flex-direction: column;
+  padding: 0 15px;
 }
 
 .nav-links a {
   text-decoration: none;
-  color: var(--brown);
-  padding: 14px 32px;
-  font-weight: 600;
+  color: rgba(255,255,255,0.85);
+  padding: 14px 20px;
+  font-weight: 500;
   transition: all 0.3s ease;
-  border-left: 5px solid transparent;
+  border-left: none;
+  border-radius: 10px;
+  margin-bottom: 5px;
   display: flex;
   align-items: center;
   gap: 12px;
@@ -73,19 +89,34 @@ body.without-sidebar {
 .nav-links a i {
   width: 20px;
   text-align: center;
+  opacity: 0.8;
 }
 
-.nav-links a:hover, .nav-links a.active {
-  background: var(--sand);
-  border-left: 5px solid var(--copper);
-  color: var(--copper);
+.nav-links a:hover {
+  background: rgba(255,255,255,0.1);
+  border-left: none;
+  color: white;
+}
+
+.nav-links a.active {
+  background: rgba(255,255,255,0.2);
+  border-left: none;
+  color: white;
+  border-radius: 10px;
+  margin-right: 0;
+  font-weight: 600;
+}
+
+.nav-links a.active i {
+  opacity: 1;
 }
 
 .sidebar footer {
   text-align: center;
-  font-size: 13px;
-  padding: 16px;
-  color: #6a4b35;
+  font-size: 12px;
+  padding: 20px;
+  color: rgba(255,255,255,0.5);
+  border-top: 1px solid rgba(255,255,255,0.1);
 }
 
 /* MAIN CONTENT */
@@ -228,30 +259,30 @@ tr:hover {
 }
 
 .btn-danger {
-  background: #d32f2f;
+  background: #8b4513;
   color: white;
 }
 
 .btn-danger:hover {
-  background: #b71c1c;
+  background: #5c2e0e;
 }
 
 .btn-success {
-  background: #28a745;
+  background: var(--moss);
   color: white;
 }
 
 .btn-success:hover {
-  background: #20c997;
+  background: #4a5a2e;
 }
 
 .btn-info {
-  background: #0277bd;
-  color: white;
+  background: var(--copper) !important;
+  color: white !important;
 }
 
 .btn-info:hover {
-  background: #01579b;
+  background: #8b5a2b !important;
 }
 
 /* BADGES */
@@ -697,30 +728,30 @@ tr:hover {
 }
 
 .btn-edit {
-  background: linear-gradient(135deg, #0277BD, #01579B);
+  background: linear-gradient(135deg, #b47b47, #8b5a2b) !important;
 }
 
 .btn-edit:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(2, 119, 189, 0.4);
+  box-shadow: 0 4px 12px rgba(180, 123, 71, 0.4);
 }
 
 .btn-delete {
-  background: linear-gradient(135deg, #D32F2F, #B71C1C);
+  background: linear-gradient(135deg, #8b4513, #5c2e0e);
 }
 
 .btn-delete:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(211, 47, 47, 0.4);
+  box-shadow: 0 4px 12px rgba(139, 69, 19, 0.4);
 }
 
 .btn-reply {
-  background: linear-gradient(135deg, #28A745, #20C997);
+  background: linear-gradient(135deg, #a9b97d, #8a9a5e);
 }
 
 .btn-reply:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.4);
+  box-shadow: 0 4px 12px rgba(169, 185, 125, 0.4);
 }
 
 .btn-back {
@@ -795,7 +826,7 @@ tr:hover {
 }
 
 .btn-cancel {
-  background: #D32F2F;
+  background: #8b4513;
   color: white;
   padding: 12px 30px;
   border: none;
@@ -809,7 +840,7 @@ tr:hover {
 }
 
 .btn-cancel:hover {
-  background: #B71C1C;
+  background: #5c2e0e;
   transform: translateY(-2px);
 }
 
@@ -946,8 +977,8 @@ tr:hover {
 }
 
 .btn-edit-reponse {
-  background: linear-gradient(135deg, #0277BD, #01579B);
-  color: white;
+  background: linear-gradient(135deg, #b47b47, #8b5a2b) !important;
+  color: white !important;
   padding: 8px 12px;
   border-radius: 8px;
   text-decoration: none;
@@ -960,11 +991,11 @@ tr:hover {
 
 .btn-edit-reponse:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(2, 119, 189, 0.4);
+  box-shadow: 0 4px 12px rgba(180, 123, 71, 0.4);
 }
 
 .btn-delete-reponse {
-  background: linear-gradient(135deg, #D32F2F, #B71C1C);
+  background: linear-gradient(135deg, #8b4513, #5c2e0e);
   color: white;
   padding: 8px 12px;
   border-radius: 8px;
@@ -978,7 +1009,7 @@ tr:hover {
 
 .btn-delete-reponse:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(211, 47, 47, 0.4);
+  box-shadow: 0 4px 12px rgba(139, 69, 19, 0.4);
 }
 
 .reponse-actions {

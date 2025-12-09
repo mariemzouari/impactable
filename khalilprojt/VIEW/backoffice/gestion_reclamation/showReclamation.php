@@ -3,33 +3,37 @@ require_once(__DIR__ . '/../../../controller/ReclamationController.php');
 require_once(__DIR__ . '/../../../CONFIGRRATION/config.php');
 require_once(__DIR__ . '/../../../SERVICE/EmotionDetector.php');
 
+// Rediriger vers le dashboard si aucun ID n'est fourni
+if (!isset($_GET['id']) || empty($_GET['id'])) {
+    header('Location: ../admin_dashboard.php?error=no_id');
+    exit;
+}
+
 $controller = new ReclamationController();
 $reclamation = null;
 $emotionAnalysis = null;
 
-if (isset($_GET['id'])) {
-    $reclamation = $controller->showReclamationById($_GET['id']);
+$reclamation = $controller->showReclamationById($_GET['id']);
+
+// Récupérer les informations de l'utilisateur
+$user = null;
+if ($reclamation) {
+    // Analyser l'émotion du texte
+    $texteComplet = ($reclamation['sujet'] ?? '') . ' ' . ($reclamation['description'] ?? '');
+    $emotionAnalysis = EmotionDetector::analyser($texteComplet);
     
-    // Récupérer les informations de l'utilisateur
-    $user = null;
-    if ($reclamation) {
-        // Analyser l'émotion du texte
-        $texteComplet = ($reclamation['sujet'] ?? '') . ' ' . ($reclamation['description'] ?? '');
-        $emotionAnalysis = EmotionDetector::analyser($texteComplet);
-        
-        try {
-            $db = config::getConnexion();
-            // Vérifier si la table utilisateur existe
-            $checkTable = $db->query("SHOW TABLES LIKE 'utilisateur'");
-            if ($checkTable->rowCount() > 0) {
-                $userQuery = $db->prepare("SELECT * FROM utilisateur WHERE Id_utilisateur = :id");
-                $userQuery->execute(['id' => $reclamation['utilisateurId']]);
-                $user = $userQuery->fetch();
-            }
-        } catch (Exception $e) {
-            // Table utilisateur n'existe pas, continuer sans
-            $user = null;
+    try {
+        $db = config::getConnexion();
+        // Vérifier si la table utilisateur existe
+        $checkTable = $db->query("SHOW TABLES LIKE 'utilisateur'");
+        if ($checkTable->rowCount() > 0) {
+            $userQuery = $db->prepare("SELECT * FROM utilisateur WHERE Id_utilisateur = :id");
+            $userQuery->execute(['id' => $reclamation['utilisateurId']]);
+            $user = $userQuery->fetch();
         }
+    } catch (Exception $e) {
+        // Table utilisateur n'existe pas, continuer sans
+        $user = null;
     }
 }
 ?>
@@ -162,8 +166,13 @@ if (isset($_GET['id'])) {
                 </a>
             </div>
         <?php else: ?>
-            <div class="error">
-                <i class="fas fa-exclamation-circle"></i> Réclamation non trouvée
+            <div class="error" style="text-align: center; padding: 40px;">
+                <i class="fas fa-exclamation-circle" style="font-size: 3em; margin-bottom: 15px; display: block;"></i>
+                <h3 style="margin-bottom: 10px;">Réclamation #<?= htmlspecialchars($_GET['id']) ?> non trouvée</h3>
+                <p style="margin-bottom: 20px; opacity: 0.8;">Cette réclamation n'existe pas ou a été supprimée.</p>
+                <a href="../admin_dashboard.php" class="btn btn-success" style="margin-top: 10px;">
+                    <i class="fas fa-home"></i> Retour au Dashboard
+                </a>
             </div>
         <?php endif; ?>
     </div>

@@ -116,7 +116,15 @@ try {
             $botResponse['suggestions'] = getContextualSuggestions($botResponse['category']);
             $botResponse['quick_actions'] = getQuickActions($botResponse['category']);
             $botResponse['message_id'] = uniqid('msg_');
-            $botResponse['response_time'] = microtime(true) - $_SERVER['REQUEST_TIME_FLOAT'];
+            $botResponse['response_time'] = round((microtime(true) - $_SERVER['REQUEST_TIME_FLOAT']) * 1000) . 'ms';
+            
+            // Ajouter indicateurs de qualité
+            $botResponse['quality'] = [
+                'understood' => $botResponse['confidence'] >= 50,
+                'confidence_level' => $botResponse['confidence'] >= 80 ? 'high' : ($botResponse['confidence'] >= 50 ? 'medium' : 'low'),
+                'sentiment_detected' => $botResponse['sentiment'] ?? 'neutral',
+                'entities_found' => count(array_filter($botResponse['entities'] ?? []))
+            ];
             
             // Ajouter la réponse à l'historique
             addToHistory('bot', $botResponse['response'], $botResponse['category'], $botResponse['message_id']);

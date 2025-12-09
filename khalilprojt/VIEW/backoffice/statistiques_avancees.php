@@ -468,28 +468,30 @@ foreach ($statsAvancees['par_mois'] as $mois) {
     </style>
 </head>
 <body class="with-sidebar">
-    <aside class="sidebar">
+    <aside class="sidebar" style="background: linear-gradient(180deg, #4a5a2f 0%, #3d4a27 100%) !important;">
         <div>
-            <div class="logo">ImpactAble</div>
-            <nav class="nav-links">
-                <a href="admin_dashboard.php">
+            <div class="logo-container" style="padding: 25px 20px; text-align: center;">
+                <img src="assets/logo-white.png" alt="ImpactAble" class="sidebar-logo" style="max-width: 200px;">
+            </div>
+            <nav class="nav-links" style="padding: 0 15px;">
+                <a href="admin_dashboard.php" style="color: rgba(255,255,255,0.85); padding: 14px 20px; border-radius: 10px; margin-bottom: 5px; display: flex; align-items: center; gap: 12px; text-decoration: none;">
                     <i class="fas fa-tachometer-alt"></i> Dashboard
                 </a>
-                <a href="statistiques_avancees.php" class="active">
-                    <i class="fas fa-chart-line"></i> Statistiques
+                <a href="statistiques_pro.php" class="active" style="background: rgba(255,255,255,0.2); color: white; padding: 14px 20px; border-radius: 10px; margin-bottom: 5px; display: flex; align-items: center; gap: 12px; text-decoration: none; font-weight: 600;">
+                    <i class="fas fa-chart-line"></i> Analytics Pro
                 </a>
-                <a href="gestion_reclamation/addReclamation.php">
+                <a href="gestion_reclamation/addReclamation.php" style="color: rgba(255,255,255,0.85); padding: 14px 20px; border-radius: 10px; margin-bottom: 5px; display: flex; align-items: center; gap: 12px; text-decoration: none;">
                     <i class="fas fa-file-alt"></i> Réclamations
                 </a>
-                <a href="reponsecrud/toutes_reponses.php">
+                <a href="reponsecrud/toutes_reponses.php" style="color: rgba(255,255,255,0.85); padding: 14px 20px; border-radius: 10px; margin-bottom: 5px; display: flex; align-items: center; gap: 12px; text-decoration: none;">
                     <i class="fas fa-comments"></i> Réponses
                 </a>
-                <a href="../frontoffice/index.php" target="_blank">
+                <a href="../frontoffice/index.php" target="_blank" style="color: rgba(255,255,255,0.85); padding: 14px 20px; border-radius: 10px; margin-bottom: 5px; display: flex; align-items: center; gap: 12px; text-decoration: none;">
                     <i class="fas fa-external-link-alt"></i> Front Office
                 </a>
             </nav>
         </div>
-        <footer>© 2025 ImpactAble</footer>
+        <footer style="color: rgba(255,255,255,0.5); text-align: center; padding: 20px; font-size: 12px; border-top: 1px solid rgba(255,255,255,0.1);">© 2025 ImpactAble</footer>
     </aside>
 
     <main>

@@ -20,6 +20,7 @@ $reclamations = $reclamationController->listReclamations();
 
     <!-- CSS EXTERNE -->
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="frontoffice-style.css">
 </head>
 
 <body>
