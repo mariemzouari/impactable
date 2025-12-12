@@ -340,8 +340,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'){
               </div>
             </div>
             <div class="form-group">
-  <div class="g-recaptcha" data-sitekey="6LdJECQsAAAAANFvaMuPSiJI-qj3qrq5NTmw3FX9"></div>
-</div>
+                <center>
+            <div class="g-recaptcha" data-sitekey="6LdJECQsAAAAANFvaMuPSiJI-qj3qrq5NTmw3FX9"></div>
+                </center>
+               </div>
 
             <div class="form-footer">
               <button class="btn primary" type="submit">S'inscrire</button>

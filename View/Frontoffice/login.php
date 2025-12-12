@@ -34,6 +34,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             try {
                 $user = $userC->verifyLogin($email, $password); 
                 if ($user) {
+
+                 // check if user blocked si non login
+                if ($user['blocked'] == 1) {
+               $error = "votre compte est suspendu";
+                           }
+                else {
                     $_SESSION['user_id'] = $user['Id_utilisateur'];
                     $_SESSION['user_role'] = $user['role'];
 
@@ -44,6 +50,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         header('Location: ../Backoffice/index.php');
                         exit;
                     }
+
+                  }
+
                 } else {
                     $error = "Email ou mot de passe incorrect";
                 }
@@ -197,7 +206,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
              
 <div class="form-group">
+  <center>
   <div class="g-recaptcha" data-sitekey="6LdJECQsAAAAANFvaMuPSiJI-qj3qrq5NTmw3FX9"></div>
+  </center>
 </div>
 
             <div class="form-footer">

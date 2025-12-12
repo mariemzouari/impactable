@@ -40,6 +40,25 @@ if (isset($_GET['delete_id'])) {
     header('Location: Ges_utilisateurs.php');
     exit;
 }
+
+
+
+
+
+// gestion du block
+if (isset($_GET['block_id'])) {
+    $userC->blockUser($_GET['block_id']);
+    header('Location: Ges_utilisateurs.php');
+    exit;
+}
+
+// gestion du unblock
+if (isset($_GET['unblock_id'])) {
+    $userC->unblockUser($_GET['unblock_id']);
+    header('Location: Ges_utilisateurs.php');
+    exit;
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -208,9 +227,18 @@ if (isset($_GET['delete_id'])) {
                         <i class="fas fa-trash"></i>
                       </a>
 
-                      <a href="" class="btn ghost small">
-                        <i class="fas fa-ban"></i>
-                      </a>
+                     
+                     
+         <?php if ($user['blocked'] == 0) { ?>
+    <a href="Ges_utilisateurs.php?block_id=<?php echo $user['Id_utilisateur']; ?>" class="btn ghost small" title="Bloquer">
+        <i class="fas fa-ban"></i>
+    </a>
+<?php } else { ?>
+    <a href="Ges_utilisateurs.php?unblock_id=<?php echo $user['Id_utilisateur']; ?>" class="btn ghost small" title="Débloquer">
+        <i class="fas fa-unlock" ></i>
+    </a>
+<?php } ?>
+
                     </div>
                   </div>
                 </div>
@@ -242,7 +270,7 @@ if (isset($_GET['delete_id'])) {
                 </button>
               </div>
               
-              <!-- Filtres rapides -->
+              <!-- Filtres rapides -->  <!-- Actions rapides
               <div style="margin-top: 24px; padding-top: 24px; border-top: 1px solid rgba(75,46,22,0.08);">
                 <h4 style="margin-bottom: 16px; color: var(--brown);">Filtres rapides</h4>
                 <div style="display: flex; flex-direction: column; gap: 8px;">
@@ -261,9 +289,9 @@ if (isset($_GET['delete_id'])) {
                   <button class="btn ghost small" style="justify-content: flex-start;">
                     <i class="fas fa-user-tag"></i>
                     <span>Nouveaux cette semaine</span>
-                  </button>
+                  </button>  
                 </div>
-              </div>
+              </div>-->
             </div>
           </div>
         </div>

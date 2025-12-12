@@ -186,7 +186,44 @@ class UtilisateurController {
         throw new Exception("Erreur de connexion: " . $e->getMessage());
     }
 
+
+
+    
 }
+
+
+// bloquer un utilisateur
+public function blockUser($id) {
+    $sql = "UPDATE utilisateur SET blocked = 1 WHERE Id_utilisateur = :id";
+    $db = config::getConnexion();
+
+    try {
+        $query = $db->prepare($sql);
+        $query->execute(['id' => $id]);
+    } catch (Exception $e) {
+        die('Error: ' . $e->getMessage());
+    }
 }
+
+// débloquer un utilisateur
+public function unblockUser($id) {
+    $sql = "UPDATE utilisateur SET blocked = 0 WHERE Id_utilisateur = :id";
+    $db = config::getConnexion();
+
+    try {
+        $query = $db->prepare($sql);
+        $query->execute(['id' => $id]);
+    } catch (Exception $e) {
+        die('Error: ' . $e->getMessage());
+    }
+}
+
+
+
+}
+
+
+
+
 
 ?>

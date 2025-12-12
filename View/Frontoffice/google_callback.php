@@ -61,7 +61,7 @@ if (isset($_GET['code'])) {
 
     $user_id = $userC->addUser($newUser);
 
-    // Créer un profil vide avec la photo Google
+    //profil vide avec la photo Google
     $newProfile = new Profil([
         'Id_utilisateur' => $user_id,
         'photo_profil' => $picture,
@@ -75,7 +75,7 @@ if (isset($_GET['code'])) {
 
     $profileC->addProfile($newProfile);
 
-    // Connexion auto
+    // Connexion 
     $_SESSION['user_id'] = $user_id;
     $_SESSION['nom'] = $lastname;
     $_SESSION['prenom'] = $name;
