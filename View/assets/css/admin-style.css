@@ -1,6 +1,4 @@
-/* ==================== BACKOFFICE CSS ==================== */
     :root {
-      /* Color palette */
       --brown: #4b2e16;
       --copper: #b47b47;
       --moss: #5e6d3b;
@@ -10,12 +8,10 @@
       --light-sage: #e1e8c9;
       --dark-green: #3a4a2a;
       
-      /* Derived shades */
       --brown-600: rgba(75,46,22,0.9);
       --brown-300: rgba(75,46,22,0.2);
       --muted: #6b4b44;
       
-      /* UI variables */
       --card-bg: #ffffff;
       --radius: 16px;
       --radius-sm: 10px;
@@ -26,15 +22,12 @@
       --input-height: 48px;
       --gap: 1rem;
       
-      /* Transitions */
       --ease-s: 200ms cubic-bezier(.2,.9,.2,1);
       --ease-l: 350ms cubic-bezier(.2,.9,.2,1);
       
-      /* Typography */
       --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
     }
 
-    /* Reset and base styles */
     * { 
       box-sizing: border-box; 
       margin: 0;
@@ -105,7 +98,7 @@
     }
     
     .admin-logo-image  {
-      height: 55px; /* Adjust based on your logo proportions */
+      height: 55px; 
   width: auto;
   object-fit: contain;
     }
@@ -413,7 +406,6 @@
       padding: 24px;
     }
     
-    /* Tables */
     .admin-table {
       width: 100%;
       border-collapse: collapse;
