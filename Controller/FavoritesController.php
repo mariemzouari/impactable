@@ -1,7 +1,15 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    if (session_status() === PHP_SESSION_NONE) session_start();
+}
+
 require_once __DIR__ . '/../config/Config.php';
 require_once __DIR__ . '/../Model/FavoritesModel.php';
+
+// Only handle request when executed directly
+if (realpath($_SERVER['SCRIPT_FILENAME']) !== realpath(__FILE__)) {
+    return;
+}
 
 header('Content-Type: application/json');
 

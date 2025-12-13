@@ -1,5 +1,15 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    if (session_status() === PHP_SESSION_NONE) session_start();
+}
+
+// Ensure this file only handles the request when executed directly
+// (e.g. called via URL /Controller/ParticipationController.php) and not when included.
+if (realpath($_SERVER['SCRIPT_FILENAME']) !== realpath(__FILE__)) {
+    // When included, just define helpers and models, don't send headers or exit.
+    return;
+}
+
 header('Content-Type: application/json');
 
 // Fonction pour envoyer une réponse JSON et terminer le script.

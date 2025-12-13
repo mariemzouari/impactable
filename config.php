@@ -1,25 +1,30 @@
 <?php
 date_default_timezone_set('Europe/Paris');
 
-class Config {
+class Config
+{
     // Database constants
     const DB_HOST = 'localhost';
     const DB_NAME = 'impactable';
     const DB_USER = 'root';
     const DB_PASS = '';
     const DB_CHARSET = 'utf8mb4';
-    
+
     // Site constants
     const SITE_NAME = 'ImpactAble';
     const SITE_URL = 'http://localhost/impactable_integration';
-    
+    // Chatbot / OpenRouter configuration
+    const OPENROUTER_API_KEY = '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';
+    const CHATBOT_ENABLED = true;
+
     private static $pdo = null;
 
     /**
      * Get PDO database connection (new method name)
      * @return PDO
      */
-    public static function getPDO() {
+    public static function getPDO()
+    {
         if (self::$pdo === null) {
             self::initConnection();
         }
@@ -30,21 +35,23 @@ class Config {
      * Get PDO database connection (legacy method name for backward compatibility)
      * @return PDO
      */
-    public static function getConnexion() {
+    public static function getConnexion()
+    {
         return self::getPDO();
     }
 
     /**
      * Initialize the database connection
      */
-    private static function initConnection() {
+    private static function initConnection()
+    {
         $dsn = "mysql:host=" . self::DB_HOST . ";dbname=" . self::DB_NAME . ";charset=" . self::DB_CHARSET;
         $options = [
-            PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-            PDO::ATTR_EMULATE_PREPARES   => false,
+            PDO::ATTR_EMULATE_PREPARES => false,
         ];
-        
+
         try {
             self::$pdo = new PDO($dsn, self::DB_USER, self::DB_PASS, $options);
         } catch (PDOException $e) {
@@ -57,16 +64,18 @@ class Config {
      * Get base URL of the site
      * @return string
      */
-    public static function getBaseUrl() {
+    public static function getBaseUrl()
+    {
         return self::SITE_URL;
     }
-    
+
     /**
      * Get full URL for an asset
      * @param string $path
      * @return string
      */
-    public static function getAssetUrl($path) {
+    public static function getAssetUrl($path)
+    {
         return self::SITE_URL . '/assets/' . ltrim($path, '/');
     }
 
@@ -74,8 +83,27 @@ class Config {
      * Get site name
      * @return string
      */
-    public static function getSiteName() {
+    public static function getSiteName()
+    {
         return self::SITE_NAME;
+    }
+
+    /**
+     * Get OpenRouter API key (for chatbot)
+     * @return string
+     */
+    public static function getOpenRouterKey()
+    {
+        return self::OPENROUTER_API_KEY;
+    }
+
+    /**
+     * Whether chatbot is enabled
+     * @return bool
+     */
+    public static function isChatbotEnabled()
+    {
+        return self::CHATBOT_ENABLED;
     }
 }
 
@@ -84,8 +112,10 @@ class Config {
  * Only define if it doesn't already exist
  */
 if (!class_exists('config')) {
-    class config extends Config {
+    class config extends Config
+    {
         // Inherits all methods from Config class
     }
 }
+
 ?>

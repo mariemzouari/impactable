@@ -66,4 +66,43 @@ class Utilisateur {
 
 
 
+
+    // DB helper to fetch a user by id (returns associative array) to match legacy controller usage
+    public function getById($id) {
+        try {
+            if (!class_exists('Database')) {
+                require_once __DIR__ . '/Database.php';
+            }
+            $db = Database::getInstance()->getConnection();
+            $stmt = $db->prepare("SELECT * FROM utilisateur WHERE Id_utilisateur = ?");
+            $stmt->execute([(int)$id]);
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (Exception $e) {
+            error_log('Utilisateur::getById error: ' . $e->getMessage());
+            return null;
+        }
+    }
+
+    // Authenticate user by email and password
+    public function connecter($email, $mot_de_passe) {
+        try {
+            if (!class_exists('Database')) {
+                require_once __DIR__ . '/Database.php';
+            }
+            $db = Database::getInstance()->getConnection();
+            $stmt = $db->prepare("SELECT * FROM utilisateur WHERE email = ? LIMIT 1");
+            $stmt->execute([$email]);
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+            if ($user && isset($user['mot_de_passe'])) {
+                if (password_verify($mot_de_passe, $user['mot_de_passe'])) {
+                    return $user;
+                }
+            }
+            return false;
+        } catch (Exception $e) {
+            error_log('Utilisateur::connecter error: ' . $e->getMessage());
+            return false;
+        }
+    }
+
 }

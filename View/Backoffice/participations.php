@@ -1,16 +1,12 @@
 <?php
-require_once "../../Controller/ParticipationController.php";
+require_once __DIR__ . '/../../Config.php';
+require_once __DIR__ . '/../../Model/ParticipationModel.php';
 
-$controller = new ParticipationController();
-$action = $_GET['action'] ?? 'index';
-$id = $_GET['id'] ?? null;
+$Config = new Config();
+$db = $Config->getPDO();
+$participationModel = new ParticipationModel($db);
 
-switch($action){
-    case 'delete':
-        $controller->delete($id);
-        break;
-    default:
-        $controller->index();
-        break;
-}
+// Back-office page: render list_participations.php template.
+$participations = []; // TODO: Fetch real participations if needed
+include __DIR__ . '/list_participations.php';
 

@@ -47,7 +47,7 @@ $eventId = $evenement['id'] ?? $_GET['id'] ?? null;
   	  <nav class="panel-nav">
   	    <div class="nav-section">
   	      <div class="nav-title">Menu Principal</div>
-  	      <a href="index.php?page=admin-dashboard" class="nav-link"><i class="fas fa-tachometer-alt"></i><span>Tableau de bord</span></a>
+  	      <a href="index.php?action=admin-dashboard" class="nav-link"><i class="fas fa-tachometer-alt"></i><span>Tableau de bord</span></a>
   	      <a href="index.php?page=admin-events-list" class="nav-link active"><i class="fas fa-calendar-alt"></i><span>Gérer les Événements</span></a>
   	      <a href="index.php?page=admin-users-list" class="nav-link"><i class="fas fa-users"></i><span>Gérer les Utilisateurs</span></a>
   	      <a href="index.php?page=admin-reclamations-list" class="nav-link"><i class="fas fa-comment-alt"></i><span>Voir les Réclamations</span></a>

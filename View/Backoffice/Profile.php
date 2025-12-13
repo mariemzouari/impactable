@@ -6,7 +6,7 @@ require_once __DIR__ . '/../../Model/UtilisateurClass.php';
 require_once __DIR__ . '/../../Model/ProfileClass.php';
 
 
-session_start();
+if (session_status() === PHP_SESSION_NONE) session_start();
 
 
 // verifier si utilisateur connecté si non send to login
@@ -81,7 +81,7 @@ if (!$user) {
             <i class="fas fa-users"></i>
             <span>Utilisateurs</span>
           </a>
-          <a href="#opportunities" class="sidebar-link">
+          <a href="index.php?action=admin-dashboard" class="sidebar-link <?= (isset($_GET['action']) && $_GET['action'] == 'admin-dashboard') ? 'active' : '' ?>">
             <i class="fas fa-briefcase"></i>
             <span>Opportunités</span>
           </a>

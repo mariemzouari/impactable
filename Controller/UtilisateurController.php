@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/../config.php';
-include(__DIR__ . '/../Model/UtilisateurClass.php');
+require_once __DIR__ . '/../Model/UtilisateurClass.php';
 
 class UtilisateurController {
 

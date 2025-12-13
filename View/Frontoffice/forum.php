@@ -73,19 +73,19 @@ error_log('DEBUG forum.php: user_id=' . $user_id . ', is_admin=' . ($is_admin ? 
             </div>
 
             <div class="header-actions">
-                <button class="btn ghost" onclick="window.location.href='/projt/index.php?action=create'">
+                <button class="btn ghost" onclick="window.location.href='/impactable_integration/View/Frontoffice/Index.php?action=create'">
                     <i class="fas fa-plus"></i> Créer un Post
                 </button>
         
                 <?php if ($is_logged_in): ?>
-                    <button class="btn secondary" onclick="window.location.href='/projt/index.php?action=logout'">
+                    <button class="btn secondary" onclick="window.location.href='/impactable_integration/View/Frontoffice/Index.php?action=deconnexion'">
                         <i class="fas fa-sign-out-alt"></i> Déconnexion
                     </button>
                 <?php else: ?>
-                    <button class="btn ghost" onclick="window.location.href='/projt/index.php?action=login'">
+                    <button class="btn ghost" onclick="window.location.href='/impactable_integration/View/Frontoffice/Index.php?action=connexion'">
                         <i class="fas fa-sign-in-alt"></i> Se connecter
                     </button>
-                    <button class="btn primary" onclick="window.location.href='/projt/index.php?action=register'">
+                    <button class="btn primary" onclick="window.location.href='/impactable_integration/View/Frontoffice/Index.php?action=inscription'">
                         <i class="fas fa-user-plus"></i> S'inscrire
                     </button>
                 <?php endif; ?>
@@ -106,28 +106,28 @@ error_log('DEBUG forum.php: user_id=' . $user_id . ', is_admin=' . ($is_admin ? 
              <nav class="panel-nav">
                 <div class="nav-section">
                     <div class="nav-title">Navigation</div>
-                    <a href="/projt/index.php?action=list" class="nav-link active">
+                    <a href="/impactable_integration/View/Frontoffice/Index.php?action=list" class="nav-link active">
                         <i class="fas fa-home"></i>
                         <span>Accueil</span>
                     </a>
-                    <a href="/projt/index.php?action=list&category=Opportunités" class="nav-link">
+                    <a href="/impactable_integration/View/Frontoffice/Index.php?action=list&category=Opportunités" class="nav-link">
                         <i class="fas fa-briefcase"></i>
                         <span>Opportunités</span>
                     </a>
-                    <a href="/projt/index.php?action=list&category=Événements" class="nav-link">
+                    <a href="/impactable_integration/View/Frontoffice/Index.php?action=list&category=Événements" class="nav-link">
                         <i class="fas fa-calendar-alt"></i>
                         <span>Événements</span>
                     </a>
 
-                    <a href="/projt/index.php?action=list&category=Ressources" class="nav-link">
+                    <a href="/impactable_integration/View/Frontoffice/Index.php?action=list&category=Ressources" class="nav-link">
                         <i class="fas fa-book"></i>
                         <span>Ressources</span>
                     </a>
-                    <a href="/projt/index.php?action=list" class="nav-link">
+                    <a href="/impactable_integration/View/Frontoffice/Index.php?action=list" class="nav-link">
                         <i class="fas fa-comments"></i>
                         <span>Forum</span>
                     </a>
-                    <a href="/projt/index.php?action=reclamations" class="nav-link">
+                    <a href="/impactable_integration/View/Frontoffice/Index.php?action=reclamations" class="nav-link">
                         <i class="fas fa-comment-alt"></i>
                         <span>Réclamations</span>
                     </a>
@@ -136,7 +136,7 @@ error_log('DEBUG forum.php: user_id=' . $user_id . ', is_admin=' . ($is_admin ? 
                 <?php if ($is_admin): ?>
                 <div class="nav-section">
                     <div class="nav-title">Administration</div>
-                    <a href="/projt/index.php?action=admin" class="nav-link">
+                    <a href="/impactable_integration/View/Frontoffice/Index.php?action=admin" class="nav-link">
                         <i class="fas fa-cog"></i>
                         <span>Tableau de bord</span>
                     </a>
@@ -155,10 +155,10 @@ error_log('DEBUG forum.php: user_id=' . $user_id . ', is_admin=' . ($is_admin ? 
         
                 <?php if (!$is_logged_in): ?>
                 <div style="margin-top: 16px; display: flex; flex-direction: column; gap: 8px;">
-                    <a href="/projt/index.php?action=login" class="btn ghost" style="width: 100%;">
+                    <a href="/impactable_integration/View/Frontoffice/Index.php?action=connexion" class="btn ghost" style="width: 100%;">
                         <i class="fas fa-sign-in-alt"></i> Se connecter
                     </a>
-                    <a href="/projt/index.php?action=register" class="btn primary" style="width: 100%;">
+                    <a href="/impactable_integration/View/Frontoffice/Index.php?action=inscription" class="btn primary" style="width: 100%;">
                         <i class="fas fa-user-plus"></i> S'inscrire
                     </a>
                 </div>
@@ -179,7 +179,7 @@ error_log('DEBUG forum.php: user_id=' . $user_id . ', is_admin=' . ($is_admin ? 
                             <div class="user-avatar"><?= strtoupper(substr($user_name, 0, 1)) ?></div>
                             <div class="post-input">
                                 <!-- Formulaire de création de post rapide -->
-                                <form action="/projt/index.php?action=create" method="POST" enctype="multipart/form-data" id="quickPostForm">
+                                <form action="/impactable_integration/View/Frontoffice/Index.php?action=create" method="POST" enctype="multipart/form-data" id="quickPostForm">
                                     <textarea name="contenu" placeholder="Partagez vos idées, questions ou expériences avec la communauté..." 
                                                         id="quickPostContent" ></textarea>
                   
@@ -240,7 +240,7 @@ error_log('DEBUG forum.php: user_id=' . $user_id . ', is_admin=' . ($is_admin ? 
                                     Affichage des posts de la catégorie "<?= htmlspecialchars($current_category) ?>"
                                 </p>
                             </div>
-                            <a href="/projt/index.php?action=list" class="btn ghost">
+                            <a href="/impactable_integration/View/Frontoffice/Index.php?action=list" class="btn ghost">
                                 <i class="fas fa-times"></i> Supprimer le filtre
                             </a>
                         </div>
@@ -256,10 +256,10 @@ error_log('DEBUG forum.php: user_id=' . $user_id . ', is_admin=' . ($is_admin ? 
                                 <p style="text-align: center; padding: 40px; color: var(--muted);">
                                     <?php if (!empty($current_category)): ?>
                                         Aucun post dans la catégorie "<?= htmlspecialchars($current_category) ?>". 
-                                        <a href="/projt/index.php?action=create" style="color: var(--copper);">Soyez le premier à partager !</a>
+                                        <a href="/impactable_integration/View/Frontoffice/Index.php?action=create" style="color: var(--copper);">Soyez le premier à partager !</a>
                                     <?php else: ?>
                                         Aucun post pour le moment. 
-                                        <a href="/projt/index.php?action=create" style="color: var(--copper);">Soyez le premier à partager !</a>
+                                        <a href="/impactable_integration/View/Frontoffice/Index.php?action=create" style="color: var(--copper);">Soyez le premier à partager !</a>
                                     <?php endif; ?>
                                 </p>
                             </div>
@@ -321,17 +321,17 @@ error_log('DEBUG forum.php: user_id=' . $user_id . ', is_admin=' . ($is_admin ? 
               
                             <!-- Boutons d'action sur la même ligne -->
                              <div class="post-interactions">
-                                <button class="interaction-btn" onclick="window.location.href='/projt/index.php?action=view&id=<?= $post['Id_post'] ?>'">
+                                <button class="interaction-btn" onclick="window.location.href='/impactable_integration/View/Frontoffice/Index.php?action=view&id=<?= $post['Id_post'] ?>'">
                                     <i class="far fa-eye"></i>
                                     <span>Voir & Commenter</span>
                                 </button>
                 
                                 <?php if ($post['Id_utilisateur'] == $user_id || $is_admin): ?>
-                                <button class="interaction-btn" onclick="window.location.href='/projt/index.php?action=edit&id=<?= $post['Id_post'] ?>'">
+                                <button class="interaction-btn" onclick="window.location.href='/impactable_integration/View/Frontoffice/Index.php?action=edit&id=<?= $post['Id_post'] ?>'">
                                     <i class="far fa-edit"></i>
                                     <span>Modifier</span>
                                 </button>
-                                <button class="interaction-btn" onclick="if(confirm('Supprimer ce post ?')) window.location.href='/projt/index.php?action=delete&id=<?= $post['Id_post'] ?>'">
+                                <button class="interaction-btn" onclick="if(confirm('Supprimer ce post ?')) window.location.href='/impactable_integration/View/Frontoffice/Index.php?action=delete&id=<?= $post['Id_post'] ?>'">
                                     <i class="fas fa-trash"></i>
                                     <span>Supprimer</span>
                                 </button>
@@ -350,7 +350,7 @@ error_log('DEBUG forum.php: user_id=' . $user_id . ', is_admin=' . ($is_admin ? 
         <div class="forum-header">
                 <h3>Catégories</h3>
                 <?php if (!empty($current_category)): ?>
-                    <a href="/projt/index.php?action=list" class="btn ghost small" title="Voir tous les posts">
+                    <a href="/impactable_integration/View/Frontoffice/Index.php?action=list" class="btn ghost small" title="Voir tous les posts">
                         <i class="fas fa-times"></i>
                     </a>
                 <?php endif; ?>

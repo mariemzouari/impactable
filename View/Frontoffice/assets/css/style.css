@@ -542,6 +542,155 @@
       font-weight: normal;
       cursor: pointer;
     }
+
+    /* Poster offre specific layout */
+    .poster-offre-container {
+      max-width: 1000px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+
+    .offre-form {
+      background: var(--white);
+      border-radius: var(--radius-sm);
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+      display: grid;
+      gap: 1.25rem;
+    }
+
+    .offre-form .form-section {
+      padding: 0.5rem 0;
+      border-bottom: 1px solid rgba(75,46,22,0.04);
+    }
+
+    .offre-form .form-section:last-child {
+      border-bottom: none;
+    }
+
+    /* Compatibility: map .form-control to input styles */
+    .form-control {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(75,46,22,0.08);
+      background: #fff;
+      font-size: 1rem;
+      color: var(--brown);
+      transition: box-shadow var(--ease-s), border-color var(--ease-s);
+    }
+
+    .form-control:focus {
+      outline: none;
+      box-shadow: var(--focus);
+      border-color: var(--copper);
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 12px;
+      margin-top: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    /* Poster specific header and form layout */
+    .poster-offre-container .section-header h1 {
+      font-size: 1.8rem;
+      color: var(--brown);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .poster-offre-container .section-header p.text-muted {
+      color: var(--muted);
+      margin: 6px 0 0 0;
+      font-size: 0.95rem;
+    }
+
+    /* Global utility: text muted */
+    .text-muted {
+      color: var(--muted) !important;
+      font-size: 0.95rem;
+    }
+
+    /* Form label explicit styling */
+    .form-label {
+      display: block;
+      font-weight: 700;
+      color: var(--brown);
+      margin-bottom: 6px;
+    }
+
+    .offre-form .form-section h2 {
+      font-size: 1.15rem;
+      color: var(--brown);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-group .btn {
+      padding: 10px 18px;
+    }
+
+    /* Form section grid on larger screens */
+    @media (min-width: 900px) {
+      .offre-form {
+        grid-template-columns: 1fr;
+      }
+
+      .offre-form .form-section {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px 24px;
+        align-items: start;
+      }
+
+      /* Make the section header full width */
+      .offre-form .form-section h2 {
+        grid-column: 1 / -1;
+      }
+    }
+
+    /* Radio and checkbox visual improvements */
+    .radio-group, .checkbox-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .radio-option, .checkbox-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(75,46,22,0.06);
+      cursor: pointer;
+      background: rgba(255,255,255,0.6);
+      transition: all var(--ease-s);
+      font-weight: 600;
+      color: var(--brown);
+    }
+
+    .radio-option input[type="radio"], .checkbox-label input[type="checkbox"] {
+      transform: translateY(0);
+      margin-right: 6px;
+      accent-color: var(--copper);
+    }
+
+    .radio-option:hover, .checkbox-label:hover {
+      box-shadow: var(--shadow);
+      border-color: rgba(75,46,22,0.12);
+    }
+
+    .form-help {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-top: 6px;
+    }
     
     .checkbox-label input {
       margin: 0;

@@ -1,5 +1,5 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) session_start();
 // Inclusion des fichiers de configuration et modèles
 require_once __DIR__ . '/../../../Config.php';
 require_once __DIR__ . '/../../../Model/EventModel.php';

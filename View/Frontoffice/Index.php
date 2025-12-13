@@ -1,8 +1,11 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE)
+  session_start();
 require_once __DIR__ . "/../../Config.php";
+require_once __DIR__ . "/../../Model/Database.php";
 require_once __DIR__ . "/../../Model/EventModel.php";
 require_once __DIR__ . "/../../Model/ParticipationModel.php";
+require_once __DIR__ . "/../../Model/utils.php";
 
 $Config = new Config();
 $db = $Config->getPDO();
@@ -15,9 +18,82 @@ $featuredEvents = array_slice($allEvents, 0, 3);
 
 $currentYear = date('Y');
 $userId = $_SESSION['user_id'] ?? null;
+
+// If an action targets the offers/candidatures features, dispatch to controllers
+$action = $_GET['action'] ?? null;
+if ($action) {
+  require_once __DIR__ . '/../../Model/Database.php';
+  require_once __DIR__ . '/../../Model/utils.php';
+  require_once __DIR__ . '/../../Model/Offre.php';
+  require_once __DIR__ . '/../../Model/Candidature.php';
+  require_once __DIR__ . '/../../Model/UtilisateurClass.php';
+  require_once __DIR__ . '/../../Controller/OffreController.php';
+  require_once __DIR__ . '/../../Controller/CandidatureController.php';
+  require_once __DIR__ . '/../../Controller/AuthController.php';
+  require_once __DIR__ . '/../../Controller/ChatbotController.php';
+  // favorites controller is an API endpoint; do not include here
+  require_once __DIR__ . '/../../Controller/AdminController.php';
+
+  $offreController = new OffreController();
+  $candidatureController = new CandidatureController();
+  $authController = new AuthController();
+  $chatbotController = new ChatbotController();
+  // ParticipationController is an API endpoint; don't include/instantiate it here.
+  // no instantiation: it's an API endpoint
+  $adminController = new AdminController();
+
+  switch ($action) {
+    case 'offres':
+      $offreController->liste();
+      exit;
+    case 'details-offre':
+      $offreController->details();
+      exit;
+    case 'poster-offre':
+      $offreController->poster();
+      exit;
+    case 'mes-offres':
+      $offreController->mesOffres();
+      exit;
+    case 'modifier-offre':
+      $offreController->modifier();
+      exit;
+    case 'supprimer-offre':
+      $offreController->supprimer();
+      exit;
+    case 'gestion-offre':
+      $offreController->gestion();
+      exit;
+    case 'postuler':
+      $candidatureController->postuler();
+      exit;
+    case 'mes-candidatures':
+      $candidatureController->mesCandidatures();
+      exit;
+    case 'connexion':
+      $authController->connexion();
+      exit;
+    case 'deconnexion':
+      $authController->deconnexion();
+      exit;
+    case 'chatbot':
+      $chatbotController->processMessage();
+      exit;
+    case 'admin-dashboard':
+      $adminController->dashboard();
+      exit;
+    case 'create':
+      $offreController->poster();
+      exit;
+    default:
+      // other actions continue to homepage
+      break;
+  }
+}
 ?>
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -25,6 +101,7 @@ $userId = $_SESSION['user_id'] ?? null;
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="../../assets/css/style.css">
   <link rel="stylesheet" href="../../assets/css/style rayen.css">
+  <link rel="stylesheet" href="../../View/Frontoffice/assets/css/style.css">
   <style>
     /* Styles pour la modale */
     .modal-backdrop {
@@ -42,10 +119,12 @@ $userId = $_SESSION['user_id'] ?? null;
       visibility: hidden;
       transition: opacity 0.3s ease, visibility 0.3s ease;
     }
+
     .modal-backdrop.active {
       opacity: 1;
       visibility: visible;
     }
+
     .modal-content {
       background: #fff;
       padding: 30px;
@@ -56,9 +135,11 @@ $userId = $_SESSION['user_id'] ?? null;
       transform: translateY(-20px);
       transition: transform 0.3s ease;
     }
+
     .modal-backdrop.active .modal-content {
       transform: translateY(0);
     }
+
     .modal-header {
       display: flex;
       justify-content: space-between;
@@ -67,11 +148,13 @@ $userId = $_SESSION['user_id'] ?? null;
       padding-bottom: 15px;
       margin-bottom: 20px;
     }
+
     .modal-header h3 {
       margin: 0;
       color: var(--brown);
       font-size: 1.5rem;
     }
+
     .modal-close {
       background: none;
       border: none;
@@ -80,18 +163,22 @@ $userId = $_SESSION['user_id'] ?? null;
       cursor: pointer;
       padding: 0;
     }
+
     .modal-close:hover {
       color: var(--brown);
     }
+
     .form-group {
       margin-bottom: 15px;
     }
+
     .form-group label {
       display: block;
       margin-bottom: 8px;
       font-weight: 600;
       color: var(--brown);
     }
+
     .form-input {
       width: 100%;
       padding: 12px;
@@ -102,11 +189,13 @@ $userId = $_SESSION['user_id'] ?? null;
       color: var(--brown);
       box-sizing: border-box;
     }
+
     .form-input:focus {
       outline: none;
       border-color: var(--moss);
       box-shadow: 0 0 0 3px rgba(94, 109, 59, 0.1);
     }
+
     .form-footer {
       display: flex;
       justify-content: flex-end;
@@ -115,6 +204,7 @@ $userId = $_SESSION['user_id'] ?? null;
       border-top: 1px solid #eee;
       padding-top: 20px;
     }
+
     .btn-modal-secondary {
       background: #f0f0f0;
       color: #333;
@@ -125,9 +215,11 @@ $userId = $_SESSION['user_id'] ?? null;
       font-weight: 600;
       transition: background 0.2s;
     }
+
     .btn-modal-secondary:hover {
       background: #e0e0e0;
     }
+
     .btn-modal-primary {
       background: var(--moss);
       color: white;
@@ -138,9 +230,11 @@ $userId = $_SESSION['user_id'] ?? null;
       font-weight: 600;
       transition: background 0.2s;
     }
+
     .btn-modal-primary:hover {
       background: #4a5830;
     }
+
     .global-status-message {
       position: fixed;
       top: 20px;
@@ -149,51 +243,92 @@ $userId = $_SESSION['user_id'] ?? null;
       color: #721c24;
       padding: 10px 20px;
       border-radius: 5px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
       z-index: 1001;
       display: none;
       font-weight: 600;
     }
+
     .global-status-message.success {
       background-color: #d4edda;
       color: #155724;
     }
+
+    /* Logo link styling */
+    a.logo {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      cursor: pointer;
+      transition: opacity 0.3s ease;
+    }
+
+    a.logo:hover {
+      opacity: 0.8;
+    }
+
+    a.logo .logo-image {
+      transition: transform 0.3s ease;
+    }
+
+    a.logo:hover .logo-image {
+      transform: scale(1.05);
+    }
   </style>
 </head>
+
 <body>
 
-  <div class="container">  
+  <div class="container">
     <!-- IMPROVED: Header with better navigation toggle placement -->
     <header class="site-header" role="banner">
       <div class="brand">
         <button class="nav-toggle" id="navToggle" aria-label="Ouvrir le menu">
           <i class="fas fa-bars"></i>
         </button>
-        <div class="logo">
+        <a href="<?php echo Config::getBaseUrl(); ?>/View/Frontoffice/index.php" class="logo">
           <img src="../../assets/images/logo.png" alt="Inclusive Opportunities" class="logo-image">
-        </div>
+        </a>
       </div>
 
       <div class="header-actions">
-        <button class="btn ghost" onclick="window.location.href='/projt/index.php?action=create'">
-          <i class="fas fa-plus"></i> Créer un Post
-        </button>
-        <a href="login.php" class="btn ghost" id="loginBtn">Se connecter</a>
-        <a href="signup.php" class="btn primary" id="signupBtn">S'inscrire</a>
+        <?php if (isset($_SESSION['user_id']) && Utils::isAuthenticated()): ?>
+          <span class="user-welcome">Bonjour, <?= htmlspecialchars($_SESSION['user_prenom'] ?? ''); ?></span>
+          <a href="index.php?action=mes-candidatures" class="btn ghost">
+            <i class="fas fa-briefcase"></i>
+            Mes candidatures
+          </a>
+          <a href="index.php?action=mes-offres" class="btn secondary">
+            <i class="fas fa-list"></i>
+            Mes offres
+          </a>
+          <button class="btn ghost" onclick="window.location.href='index.php?action=create'">
+            <i class="fas fa-plus"></i> Créer un Post
+          </button>
+          <a href="index.php?action=deconnexion" class="btn secondary">
+            <i class="fas fa-sign-out-alt"></i> Déconnexion
+          </a>
+          <?php if (isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin'): ?>
+            <a class="btn ghost" href="index.php?action=admin-dashboard"><i class="fas fa-cog"></i> Admin</a>
+          <?php endif; ?>
+        <?php else: ?>
+          <a href="index.php?action=connexion" class="btn ghost" id="loginBtn">Se connecter</a>
+          <a href="index.php?action=inscription" class="btn primary" id="signupBtn">S'inscrire</a>
+        <?php endif; ?>
       </div>
     </header>
 
     <!-- Side Panel Navigation -->
     <div class="side-panel" id="sidePanel">
       <div class="panel-header">
-        <div class="logo">
+        <a href="<?php echo Config::getBaseUrl(); ?>/View/Frontoffice/index.php" class="logo">
           <img src="../../assets/images/logo.png" alt="Inclusive Opportunities" class="logo-image">
-        </div>
+        </a>
         <button class="panel-close" id="panelClose">
           <i class="fas fa-times"></i>
         </button>
       </div>
-      
+
       <nav class="panel-nav">
         <div class="nav-section">
           <div class="nav-title">Navigation</div>
@@ -225,9 +360,9 @@ $userId = $_SESSION['user_id'] ?? null;
             <i class="fas fa-comment-alt"></i>
             <span>Réclamations</span>
           </a>
-        </div> 
+        </div>
       </nav>
-      
+
       <div class="panel-footer">
         <div class="user-profile">
           <div class="user-avatar">VS</div>
@@ -238,14 +373,15 @@ $userId = $_SESSION['user_id'] ?? null;
         </div>
       </div>
     </div>
-    
+
     <div class="panel-overlay" id="panelOverlay"></div>
 
     <!-- Hero -->
     <section id="home" class="hero" aria-labelledby="hero-title">
       <div class="hero-content">
         <h1 id="hero-title">Événements à Impact Positif</h1>
-        <p class="lead">Découvrez des événements qui créent un impact social positif : formations inclusives, conférences engagées, actions de solidarité et bien plus encore.</p>
+        <p class="lead">Découvrez des événements qui créent un impact social positif : formations inclusives,
+          conférences engagées, actions de solidarité et bien plus encore.</p>
 
         <div class="hero-cta">
           <a class="btn primary" href="events-list.php">
@@ -279,7 +415,9 @@ $userId = $_SESSION['user_id'] ?? null;
       </div>
 
       <div>
-        <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80" alt="Public participant à un événement solidaire" class="hero-img" />
+        <img
+          src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80"
+          alt="Public participant à un événement solidaire" class="hero-img" />
       </div>
     </section>
 
@@ -297,7 +435,8 @@ $userId = $_SESSION['user_id'] ?? null;
           <i class="fas fa-calendar-alt"></i>
         </div>
         <h3>Événements</h3>
-        <p>Inscrivez-vous à des événements locaux et en ligne, avec des options d'accessibilité indiquées clairement.</p>
+        <p>Inscrivez-vous à des événements locaux et en ligne, avec des options d'accessibilité indiquées clairement.
+        </p>
       </article>
       <article class="feature">
         <div class="feature-icon">
@@ -308,66 +447,38 @@ $userId = $_SESSION['user_id'] ?? null;
       </article>
     </section>
 
-    <!-- Opportunities Grid -->
-    <section id="opportunities" class="section">
-      <div class="section-header">
-        <h2>Opportunités</h2>
-        <a href="#" class="section-link">
-          Voir toutes
-          <i class="fas fa-arrow-right"></i>
-        </a>
-      </div>
-      <div class="cards-grid">
-        <article class="card">
-          <img class="card-img" src="https://images.unsplash.com/photo-1551836026-d5c8c2d6c0d4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80" alt="Personnes en réunion">
-          <div class="card-body">
-            <h3>Assistant(e) communautaire</h3>
-            <p class="text-muted">Remote · Temps partiel · Accessibilité: Ramp</p>
-            <p class="card-excerpt">Aidez à la coordination d'activités inclusives pour personnes en situation de handicap.</p>
-            <div class="card-actions">
-              <a class="btn primary" href="#">Postuler</a>
-              <a class="btn ghost" href="#">En savoir plus</a>
-            </div>
-          </div>
-          <div class="card-footer">
-            <span class="text-muted small">Publié il y a 2 jours</span>
-            <span class="badge">Nouveau</span>
-          </div>
-        </article>
+    <!-- Opportunités: embedded list -->
+    <?php
+    // Prepare offers data to embed the list template
+    require_once __DIR__ . '/../../Model/Offre.php';
+    require_once __DIR__ . '/../../Model/Candidature.php';
+    require_once __DIR__ . '/../../Model/UtilisateurClass.php';
 
-        <article class="card">
-          <img class="card-img" src="https://images.unsplash.com/photo-1573164713714-d95e436ab8d6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=869&q=80" alt="Personne travaillant sur ordinateur">
-          <div class="card-body">
-            <h3>Développeur Accessibilité Web</h3>
-            <p class="text-muted">Hybride · Temps plein</p>
-            <p class="card-excerpt">Contribuez à créer des expériences web inclusives et accessibles à tous.</p>
-            <div class="card-actions">
-              <a class="btn primary" href="#">Postuler</a>
-              <a class="btn ghost" href="#">En savoir plus</a>
-            </div>
-          </div>
-          <div class="card-footer">
-            <span class="text-muted small">Publié il y a 5 jours</span>
-          </div>
-        </article>
+    $offreManager = new Offre();
+    $candidatureManager = new Candidature();
 
-        <article class="card">
-          <img class="card-img" src="https://images.unsplash.com/photo-1543269865-cbf427effbad?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80" alt="Étudiants en cours">
-          <div class="card-body">
-            <h3>Formateur en Inclusion</h3>
-            <p class="text-muted">Présentiel · Temps partiel</p>
-            <p class="card-excerpt">Animez des ateliers de sensibilisation à l'inclusion en milieu professionnel.</p>
-            <div class="card-actions">
-              <a class="btn primary" href="#">Postuler</a>
-              <a class="btn ghost" href="#">En savoir plus</a>
-            </div>
-          </div>
-          <div class="card-footer">
-            <span class="text-muted small">Publié il y a 1 semaine</span>
-          </div>
-        </article>
-      </div>
-    </section>
+    $filters = [];
+    if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+      if (!empty($_GET['type_offre']))
+        $filters['type_offre'] = $_GET['type_offre'];
+      if (!empty($_GET['mode']))
+        $filters['mode'] = $_GET['mode'];
+      if (!empty($_GET['horaire']))
+        $filters['horaire'] = $_GET['horaire'];
+      if (isset($_GET['disability_friendly']))
+        $filters['disability_friendly'] = $_GET['disability_friendly'];
+      if (!empty($_GET['type_handicap']))
+        $filters['type_handicap'] = $_GET['type_handicap'];
+    }
+
+    $offres = $offreManager->getAll($filters, 6);
+    $candidaturesPlacees = $candidatureManager->getCandidaturesPlacees();
+
+    // Use EMBEDDED mode to avoid duplicating header/footer
+    if (!defined('EMBEDDED'))
+      define('EMBEDDED', true);
+    require_once __DIR__ . '/offre/liste.php';
+    ?>
 
     <!-- Events Section - Enhanced from second file -->
     <section id="events" class="section">
@@ -405,42 +516,46 @@ $userId = $_SESSION['user_id'] ?? null;
               $isStaticEventParticipating = true;
             }
           }
-        ?>
-        <div class="event-item">
-          <time datetime="<?= date('Y-m-d', strtotime($sEvent['date'])) ?>"><?= date('d M Y', strtotime($sEvent['date'])) ?><br><span style="font-size: 0.9rem; color: var(--muted);"><?= date('H\hi', strtotime($sEvent['date'])) ?></span></time>
-          <div class="event-content">
-            <h4><?= htmlspecialchars($sEvent['titre']) ?></h4>
-            <p><?= htmlspecialchars($sEvent['description']) ?></p>
-            <div class="feature-list" style="margin: 0.5rem 0;">
-              <?php foreach ($sEvent['badges'] as $badge): ?>
-                <div class="badge">
-                  <i class="<?= htmlspecialchars($badge['icon']) ?>"></i> <?= htmlspecialchars($badge['text']) ?> 
-                </div>
-              <?php endforeach; ?>
-            </div>
-            <div style="margin-top: 1rem;">
-              <?php if ($userId): ?>
-                <?php if ($isStaticEventParticipating): ?>
-                  <button class="btn btn-participer" disabled style="background: #27ae60; cursor: default;">
-                    <i class="fas fa-check"></i> Inscrit
+          ?>
+          <div class="event-item">
+            <time
+              datetime="<?= date('Y-m-d', strtotime($sEvent['date'])) ?>"><?= date('d M Y', strtotime($sEvent['date'])) ?><br><span
+                style="font-size: 0.9rem; color: var(--muted);"><?= date('H\hi', strtotime($sEvent['date'])) ?></span></time>
+            <div class="event-content">
+              <h4><?= htmlspecialchars($sEvent['titre']) ?></h4>
+              <p><?= htmlspecialchars($sEvent['description']) ?></p>
+              <div class="feature-list" style="margin: 0.5rem 0;">
+                <?php foreach ($sEvent['badges'] as $badge): ?>
+                  <div class="badge">
+                    <i class="<?= htmlspecialchars($badge['icon']) ?>"></i> <?= htmlspecialchars($badge['text']) ?>
+                  </div>
+                <?php endforeach; ?>
+              </div>
+              <div style="margin-top: 1rem;">
+                <?php if ($userId): ?>
+                  <?php if ($isStaticEventParticipating): ?>
+                    <button class="btn btn-participer" disabled style="background: #27ae60; cursor: default;">
+                      <i class="fas fa-check"></i> Inscrit
+                    </button>
+                    <span class="text-muted" style="margin: 0 1rem;">•</span>
+                    <span class="text-muted participants-count">Vous participez</span>
+                  <?php else: ?>
+                    <button class="btn btn-participer"
+                      onclick="openDetailedParticipationModal(<?= $sEvent['id'] ?>, <?= json_encode($userId) ?>)">Participer</button>
+                    <span class="text-muted" style="margin: 0 1rem;">•</span>
+                    <span class="text-muted participants-count"><?= $staticParticipationCount ?> participants inscrits</span>
+                  <?php endif; ?>
+                <?php else: ?>
+                  <button class="btn btn-participer" disabled style="background: rgba(180,123,71,0.5); cursor: not-allowed;"
+                    title="Connectez-vous pour participer">
+                    <i class="fas fa-user"></i> Se connecter
                   </button>
                   <span class="text-muted" style="margin: 0 1rem;">•</span>
-                  <span class="text-muted participants-count">Vous participez</span>
-                <?php else: ?>
-                  <button class="btn btn-participer" onclick="openDetailedParticipationModal(<?= $sEvent['id'] ?>, <?= json_encode($userId) ?>)">Participer</button>
-                  <span class="text-muted" style="margin: 0 1rem;">•</span>
-                  <span class="text-muted participants-count"><?= $staticParticipationCount ?> participants inscrits</span>
+                  <span class="text-muted participants-count">0 participants inscrits</span>
                 <?php endif; ?>
-              <?php else: ?>
-                <button class="btn btn-participer" disabled style="background: rgba(180,123,71,0.5); cursor: not-allowed;" title="Connectez-vous pour participer">
-                  <i class="fas fa-user"></i> Se connecter
-                </button>
-                <span class="text-muted" style="margin: 0 1rem;">•</span>
-                <span class="text-muted participants-count">0 participants inscrits</span>
-              <?php endif; ?>
+              </div>
             </div>
           </div>
-        </div>
         <?php endforeach; ?>
       </div>
     </section>
@@ -484,14 +599,16 @@ $userId = $_SESSION['user_id'] ?? null;
             <i class="fas fa-heartbeat"></i>
           </div>
           <h3>Santé & Bien-être</h3>
-          <p>Prenez part à des initiatives pour la santé physique et mentale, l'accès aux soins et le bien-être de tous.</p>
+          <p>Prenez part à des initiatives pour la santé physique et mentale, l'accès aux soins et le bien-être de tous.
+          </p>
         </article>
         <article class="feature">
           <div class="feature-icon">
             <i class="fas fa-briefcase"></i>
           </div>
           <h3>Métier & Carrière</h3>
-          <p>Découvrez des métiers, développez vos compétences professionnelles et explorez de nouvelles opportunités de carrière.</p>
+          <p>Découvrez des métiers, développez vos compétences professionnelles et explorez de nouvelles opportunités de
+            carrière.</p>
         </article>
         <article class="feature">
           <div class="feature-icon">
@@ -529,12 +646,16 @@ $userId = $_SESSION['user_id'] ?? null;
                 $isFeaturedEventParticipating = true;
               }
             }
-          ?>
+            ?>
             <article class="card">
-              <img class="card-img" src="<?= htmlspecialchars($event['image'] ?? 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80') ?>" alt="Image pour <?= htmlspecialchars($event['titre']) ?>">
+              <img class="card-img"
+                src="<?= htmlspecialchars($event['image'] ?? 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80') ?>"
+                alt="Image pour <?= htmlspecialchars($event['titre']) ?>">
               <div class="card-body">
                 <h3><?= htmlspecialchars($event['titre']) ?></h3>
-                <p class="text-muted"><?= date('d M Y', strtotime($event['date_debut'])) ?> · <?= htmlspecialchars($event['adresse'] ?? 'Lieu à définir') ?></p>
+                <p class="text-muted"><?= date('d M Y', strtotime($event['date_debut'])) ?> ·
+                  <?= htmlspecialchars($event['adresse'] ?? 'Lieu à définir') ?>
+                </p>
                 <p class="card-excerpt"><?= htmlspecialchars(substr($event['description'], 0, 100)) ?>...</p>
                 <div class="card-actions">
                   <a class="btn ghost" href="event/event-detail.php?id=<?= intval($event['id']) ?>">Détails</a>
@@ -544,19 +665,24 @@ $userId = $_SESSION['user_id'] ?? null;
                         <i class="fas fa-check"></i> Inscrit
                       </button>
                     <?php else: ?>
-                      <button class="btn primary" onclick="openDetailedParticipationModal(<?= $event['id'] ?>, <?= json_encode($userId) ?>)">Participer</button>
+                      <button class="btn primary"
+                        onclick="openDetailedParticipationModal(<?= $event['id'] ?>, <?= json_encode($userId) ?>)">Participer</button>
                     <?php endif; ?>
                   <?php else: ?>
-                    <button class="btn primary" disabled style="background: rgba(180,123,71,0.5); cursor: not-allowed;" title="Connectez-vous pour participer">
+                    <button class="btn primary" disabled style="background: rgba(180,123,71,0.5); cursor: not-allowed;"
+                      title="Connectez-vous pour participer">
                       <i class="fas fa-user"></i> Participer
                     </button>
                   <?php endif; ?>
                 </div>
-                <div class="success-msg" style="display: none; text-align: center; font-size: 0.9em; margin-top: 5px;"></div>
-                <div class="error-msg" style="display: none; color: red; text-align: center; font-size: 0.9em; margin-top: 5px;"></div>
+                <div class="success-msg" style="display: none; text-align: center; font-size: 0.9em; margin-top: 5px;">
+                </div>
+                <div class="error-msg"
+                  style="display: none; color: red; text-align: center; font-size: 0.9em; margin-top: 5px;"></div>
               </div>
               <div class="card-footer">
-                <span class="text-muted small"><?= isset($event['capacite']) ? htmlspecialchars($event['capacite']) . ' places disponibles' : 'Places disponibles' ?></span>
+                <span
+                  class="text-muted small"><?= isset($event['capacite']) ? htmlspecialchars($event['capacite']) . ' places disponibles' : 'Places disponibles' ?></span>
                 <span class="badge"><?= htmlspecialchars($event['categorie']) ?></span>
               </div>
             </article>
@@ -734,13 +860,14 @@ $userId = $_SESSION['user_id'] ?? null;
     <div class="modal-content">
       <div class="modal-header">
         <h3>Inscription à l'événement</h3>
-        <button class="modal-close" type="button" onclick="closeDetailedParticipationModal()"><i class="fas fa-times"></i></button>
+        <button class="modal-close" type="button" onclick="closeDetailedParticipationModal()"><i
+            class="fas fa-times"></i></button>
       </div>
       <div class="modal-body">
         <form id="detailedParticipationForm">
           <input type="hidden" name="id_evenement" id="modalEventId">
           <input type="hidden" name="id_utilisateur" id="modalUserId">
-          
+
           <?php if (!$userId): ?>
             <div class="form-group">
               <label for="modalPrenom">Prénom</label>
@@ -756,11 +883,13 @@ $userId = $_SESSION['user_id'] ?? null;
             </div>
             <div class="form-group">
               <label for="modalNumTel">Numéro de téléphone</label>
-              <input type="text" id="modalNumTel" name="num_tel" class="form-input" placeholder="Ex: +216 12 345 678" required>
+              <input type="text" id="modalNumTel" name="num_tel" class="form-input" placeholder="Ex: +216 12 345 678"
+                required>
             </div>
             <div class="form-group">
               <label for="modalNumIdentite">Numéro d'identité (CIN/Passeport)</label>
-              <input type="text" id="modalNumIdentite" name="num_identite" class="form-input" placeholder="Ex: 08123456" required>
+              <input type="text" id="modalNumIdentite" name="num_identite" class="form-input" placeholder="Ex: 08123456"
+                required>
             </div>
           <?php else: ?>
             <div class="form-group">
@@ -787,18 +916,22 @@ $userId = $_SESSION['user_id'] ?? null;
 
           <div class="form-group">
             <label for="modalAccompagnants">Nombre d'accompagnants</label>
-            <input type="number" id="modalAccompagnants" name="nombre_accompagnants" class="form-input" value="0" min="0">
+            <input type="number" id="modalAccompagnants" name="nombre_accompagnants" class="form-input" value="0"
+              min="0">
           </div>
           <div class="form-group">
             <label for="modalBesoins">Besoins d'accessibilité (facultatif)</label>
-            <textarea id="modalBesoins" name="besoins_accessibilite" class="form-input" rows="3" placeholder="Ex: Rampe d'accès, interprète LSF..."></textarea>
+            <textarea id="modalBesoins" name="besoins_accessibilite" class="form-input" rows="3"
+              placeholder="Ex: Rampe d'accès, interprète LSF..."></textarea>
           </div>
           <div class="form-group">
             <label for="modalMessage">Message/Notes (facultatif)</label>
-            <textarea id="modalMessage" name="message" class="form-input" rows="3" placeholder="Toute autre information utile..."></textarea>
+            <textarea id="modalMessage" name="message" class="form-input" rows="3"
+              placeholder="Toute autre information utile..."></textarea>
           </div>
           <div class="form-footer">
-            <button type="button" class="btn-modal-secondary" onclick="closeDetailedParticipationModal()">Annuler</button>
+            <button type="button" class="btn-modal-secondary"
+              onclick="closeDetailedParticipationModal()">Annuler</button>
             <button type="submit" class="btn-modal-primary">Confirmer l'inscription</button>
           </div>
         </form>
@@ -813,5 +946,11 @@ $userId = $_SESSION['user_id'] ?? null;
     // Update year in footer
     document.getElementById('year').textContent = new Date().getFullYear();
   </script>
+
+  <!-- Include Chatbot Component -->
+  <?php if (Config::isChatbotEnabled()): ?>
+    <?php require_once __DIR__ . '/../components/chatbot.php'; ?>
+  <?php endif; ?>
 </body>
+
 </html>

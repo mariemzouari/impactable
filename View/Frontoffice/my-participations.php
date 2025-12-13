@@ -1,6 +1,6 @@
 <?php
 // ob_start(); // Removed as per request to allow access without login, no header redirect will occur
-session_start();
+if (session_status() === PHP_SESSION_NONE) session_start();
 // Le contrôleur est un endpoint API et ne doit pas être inclus ici.
 require_once __DIR__ . "/../../Model/ParticipationModel.php";
 require_once __DIR__ . "/../../Model/UserModel.php"; // Inclure le modèle utilisateur

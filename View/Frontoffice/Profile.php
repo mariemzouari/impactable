@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../../Controller/UtilisateurController.php';
 require_once __DIR__ . '/../../Controller/ProfileController.php';
 
-session_start();
+if (session_status() === PHP_SESSION_NONE) session_start();
 
 
 // verifier si utilisateur connecté si non send to login

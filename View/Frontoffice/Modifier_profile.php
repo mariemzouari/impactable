@@ -5,7 +5,7 @@ require_once __DIR__ . '/../../Model/UtilisateurClass.php';
 require_once __DIR__ . '/../../Model/ProfileClass.php';
 
 
-session_start();
+if (session_status() === PHP_SESSION_NONE) session_start();
 
 
 // verifier si utilisateur connecté si non send to login

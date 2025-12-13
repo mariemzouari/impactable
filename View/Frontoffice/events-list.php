@@ -1,5 +1,5 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) session_start();
 // Vérifiez bien que ces chemins sont corrects par rapport à l'emplacement de ce fichier
 require_once "../../Config.php";
 require_once "../../Model/ParticipationModel.php";
