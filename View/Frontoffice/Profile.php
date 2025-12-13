@@ -1,0 +1,485 @@
+<?php 
+require_once __DIR__ . '/../../Controller/UtilisateurController.php';
+require_once __DIR__ . '/../../Controller/ProfileController.php';
+
+session_start();
+
+
+// verifier si utilisateur connecté si non send to login
+if (!isset($_SESSION['user_id'])) {
+    header('Location: login.php');
+    exit;
+}
+
+
+// controllers
+$userC = new UtilisateurController();
+$profileC = new ProfileController();
+
+// recuperer l'utilisateur de la session et son profil pour la photo
+$user_id = $_SESSION['user_id'];
+$user = $userC->showUser($user_id);
+$profile = $profileC->showProfile($user_id);
+
+//si il n'ya pas de user
+if (!$user) {
+    echo "UTILISATEUR NON TROUVE EN BASE";
+    exit;
+}
+
+//supression
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete'])){
+  try{
+    $userC->deleteUser($user_id);
+    session_destroy();
+
+    header('Location: login.php');
+    exit;
+  }catch(Exception $e){
+    $erreur = "Erreur lors de la suppression : " . $e->getMessage();
+  }
+
+
+} ?>
+
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="assets\css\style.css">
+</head>
+<body>
+
+
+  <div class="container"> 
+
+    <!-- Header -->
+    <header class="site-header" role="banner">
+      <div class="brand">
+        <button class="nav-toggle" id="navToggle" aria-label="Ouvrir le menu">
+          <i class="fas fa-bars"></i>
+        </button>
+         <div class="logo">
+      <img src="assets\images\logo.png" alt="Inclusive Opportunities" class="logo-image">
+    </div>
+      </div>
+
+      <div class="header-actions">
+        <a href="logout.php" class="btn secondary">Déconnexion</a>
+      </div>
+    </header>
+
+    <!-- Side Panel Navigation -->
+    <div class="side-panel" id="sidePanel">
+      <div class="panel-header">
+         <div class="logo">
+      <img src="assets\images\logo.png" alt="Inclusive Opportunities" class="logo-image">
+    </div>
+        <button class="panel-close" id="panelClose">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      
+      <nav class="panel-nav">
+        <div class="nav-section">
+          <div class="nav-title">Navigation</div>
+          <a href="#home" class="nav-link active">
+            <i class="fas fa-home"></i>
+            <span>Accueil</span>
+          </a>
+          <a href="#opportunities" class="nav-link">
+            <i class="fas fa-briefcase"></i>
+            <span>Opportunités</span>
+          </a>
+          <a href="#events" class="nav-link">
+            <i class="fas fa-calendar-alt"></i>
+            <span>Événements</span>
+          </a>
+          <a href="#donations" class="nav-link">
+            <i class="fas fa-hand-holding-heart"></i>
+            <span>Campagnes</span>
+          </a>
+          <a href="#resources" class="nav-link">
+            <i class="fas fa-book"></i>
+            <span>Ressources</span>
+          </a>
+          <a href="#forum" class="nav-link">
+            <i class="fas fa-comments"></i>
+            <span>Forum</span>
+          </a>
+          <a href="#reclamations" class="nav-link">
+            <i class="fas fa-comment-alt"></i>
+            <span>Réclamations</span>
+          </a>
+        </div> 
+  
+      </nav>
+      
+      <div class="panel-footer">
+        <div class="user-profile">
+          <div class="user-avatar">VS</div>
+          <div class="user-info">
+            <h4>Visiteur</h4>
+            <p>Connectez-vous pour plus de fonctionnalités</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="panel-overlay" id="panelOverlay"></div>
+
+    <!-- Your code here -->
+
+
+
+<!-- Profile Page -->
+<section class="section">
+  <div class="section-header">
+    <h2>Mon Espace Personnel</h2>
+  
+<form method="post" action="Profile.php">
+<button type="submit" name="delete" class="btn secondary"> Supprimer mon compte </button>
+</form>
+
+  </div>
+
+
+
+  <div class="auth-layout">
+    <div>
+      <!-- Profile Header Card -->
+      <div class="card" style="background: linear-gradient(135deg, var(--light-sage), var(--sage));">
+        <div class="card-body">
+          <div class="profile" >
+
+             <!--photo de profil-->
+            <img class="avatar" style="width: 100px; height: 100px; margin-right: 50px; margin-left: 50px;" src="../../uploads/<?php echo $profile['photo_profil'] ?>" ></img>
+            
+            
+            <div>
+              <h2 style="margin-bottom: 0.5rem; color: var(--brown);"> <?php echo $user["prenom"] . " " . $user["nom"] ?></h2>
+              <p class="text-muted" style="margin-bottom: 1.5rem;"> 
+                <i class="fas fa-calendar"></i> Membre depuis : <?php echo date("Y-m-d",strtotime($user['date_inscription'])); ?>
+              </p>
+              <div class="field-row" >
+                <a class="btn primary" href="Modifier_profile.php?id=<?php echo $user['Id_utilisateur']; ?>">
+                  <i class="fas fa-edit"></i>
+                  Modifier le profil
+                </a>
+                <a class="btn secondary" href="#">
+                  <i class="fas fa-share-alt"></i>
+                  Partager
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Stats -->
+      <div class="stats" style="margin: 2rem 0;">
+        
+      </div>
+
+      <!-- Mes Offres Postées -->
+      <div class="card">
+        <div class="card-body">
+          <div class="section-header" style="padding: 0; margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+            <h3 style="margin: 0;">
+              <i class="fas fa-briefcase" style="color: var(--copper);"></i>
+              Mes Offres Postées
+            </h3>
+            <a href="#" class="btn primary" style="padding: 8px 16px;">
+              <i class="fas fa-plus"></i>
+              Nouvelle offre
+            </a>
+          </div>
+          
+          <div class="cards-grid" style="grid-template-columns: 1fr;">
+            <!-- Offre 1 -->
+            <article class="card">
+              <div class="card-body">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+                  <h4 style="margin: 0; color: var(--brown);">Développeur Accessibilité Web</h4>
+                  <span class="badge" style="background: var(--moss); color: white;">Active</span>
+                </div>
+                <p class="text-muted">TechForAll • Remote • Temps plein</p>
+                <p class="card-excerpt">Recherche d'un développeur spécialisé en accessibilité web pour rejoindre notre équipe inclusive.</p>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem;">
+                  <div class="text-muted small">
+                    <i class="fas fa-eye"></i> 124 vues • 
+                    <i class="fas fa-users"></i> 8 candidatures
+                  </div>
+                  <div class="card-actions">
+                    <a class="btn ghost" href="#">
+                      <i class="fas fa-edit"></i>
+                      Modifier
+                    </a>
+                    <a class="btn primary" href="#">
+                      <i class="fas fa-chart-bar"></i>
+                      Statistiques
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </article>
+
+            <!-- Offre 2 -->
+            <article class="card">
+              <div class="card-body">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+                  <h4 style="margin: 0; color: var(--brown);">Assistant Communication</h4>
+                  <span class="badge" style="background: var(--copper); color: white;">Clôturée</span>
+                </div>
+                <p class="text-muted">AssocInclusive • Tunis • Temps partiel</p>
+                <p class="card-excerpt">Assistant pour la création de contenus accessibles et organisation d'événements inclusifs.</p>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem;">
+                  <div class="text-muted small">
+                    <i class="fas fa-check-circle"></i> 1 personne recrutée • 
+                    <i class="fas fa-users"></i> 15 candidatures
+                  </div>
+                  <div class="card-actions">
+                    <a class="btn ghost" href="#">
+                      <i class="fas fa-eye"></i>
+                      Voir
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mes Candidatures -->
+      <div class="card" style="margin-top: 2rem;">
+        <div class="card-body">
+          <div class="section-header" style="padding: 0; margin-bottom: 1.5rem;">
+            <h3 style="margin: 0;">
+              <i class="fas fa-file-alt" style="color: var(--moss);"></i>
+              Mes Candidatures
+            </h3>
+          </div>
+          
+          <div class="timeline">
+            <div class="event-item" style="background: transparent; padding: 1rem 0; border-bottom: 1px solid rgba(75,46,22,0.1);">
+              <div class="event-content" style="width: 100%;">
+                <div style="display: flex; align-items: flex-start; gap: 1rem;">
+                  <div class="feature-icon" style="width: 50px; height: 50px; margin: 0; background: var(--light-sage);">
+                    <i class="fas fa-briefcase" style="font-size: 1.2rem; color: var(--moss);"></i>
+                  </div>
+                  <div style="flex: 1;">
+                    <h4 style="margin: 0 0 0.5rem 0; color: var(--brown);">Assistant(e) communautaire</h4>
+                    <p style="margin: 0; color: var(--muted);">CommUnity • Remote • Il y a 2 jours</p>
+                    <span class="badge" style="margin-top: 0.5rem; background: var(--copper); color: white;">En attente</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="event-item" style="background: transparent; padding: 1rem 0; border-bottom: 1px solid rgba(75,46,22,0.1);">
+              <div class="event-content" style="width: 100%;">
+                <div style="display: flex; align-items: flex-start; gap: 1rem;">
+                  <div class="feature-icon" style="width: 50px; height: 50px; margin: 0; background: var(--light-sage);">
+                    <i class="fas fa-chalkboard-teacher" style="font-size: 1.2rem; color: var(--moss);"></i>
+                  </div>
+                  <div style="flex: 1;">
+                    <h4 style="margin: 0 0 0.5rem 0; color: var(--brown);">Formateur Accessibilité</h4>
+                    <p style="margin: 0; color: var(--muted);">DigitalInclu • Hybride • Il y a 1 semaine</p>
+                    <span class="badge" style="margin-top: 0.5rem; background: var(--moss); color: white;">Acceptée</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mes Événements  -->
+      <div class="card" style="margin-top: 2rem;">
+        <div class="card-body">
+          <div class="section-header" style="padding: 0; margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+            <h3 style="margin: 0;">
+              <i class="fas fa-calendar-plus" style="color: var(--copper);"></i>
+              Mes Événements 
+            </h3>
+          </div>
+          
+          <div class="cards-grid" style="grid-template-columns: 1fr;">
+            <article class="card">
+              <div class="card-body">
+                <h4 style="margin: 0 0 0.5rem 0; color: var(--brown);">Atelier Accessibilité Mobile</h4>
+                <p class="text-muted">25 participants • 15 Déc 2024 • En ligne</p>
+                <p class="card-excerpt">Formation sur le développement d'applications mobiles accessibles pour iOS et Android.</p>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem;">
+                  <div class="feature-list">
+                    <div class="badge">
+                      <i class="fas fa-users"></i>
+                      25 inscrits
+                    </div>
+                    <div class="badge">
+                      <i class="fas fa-star"></i>
+                      4.8/5
+                    </div>
+                  </div>
+                  <div class="card-actions">
+                    <a class="btn ghost" href="#">
+                      <i class="fas fa-chart-bar"></i>
+                      Analytics
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar Enhanced -->
+    <aside class="info-panel">
+      <!-- Quick Actions -->
+      <div class="card">
+        <div class="card-body">
+          <h4 style="margin-bottom: 1rem; color: var(--brown);">
+            <i class="fas fa-bolt" style="color: var(--copper);"></i>
+            Actions Rapides
+          </h4>
+          <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+            <a class="btn primary" href="#" style="justify-content: flex-start;">
+              <i class="fas fa-briefcase"></i>
+              Poster une offre
+            </a>
+            <a class="btn ghost" href="#" style="justify-content: flex-start;">
+              <i class="fas fa-chart-line"></i>
+              Mes statistiques
+            </a>
+            <a class="btn ghost" href="#" style="justify-content: flex-start;">
+              <i class="fas fa-cog"></i>
+              Paramètres
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Statistics -->
+      <div class="card" style="margin-top: 1.5rem;">
+        <div class="card-body">
+          <h4 style="margin-bottom: 1rem; color: var(--brown);">
+            <i class="fas fa-chart-bar" style="color: var(--moss);"></i>
+            Mon Impact
+          </h4>
+          <div style="display: flex; flex-direction: column; gap: 1rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="color: var(--muted);">Offres postées</span>
+              <span style="font-weight: bold; color: var(--brown);">2 </span>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="color: var(--muted);">Candidatures</span>
+              <span style="font-weight: bold; color: var(--brown);">3 </span>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="color: var(--muted);">Événements participés</span>
+              <span style="font-weight: bold; color: var(--brown);">1 </span>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="color: var(--muted);">Personnes impactées</span>
+              <span style="font-weight: bold; color: var(--brown);">45+</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Badges -->
+      <div class="card" style="margin-top: 1.5rem;">
+        <div class="card-body">
+          <h4 style="margin-bottom: 1rem; color: var(--brown);">
+            <i class="fas fa-award" style="color: var(--copper);"></i>
+            Mes Récompenses
+          </h4>
+          <div class="feature-list" style="flex-direction: column; align-items: flex-start; gap: 0.5rem;">
+            <div class="badge" style="background: var(--copper); color: white; padding: 8px 12px;">
+              <i class="fas fa-star"></i>
+              Contributeur Actif
+            </div>
+            <div class="badge" style="background: var(--moss); color: white; padding: 8px 12px;">
+              <i class="fas fa-briefcase"></i>
+              Recruteur Engagé
+            </div>
+            <div class="badge" style="padding: 8px 12px;">
+              <i class="fas fa-users"></i>
+              Communauté
+            </div>
+          </div>
+        </div>
+      </div>
+
+      
+</section>
+
+    
+    <!-- Footer-->
+    <footer class="site-footer">
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-column">
+            <h3>ImpactAble</h3>
+            <p class="text-muted">Plateforme dédiée à l'inclusion et à l'impact social.</p>
+            <div class="social-links">
+              <a href="#"><i class="fab fa-facebook-f"></i></a>
+              <a href="#"><i class="fab fa-twitter"></i></a>
+              <a href="#"><i class="fab fa-linkedin-in"></i></a>
+              <a href="#"><i class="fab fa-instagram"></i></a>
+            </div>
+          </div>
+          <div class="footer-column">
+            <h3>Navigation</h3>
+            <div class="footer-links">
+              <a href="#home">Accueil</a>
+              <a href="#opportunities">Opportunités</a>
+              <a href="#events">Événements</a>
+              <a href="#donations">Campagnes</a>
+              <a href="#resources">Ressources</a>
+              <a href="#forum">Forum</a>
+            </div>
+          </div>
+          <div class="footer-column">
+            <h3>Légal</h3>
+            <div class="footer-links">
+              <a href="#">Mentions légales</a>
+              <a href="#">Politique de confidentialité</a>
+              <a href="#">Conditions d'utilisation</a>
+              <a href="#">Accessibilité</a>
+            </div>
+          </div>
+          <div class="footer-column">
+            <h3>Contact</h3>
+            <div class="footer-links">
+              <a href="mailto:contact@impactable.org">contact@impactable.org</a>
+              <a href="tel:+21612345678">+216 12 345 678</a>
+              <a href="#">Tunis, Tunisia</a>
+            </div>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>© <span id="year"></span> ImpactAble — Tous droits réservés.</p>
+        </div>
+      </div>
+    </footer>
+  </div> <!-- /.container -->
+    
+  
+  </div>
+
+
+
+  <script src="assets\js\script.js"></script>
+</body>
+</html>

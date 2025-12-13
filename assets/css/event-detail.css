@@ -1,0 +1,119 @@
+/* Styles for event-detail.php */
+
+.hero-img { 
+    width:100%; 
+    height:360px; 
+    object-fit:cover; 
+    border-radius:12px; 
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08); 
+}
+
+.participation-status {
+    color: #27ae60; 
+    font-weight: 600;
+}
+
+/* Modal Styles for consistency */
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s;
+}
+
+.modal-backdrop:not(.hidden) {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal {
+    background: #fffaf5;
+    padding: 24px;
+    border-radius: 12px;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    transform: scale(0.95);
+    transition: transform 0.3s;
+}
+
+.modal-backdrop:not(.hidden) .modal {
+    transform: scale(1);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #f4ecdd;
+    padding-bottom: 10px;
+}
+
+.modal-header h3 {
+    margin: 0;
+    color: #4b2e16;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #6b4b44;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+    color: #4b2e16;
+}
+
+.form-input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #f4ecdd;
+    box-sizing: border-box;
+    background: #fff;
+}
+
+.form-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.btn-modal {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.btn-modal.primary {
+    background: #5e6d3b;
+    color: white;
+}
+
+.btn-modal.secondary {
+    background: #e1e8c9;
+    color: #4b2e16;
+}
+
+#guest-fields.hidden {
+    display: none;
+}

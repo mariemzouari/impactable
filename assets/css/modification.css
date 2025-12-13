@@ -1,0 +1,128 @@
+.search-form {
+  display: inline-block;
+}
+
+.table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 25px 0;
+    font-size: 0.9em;
+    font-family: 'Inter', sans-serif;
+    background-color: #fff;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.admin-table thead tr {
+    background-color: var(--moss);
+    color: #ffffff;
+    text-align: left;
+    font-weight: bold;
+}
+
+.admin-table th,
+.admin-table td {
+    padding: 15px 20px;
+    text-align: left;
+}
+
+.admin-table tbody tr {
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.admin-table tbody tr:nth-of-type(even) {
+    background-color: #f9f9f9;
+}
+
+.admin-table tbody tr:last-of-type {
+    border-bottom: none;
+}
+
+.admin-table tbody tr:hover {
+    background-color: var(--light-sage);
+    cursor: pointer;
+}
+
+.admin-table .btn {
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 0.8em;
+}
+.admin-table .action-btns {
+    display: flex;
+    gap: 10px;
+}
+
+/* Stat card styling */
+.stat-card {
+    background: #fff; /* Default background, will be overridden by specific classes */
+    border: none; /* No border for a cleaner look with solid backgrounds */
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s ease-in-out;
+    color: #fff; /* Default text color for solid backgrounds */
+}
+
+.stat-card:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+}
+
+.stat-card-title {
+    margin: 0;
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.8); /* Lighter white for titles */
+    font-weight: 500;
+}
+
+.stat-card-number {
+    margin: 0.5rem 0 0 0;
+    font-size: 2.2rem;
+    color: #fff; /* Pure white for numbers */
+    font-weight: 700;
+}
+
+.stat-card-icon {
+    font-size: 2.2rem;
+    color: rgba(255, 255, 255, 0.7); /* Lighter white for icons */
+    opacity: 1; /* Make icons fully opaque */
+}
+
+/* Specific color classes for stat cards - solid backgrounds */
+.stat-card.total-events {
+    background-color: #4CAF50; /* Green */
+}
+
+.stat-card.total-participations {
+    background-color: #2196F3; /* Blue */
+}
+
+.stat-card.upcoming-events {
+    background-color: #FFC107; /* Amber */
+}
+
+.stat-card.no-participations {
+    background-color: #F44336; /* Red */
+}
+
+.stat-card.finished-events {
+    background-color: #9E9E9E; /* Grey */
+}
+
+.stat-card.average-participation {
+    background-color: #9C27B0; /* Purple */
+}
+
+.stat-card.new-stat {
+    background-color: #FF5733; /* Orange-Red for a new stat */
+}
