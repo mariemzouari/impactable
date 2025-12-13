@@ -72,7 +72,7 @@ if (!$user) {
             <i class="fas fa-briefcase"></i>
             <span>Opportunités</span>
           </a>
-          <a href="#events" class="sidebar-link">
+          <a href="evenment_back.php" class="sidebar-link">
             <i class="fas fa-calendar-alt"></i>
             <span>Événements</span>
           </a>
@@ -131,10 +131,10 @@ if (!$user) {
             <i class="fas fa-search"></i>
             <input type="text" placeholder="Rechercher...">
           </div>
-          <button class="btn secondary">
-            <i class="fas fa-sign-out-alt"></i>
-            <a href="logout.php" >Déconnexion</a>
-          </button>
+<a href="logout.php" class="btn secondary" onclick="return confirm('Voulez-vous vraiment vous déconnecter ?');">
+  <i class="fas fa-sign-out-alt"></i>
+  <span>Déconnexion</span>
+</a>
         </div>
       </header>
       

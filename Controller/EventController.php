@@ -12,7 +12,7 @@ class EventController {
     }
 
     // Liste tous les événements
-    public function index() {
+    public function evenment_back() {
         $searchQuery = $_GET['search_query'] ?? '';
 
         if (!empty($searchQuery)) {
@@ -73,7 +73,7 @@ class EventController {
 
             if(empty($errors)){
                 $this->eventModel->create($data);
-                header("Location: index.php");
+                header("Location: evenment_back.php");
                 exit;
             } else {
                 $action = 'create';
@@ -110,7 +110,7 @@ class EventController {
 
             if(empty($errors)){
                 $this->eventModel->update($id, $data);
-                header("Location: index.php");
+                header("Location: evenment_back.php");
                 exit;
             } else {
                 $action = 'edit';
@@ -127,7 +127,7 @@ class EventController {
     public function delete($id) {
         $ok = $this->eventModel->delete($id);
         if($ok){
-            header("Location: index.php");
+            header("Location: evenment_back.php");
             exit;
         } else {
             // Couldn't delete (likely dependent records); show error in list view

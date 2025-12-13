@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '../../Config.php';
+require_once __DIR__ . '/../../Config.php';
 require_once __DIR__ . '/../../Model/EventModel.php';
 
 $eventId = isset($_GET['id']) ? intval($_GET['id']) : 0;

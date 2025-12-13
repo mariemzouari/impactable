@@ -21,7 +21,7 @@
       <nav class="sidebar-nav">
         <div class="nav-section">
           <div class="nav-title">Principal</div>
-          <a href="#dashboard" class="sidebar-link active">
+          <a href="index.php" class="sidebar-link active">
             <i class="fas fa-tachometer-alt"></i>
             <span>Tableau de bord</span>
           </a>
@@ -115,7 +115,7 @@
       <h2>Gestion des Événements</h2>
       <p class="text-muted">Créez, modifiez et gérez les événements communautaires</p>
       <div class="top-actions">
-        <a href="index.php?action=create" class="btn primary"><i class="fas fa-plus"></i> Nouvel Événement</a>
+        <a href="evenment_back.php?action=create" class="btn primary"><i class="fas fa-plus"></i> Nouvel Événement</a>
         <div class="search-bar">
             <i class="fas fa-search"></i>
             <input type="text" placeholder="Rechercher événement...">
@@ -294,8 +294,8 @@
                   <a href="view_event_participants.php?id=<?= $event['id'] ?>" class="btn primary" title="Voir les participants" style="margin-right: 8px;">
                     <i class="fas fa-users"></i> Participants
                   </a>
-                  <a href="index.php?action=edit&id=<?= $event['id'] ?>" class="btn edit" title="Éditer"><i class="fas fa-pen"></i></a>
-                  <a href="index.php?action=delete&id=<?= $event['id'] ?>" class="btn delete" onclick="return confirm('Voulez-vous vraiment supprimer ?');" title="Supprimer"><i class="fas fa-trash"></i></a>
+                  <a href="evenment_back.php?action=edit&id=<?= $event['id'] ?>" class="btn edit" title="Éditer"><i class="fas fa-pen"></i></a>
+                  <a href="evenment_back.php?action=delete&id=<?= $event['id'] ?>" class="btn delete" onclick="return confirm('Voulez-vous vraiment supprimer ?');" title="Supprimer"><i class="fas fa-trash"></i></a>
                 </td>
               </tr>
             <?php endforeach; ?>

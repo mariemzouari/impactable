@@ -170,7 +170,7 @@ $eventCategorie = $event['categorie'] ?? '';
 $eventDescription = $event['description'] ?? '';
 $eventCapaciteMax = $event['capacite_max'] ?? '';
 $eventLocation = $event['location'] ?? '';
-$formAction = ($mode === 'edit' && isset($id)) ? "index.php?action=edit&id=" . intval($id) : 'index.php?action=create';
+$formAction = ($mode === 'edit' && isset($id)) ? "evenment_back.php?action=edit&id=" . intval($id) : 'evenment_back.php?action=create';
 $submitLabel = ($mode === 'edit') ? 'Enregistrer les modifications' : 'Enregistrer';
 ?>
 
@@ -237,18 +237,14 @@ $submitLabel = ($mode === 'edit') ? 'Enregistrer les modifications' : 'Enregistr
             <i class="fas fa-check"></i> <?= $submitLabel ?>
         </button>
 
-        <a href="index.php" class="btn secondary">
+        <a href="evenment_back.php" class="btn secondary">
             <i class="fas fa-arrow-left"></i> Annuler
         </a>
     </div>
 
 </form>
 </section>
-
-
-
-
-      </div>
+</div>
 
 
 

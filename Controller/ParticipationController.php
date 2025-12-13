@@ -9,20 +9,65 @@ function send_json($data, $statusCode = 200) {
     exit;
 }
 
+// Safe logging function that won't crash if directory doesn't exist
+function safe_log($message) {
+    $logDir = __DIR__ . '/../logs';
+    $logFile = $logDir . '/participation_debug.log';
+    
+    // Only try to log if directory exists and is writable
+    if (file_exists($logDir) && is_writable($logDir)) {
+        @error_log($message, 3, $logFile);
+    }
+    
+    // Always fallback to PHP's error_log
+    error_log($message);
+}
+
 // Wrapper try-catch pour attraper toutes les erreurs (y compris fatales) et les retourner en JSON.
 try {
-    error_log("[" . date('c') . "] ParticipationController: REQUEST_METHOD: " . ($_SERVER['REQUEST_METHOD'] ?? 'N/A') . "\n", 3, __DIR__ . '/../logs/participation_debug.log');
-    error_log("[" . date('c') . "] ParticipationController: _REQUEST: " . json_encode($_REQUEST) . "\n", 3, __DIR__ . '/../logs/participation_debug.log');
-    error_log("[" . date('c') . "] ParticipationController: _POST: " . json_encode($_POST) . "\n", 3, __DIR__ . '/../logs/participation_debug.log');
+    safe_log("[" . date('c') . "] ParticipationController: REQUEST_METHOD: " . ($_SERVER['REQUEST_METHOD'] ?? 'N/A'));
+    safe_log("[" . date('c') . "] ParticipationController: _REQUEST: " . json_encode($_REQUEST));
+    safe_log("[" . date('c') . "] ParticipationController: _POST: " . json_encode($_POST));
     $rawInput = file_get_contents('php://input');
-    error_log("[" . date('c') . "] ParticipationController: Raw input: " . $rawInput . "\n", 3, __DIR__ . '/../logs/participation_debug.log');
+    safe_log("[" . date('c') . "] ParticipationController: Raw input: " . $rawInput);
 
-    $configPath = __DIR__ . '/../config/Config.php';
-    $modelPath = __DIR__ . '/../Model/ParticipationModel.php';
-
-    if (!file_exists($configPath) || !file_exists($modelPath)) {
-        throw new Exception("Fichier de configuration ou de modèle manquant.");
+    // Try multiple possible paths for Config.php
+    $possibleConfigPaths = [
+        __DIR__ . '/../Config.php',
+        __DIR__ . '/../config/Config.php',
+        __DIR__ . '/../../Config.php',
+    ];
+    
+    $configPath = null;
+    foreach ($possibleConfigPaths as $path) {
+        if (file_exists($path)) {
+            $configPath = $path;
+            break;
+        }
     }
+    
+    if (!$configPath) {
+        throw new Exception("Fichier de configuration manquant. Chemins essayés: " . implode(', ', $possibleConfigPaths));
+    }
+    
+    // Try multiple possible paths for ParticipationModel.php
+    $possibleModelPaths = [
+        __DIR__ . '/../Model/ParticipationModel.php',
+        __DIR__ . '/../../Model/ParticipationModel.php',
+    ];
+    
+    $modelPath = null;
+    foreach ($possibleModelPaths as $path) {
+        if (file_exists($path)) {
+            $modelPath = $path;
+            break;
+        }
+    }
+    
+    if (!$modelPath) {
+        throw new Exception("Fichier de modèle manquant. Chemins essayés: " . implode(', ', $possibleModelPaths));
+    }
+    
     require_once $configPath;
     require_once $modelPath;
 
@@ -89,7 +134,7 @@ try {
                 break;
 
             case 'edit_participant': // Action du back-office (FormData)
-                error_log("[" . date('c') . "] ParticipationController: edit_participant action. Input data: " . json_encode($input_data) . "\n", 3, __DIR__ . '/../logs/participation_debug.log');
+                safe_log("[" . date('c') . "] ParticipationController: edit_participant action. Input data: " . json_encode($input_data));
                 $id = $input_data['id'] ?? 0;
                 $data = [
                     'prenom' => $input_data['prenom'], 'nom' => $input_data['nom'], 'email' => $input_data['email'],
@@ -114,7 +159,7 @@ try {
                 break;
 
             case 'bulk_action': // Action du back-office (FormData)
-                error_log("[" . date('c') . "] ParticipationController: bulk_action action. Input data: " . json_encode($input_data) . "\n", 3, __DIR__ . '/../logs/participation_debug.log');
+                safe_log("[" . date('c') . "] ParticipationController: bulk_action action. Input data: " . json_encode($input_data));
                 $type = $input_data['type'] ?? '';
                 $ids = $input_data['ids'] ?? [];
                 if (!is_array($ids)) $ids = [$ids]; // Assurez-vous que c'est un tableau
@@ -156,6 +201,8 @@ try {
                 $prenom = $input_data['prenom'] ?? null;
                 $nom = $input_data['nom'] ?? null;
                 $email = $input_data['email'] ?? null;
+                $num_tel = $input_data['num_tel'] ?? null;
+                $num_identite = $input_data['num_identite'] ?? null;
                 $nombre_accompagnants = $input_data['nombre_accompagnants'] ?? 0;
                 $besoins_accessibilite = $input_data['besoins_accessibilite'] ?? '';
                 $message = $input_data['message'] ?? '';
@@ -169,20 +216,20 @@ try {
                 
                 // Vérifier si l'utilisateur est déjà inscrit ou confirmé (seulement si userId existe)
                 if ($userId) {
-                    $existing = $participationModel->findOneBy(['id_utilisateur' => $userId, 'id_evenement' => $eventId, 'statut' => ['inscrit', 'confirmé']]);
-                    if ($existing) {
+                    $existing = $participationModel->findOneBy(['id_utilisateur' => $userId, 'id_evenement' => $eventId]);
+                    if ($existing && in_array($existing['statut'], ['inscrit', 'confirmé'])) {
                         send_json(['success' => false, 'error' => 'Vous êtes déjà inscrit à cet événement.']);
                     }
                 }
-                // Si l'utilisateur n'est pas connecté, nous nous appuyons sur prenom/nom/email fournis
-                // Si l'utilisateur est connecté, nous utilisons son id, et les champs prenom/nom/email peuvent être ignorés ou pré-remplis côté client.
 
                 $participationData = [
                     'id_evenement' => $eventId,
-                    'id_utilisateur' => $userId, // Sera null si non connecté et soumis
+                    'id_utilisateur' => $userId, // Sera null si non connecté
                     'prenom' => $prenom,
                     'nom' => $nom,
                     'email' => $email,
+                    'num_tel' => $num_tel,
+                    'num_identite' => $num_identite,
                     'date_inscription' => date('Y-m-d H:i:s'),
                     'statut' => 'inscrit',
                     'nombre_accompagnants' => $nombre_accompagnants,
@@ -243,6 +290,7 @@ try {
     send_json(['success' => false, 'error' => 'Action non valide ou méthode de requête non autorisée.'], 400);
 
 } catch (Throwable $e) {
+    safe_log("ERROR: " . $e->getMessage() . " in " . $e->getFile() . " on line " . $e->getLine());
     send_json([
         'success' => false,
         'error' => 'Une erreur serveur est survenue.',
