@@ -35,7 +35,7 @@ $post['user_liked'] = $likeModel->hasUserLiked($id, $user_id);
 $comments = $commentModel->getCommentsByPost($id);
 
 $user_name = $_SESSION['user_name'] ?? 'Visiteur';
-$is_admin = $_SESSION['is_admin'] ?? false;
+$is_admin = ($_SESSION['role'] ?? '') == 'admin';
 $is_logged_in = ($user_id > 0);
 
 $old_comment = $_SESSION['old_comment'] ?? '';
@@ -69,7 +69,7 @@ unset($_SESSION['comment_success'], $_SESSION['comment_errors'], $_SESSION['old_
                 <div class="author-info">
                     <div class="author-name">
                                         <?= htmlspecialchars($post['auteur'] ?? 'Utilisateur') ?>
-                                        <?php if (isset($_SESSION['is_admin']) && $_SESSION['is_admin'] && $post['Id_utilisateur'] != $_SESSION['user_id']): ?>
+                                        <?php if ($is_admin && $post['Id_utilisateur'] != $_SESSION['user_id']): ?>
                                         <button type="button" class="report-icon-btn" title="Signaler cet utilisateur" onclick="openReportModal('user', <?= $post['Id_utilisateur'] ?>, '<?= addslashes(htmlspecialchars($post['auteur'] ?? 'Utilisateur')) ?>')">
                                             <i class="fas fa-flag"></i>
                                         </button>
@@ -224,7 +224,7 @@ unset($_SESSION['comment_success'], $_SESSION['comment_errors'], $_SESSION['old_
                                             <div class="author-info">
                                                 <div class="author-name">
                                                     <?= htmlspecialchars($comment['auteur']) ?>
-                                                    <?php if (isset($_SESSION['is_admin']) && $_SESSION['is_admin'] && $comment['Id_utilisateur'] != $_SESSION['user_id']): ?>
+                                                    <?php if ($is_admin && $comment['Id_utilisateur'] != $_SESSION['user_id']): ?>
                                                     <button type="button" class="report-icon-btn" title="Signaler ce commentaire" onclick="openReportModal('comment', <?= $comment['Id_commentaire'] ?>, '<?= addslashes(htmlspecialchars($comment['auteur'])) ?>')">
                                                         <i class="fas fa-flag"></i>
                                                     </button>

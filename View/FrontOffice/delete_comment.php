@@ -9,7 +9,7 @@ $post_id = $_GET['post_id'] ?? 0;
 $comment = $commentModel->getCommentById($comment_id);
 $errors = [];
 
-if ($comment && ($comment['Id_utilisateur'] == $_SESSION['user_id'] || ($_SESSION['is_admin'] ?? false))) {
+if ($comment && ($comment['Id_utilisateur'] == $_SESSION['user_id'] || (($_SESSION['role'] ?? '') == 'admin'))) {
     $commentModel->deleteComment($comment_id);
     $_SESSION['comment_success'] = 'Commentaire supprimé avec succès';
 } else {

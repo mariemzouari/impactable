@@ -5,7 +5,7 @@ require_once __DIR__ . '/../../Model/LikeModel.php';
 $postModel = new PostModel();
 $likeModel = new LikeModel();
 
-if (!isset($_SESSION['is_admin']) || !$_SESSION['is_admin']) {
+if (($_SESSION['role'] ?? '') != 'admin') {
     header('Location: index.php?action=list');
     exit;
 }
@@ -106,7 +106,7 @@ unset($_SESSION['admin_message'], $_SESSION['admin_error']);
                         <i class="fas fa-search"></i>
                         <span>Rechercher</span>
                     </a>
-                    <a href="View/BackOffice/admin_reports.php" class="sidebar-link">
+                    <a href="index.php?action=admin_reports" class="sidebar-link">
                         <i class="fas fa-flag"></i>
                         <span>Signalements</span>
                     </a>

@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($result['success']) {
             $_SESSION['user_id'] = $result['user_id'];
             $_SESSION['user_name'] = $prenom . ' ' . $nom;
-            $_SESSION['is_admin'] = false;
+            $_SESSION['role'] = 'user';
             header('Location: index.php?action=list');
             exit;
         } else {

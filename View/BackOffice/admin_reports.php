@@ -2,10 +2,10 @@
 require_once __DIR__ . '/../../config.php';
 
 $user_id = $_SESSION['user_id'] ?? 0;
-$is_admin = $_SESSION['is_admin'] ?? false;
+$is_admin = (($_SESSION['role'] ?? '') == 'admin');
 
 if (!$is_admin) {
-    header('Location: /projt/index.php?action=login');
+    header('Location: index.php?action=login');
     exit;
 }
 
@@ -20,14 +20,14 @@ $reportsQuery = "
         ur.reason,
         ur.status,
         ur.created_at,
-        u1.nom_utilisateur as reporter_name,
-        u2.nom_utilisateur as target_user_name,
-        CASE 
-            WHEN ur.target_type = 'user' THEN u2.nom_utilisateur
-            WHEN ur.target_type = 'post' THEN p.titre
-            WHEN ur.target_type = 'comment' THEN c.contenu
-            ELSE 'N/A'
-        END as target_description
+        CONCAT_WS(' ', u1.prenom, u1.nom) as reporter_name,
+            CONCAT_WS(' ', u2.prenom, u2.nom) as target_user_name,
+            CASE 
+                WHEN ur.target_type = 'user' THEN CONCAT_WS(' ', u2.prenom, u2.nom)
+                WHEN ur.target_type = 'post' THEN p.titre
+                WHEN ur.target_type = 'comment' THEN c.contenu
+                ELSE 'N/A'
+            END as target_description
     FROM user_reports ur
     LEFT JOIN utilisateur u1 ON ur.reporter_id = u1.Id_utilisateur
     LEFT JOIN utilisateur u2 ON ur.target_type = 'user' AND ur.target_id = u2.Id_utilisateur
@@ -54,17 +54,118 @@ $closedCount = count(array_filter($reports, fn($r) => $r['status'] === 'closed')
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Signalements - ImpactAble Admin</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="/projt/View/assets/css/style.css">
+    <link rel="stylesheet" href="View/assets/css/admin-style.css">
+    <style>
+    /* Harmonise les couleurs de cette page avec le thème backoffice */
+    .admin-main .admin-header h1,
+    .admin-main .forum-header h2,
+    .admin-main table th {
+        color: var(--brown) !important;
+    }
+    .admin-main .stat-card {
+        background: var(--white) !important;
+        color: inherit !important;
+        box-shadow: var(--shadow) !important;
+        padding: 24px !important; /* Ajouter padding interne pour éloigner le contenu des bords */
+    }
+    .admin-main .stat-card > div:first-child {
+        color: var(--moss) !important;
+    }
+    .admin-main .forum-card {
+        background: var(--white) !important;
+        box-shadow: var(--shadow) !important;
+        border-radius: var(--radius) !important;
+        padding: 24px !important; /* Ajouter padding interne pour éloigner le tableau des bords */
+    }
+    .admin-main table td {
+        color: var(--muted) !important;
+    }
+    .admin-main .btn {
+        color: var(--brown) !important;
+    }
+
+    /* Espacements serrés demandés */
+    .admin-sidebar { padding: 24px !important; }
+    .admin-main .admin-header { margin-bottom: 16px !important; }
+    .admin-content { padding: 48px !important; }
+    .stats-grid { gap: 16px !important; padding: 0 16px !important; }
+    .forum-card { margin-top: 16px !important; }
+    </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="admin-header">
-        <h1><i class="fas fa-flag"></i> Signalements et Modération</h1>
-        <a href="/projt/index.php?action=admin" class="btn ghost">
-            <i class="fas fa-arrow-left"></i> Retour au tableau de bord
-        </a>
-    </div>
+<div class="admin-container">
+    <!-- Sidebar (copied from admin.php) -->
+    <aside class="admin-sidebar">
+        <div class="sidebar-header">
+            <div class="admin-logo">
+                <img src="View/assets/images/logo1.png" alt="Logo" class="admin-logo-image">
+            </div>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="nav-section">
+                <div class="nav-title">Principal</div>
+                <a href="index.php?action=admin" class="sidebar-link">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Tableau de bord</span>
+                </a>
+                <a href="index.php?action=admin" class="sidebar-link">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Analytiques</span>
+                </a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-title">Gestion de contenu</div>
+                <a href="index.php?action=admin" class="sidebar-link">
+                    <i class="fas fa-users"></i>
+                    <span>Utilisateurs</span>
+                </a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-title">Communauté</div>
+                <a href="index.php?action=admin" class="sidebar-link">
+                    <i class="fas fa-comments"></i>
+                    <span>Forum</span>
+                </a>
+                <a href="index.php?action=admin_comments" class="sidebar-link">
+                    <i class="fas fa-comment-alt"></i>
+                    <span>Commentaires</span>
+                </a>
+                <a href="index.php?action=search_comments" class="sidebar-link">
+                    <i class="fas fa-search"></i>
+                    <span>Rechercher</span>
+                </a>
+                <a href="index.php?action=admin_reports" class="sidebar-link active">
+                    <i class="fas fa-flag"></i>
+                    <span>Signalements</span>
+                </a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-title">Paramètres</div>
+                <a href="index.php?action=logout" class="sidebar-link">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Déconnexion</span>
+                </a>
+            </div>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="admin-user">
+                <div class="admin-avatar">AD</div>
+                <div class="admin-user-info">
+                    <h4>Admin</h4>
+                    <p>Administrateur</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <main class="admin-main">
+        <div class="admin-header">
+            <h1><i class="fas fa-flag"></i> Signalements et Modération</h1>
+            <a href="index.php?action=admin" class="btn ghost">
+                <i class="fas fa-arrow-left"></i> Retour au tableau de bord
+            </a>
+        </div>
 
     <!-- Stats -->
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px;">
@@ -94,7 +195,7 @@ $closedCount = count(array_filter($reports, fn($r) => $r['status'] === 'closed')
                     Aucun signalement pour le moment. C'est du bon travail !
                 </p>
             <?php else: ?>
-                <div style="overflow-x: auto;">
+                <div style="overflow-x: auto; padding: 16px;">
                     <table style="width: 100%; border-collapse: collapse;">
                         <thead>
                             <tr style="background: #f8f9fa; border-bottom: 2px solid #e8e8e8;">
@@ -116,9 +217,9 @@ $closedCount = count(array_filter($reports, fn($r) => $r['status'] === 'closed')
                                 <td style="padding: 16px;">
                                     <?php
                                     $typeLabel = [
-                                        'post' => '<span style="background: #3498db; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.85rem; font-weight: 600;">Post</span>',
-                                        'comment' => '<span style="background: #9b59b6; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.85rem; font-weight: 600;">Commentaire</span>',
-                                        'user' => '<span style="background: #e74c3c; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.85rem; font-weight: 600;">Utilisateur</span>'
+                                        'post' => '<span class="badge badge-primary">Post</span>',
+                                        'comment' => '<span class="badge badge-purple">Commentaire</span>',
+                                        'user' => '<span class="badge badge-danger">Utilisateur</span>'
                                     ];
                                     echo $typeLabel[$report['target_type']] ?? 'N/A';
                                     ?>
@@ -139,11 +240,11 @@ $closedCount = count(array_filter($reports, fn($r) => $r['status'] === 'closed')
                                 <td style="padding: 16px;">
                                     <?php
                                     $statusStyle = $report['status'] === 'open' 
-                                        ? 'background: #f39c12; color: white;' 
-                                        : 'background: #27ae60; color: white;';
+                                        ? 'badge-warning' 
+                                        : 'badge-success';
                                     $statusLabel = $report['status'] === 'open' ? 'En attente' : 'Résolu';
                                     ?>
-                                    <span style="<?= $statusStyle ?> padding: 4px 8px; border-radius: 4px; font-size: 0.85rem; font-weight: 600;">
+                                    <span class="badge <?php echo $statusStyle; ?>">
                                         <?= $statusLabel ?>
                                     </span>
                                 </td>
@@ -165,6 +266,7 @@ $closedCount = count(array_filter($reports, fn($r) => $r['status'] === 'closed')
             <?php endif; ?>
         </div>
     </div>
+</main>
 </div>
 
 <!-- Modal Details -->

@@ -79,7 +79,7 @@
       width: 260px;
       background: var(--dark-green);
       color: white;
-      padding: 24px 0;
+      padding: 24px 20px;
       transition: width var(--ease-l);
       overflow-y: auto;
       flex-shrink: 0;
@@ -194,6 +194,7 @@
       justify-content: space-between;
       align-items: center;
       z-index: 10;
+      margin-bottom: 24px;
     }
     
     .header-actions {
@@ -233,7 +234,7 @@
     
     .admin-content {
       flex: 1;
-      padding: 32px;
+      padding: 48px;
       overflow-y: auto;
     }
     
@@ -335,6 +336,21 @@
       font-size: 0.85rem;
     }
     
+    /* Badges */
+    .badge {
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      display: inline-block;
+    }
+    
+    .badge-primary { background: #3498db; color: white; }
+    .badge-warning { background: #f39c12; color: white; }
+    .badge-success { background: #27ae60; color: white; }
+    .badge-danger { background: #e74c3c; color: white; }
+    .badge-purple { background: #9b59b6; color: white; }
+    
     /* Cards */
     .stats-grid {
       display: grid;
@@ -399,11 +415,13 @@
     
     .card-header h3 {
       color: var(--brown);
-      font-size: 1.3rem;
+      font-size: 1.6rem;
+      margin: 0;
+      letter-spacing: 0.2px;
     }
     
     .card-body {
-      padding: 24px;
+      padding: 28px 28px 32px;
     }
     
     .admin-table {
@@ -421,9 +439,20 @@
     }
     
     .admin-table td {
-      padding: 16px;
+      padding: 20px 22px;
       border-bottom: 1px solid rgba(75,46,22,0.08);
     }
+
+    .admin-table th, .admin-table td {
+      vertical-align: middle;
+      color: var(--brown);
+    }
+
+    .admin-table thead th {
+      padding: 14px 18px;
+    }
+
+    /* Column alignment removed to preserve original layout */
     
     .admin-table tr:last-child td {
       border-bottom: none;

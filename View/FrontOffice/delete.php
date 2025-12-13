@@ -6,7 +6,7 @@ $postModel = new PostModel();
 $id = $_GET['id'] ?? 0;
 $post = $postModel->findById($id);
 
-if ($post && ($post['Id_utilisateur'] == $_SESSION['user_id'] || ($_SESSION['is_admin'] ?? false))) {
+if ($post && ($post['Id_utilisateur'] == $_SESSION['user_id'] || (($_SESSION['role'] ?? '') == 'admin'))) {
     $postModel->delete($id);
 }
 

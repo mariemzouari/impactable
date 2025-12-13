@@ -15,7 +15,7 @@ $post_id = $_POST['post_id'] ?? 0;
 $comment = $commentModel->getCommentById($comment_id);
 $errors = [];
 
-if ($comment && ($comment['Id_utilisateur'] == $_SESSION['user_id'] || ($_SESSION['is_admin'] ?? false))) {
+if ($comment && ($comment['Id_utilisateur'] == $_SESSION['user_id'] || (($_SESSION['role'] ?? '') == 'admin'))) {
     if (empty(trim($contenu))) {
         $errors[] = "Le commentaire ne peut pas être vide";
     } elseif (strlen(trim($contenu)) < 2) {

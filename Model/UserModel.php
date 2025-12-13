@@ -47,8 +47,7 @@ class UserModel {
                         'nom' => $user['nom'],
                         'prenom' => $user['prenom'],
                         'email' => $user['email'],
-                        'role' => $user['role'],
-                        'is_admin' => $user['is_admin'] ?? 0
+                        'role' => $user['role']
                     ]
                 ];
             }

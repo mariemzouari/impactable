@@ -42,7 +42,7 @@ $totalAllPosts = count($allPosts);
 
 $current_category = $category;
 $user_name = $_SESSION['user_name'] ?? 'Visiteur';
-$is_admin = $_SESSION['is_admin'] ?? false;
+$is_admin = ($_SESSION['role'] ?? '') == 'admin';
 $is_logged_in = ($user_id > 0);
 
 error_log('DEBUG forum.php: user_id=' . $user_id . ', is_admin=' . ($is_admin ? 'true' : 'false'));

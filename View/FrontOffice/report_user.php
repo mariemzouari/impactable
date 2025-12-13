@@ -10,7 +10,7 @@ $result = ['success' => false, 'message' => 'Erreur inconnue'];
 
 try {
     $reporter = $_SESSION['user_id'] ?? null;
-    $is_admin = $_SESSION['is_admin'] ?? false;
+    $is_admin = ($_SESSION['role'] ?? '') == 'admin';
     if (!$reporter) {
         throw new Exception('Non connecté');
     }

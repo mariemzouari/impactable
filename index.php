@@ -9,7 +9,7 @@ if (headers_sent()) {
 if (!isset($_SESSION['user_id'])) {
     $_SESSION['user_id'] = 0;
     $_SESSION['user_name'] = 'Visiteur';
-    $_SESSION['is_admin'] = false;
+    $_SESSION['role'] = 'guest';
 }
 
 $action = $_GET['action'] ?? 'list';
@@ -54,6 +54,9 @@ switch ($action) {
         break;
     case 'admin':
         include 'View/BackOffice/admin.php';
+        break;
+    case 'admin_reports':
+        include 'View/BackOffice/admin_reports.php';
         break;
     case 'admin_comments':
         include 'View/BackOffice/admin_comments.php';

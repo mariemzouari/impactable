@@ -7,7 +7,7 @@ session_start();
 $result = ['success' => false, 'message' => 'Erreur inconnue'];
 
 try {
-    $is_admin = $_SESSION['is_admin'] ?? false;
+    $is_admin = (($_SESSION['role'] ?? '') == 'admin');
     if (!$is_admin) {
         throw new Exception('Accès non autorisé');
     }

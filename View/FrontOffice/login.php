@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($result['success']) {
             $_SESSION['user_id'] = $result['user']['Id_utilisateur'];
             $_SESSION['user_name'] = $result['user']['prenom'] . ' ' . $result['user']['nom'];
-            $_SESSION['is_admin'] = (bool)$result['user']['is_admin'];
+            $_SESSION['role'] = $result['user']['role'];
             header('Location: index.php?action=list');
             exit;
         } else {

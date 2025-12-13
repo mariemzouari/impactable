@@ -14,7 +14,7 @@ $id = $_GET['id'] ?? 0;
 $post = $postModel->findById($id);
 $from_admin = isset($_GET['from']) && $_GET['from'] == 'admin';
 
-if (!$post || ($post['Id_utilisateur'] != $_SESSION['user_id'] && !($_SESSION['is_admin'] ?? false))) {
+if (!$post || ($post['Id_utilisateur'] != $_SESSION['user_id'] && (($_SESSION['role'] ?? '') != 'admin'))) {
     header('Location: index.php?action=list');
     exit;
 }
