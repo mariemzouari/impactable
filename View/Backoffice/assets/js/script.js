@@ -35,6 +35,33 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
+  // Sidebar Dropdown Toggle
+  const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
+  
+  dropdownToggles.forEach(toggle => {
+    toggle.addEventListener('click', function(e) {
+      e.preventDefault();
+      
+      const submenu = this.nextElementSibling;
+      const arrow = this.querySelector('.dropdown-arrow');
+      const isExpanded = this.getAttribute('aria-expanded') === 'true';
+      
+      // Close other open dropdowns (optional, depending on UX preference)
+      /*
+      document.querySelectorAll('.sidebar-submenu.show').forEach(sub => {
+        if (sub !== submenu) {
+          sub.classList.remove('show');
+          sub.previousElementSibling.setAttribute('aria-expanded', 'false');
+        }
+      });
+      */
+
+      // Toggle current
+      this.setAttribute('aria-expanded', !isExpanded);
+      submenu.classList.toggle('show');
+    });
+  });
+
   // Initialisation : Afficher le contenu par défaut selon la page
   function initializePage() {
     if (isDashboardPage) {

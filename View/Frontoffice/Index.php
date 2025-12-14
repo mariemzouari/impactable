@@ -16,6 +16,14 @@ $participationModel = new ParticipationModel($db);
 $allEvents = $eventModel->getAll();
 $featuredEvents = array_slice($allEvents, 0, 3);
 
+// Récupérer les campagnes pour l'accueil
+require_once __DIR__ . '/../../Model/FrontCampagneController.php';
+$frontController = new FrontCampagneController();
+$campagnesAccueil = $frontController->listCampagnesActives();
+$campagnesAccueil = array_slice($campagnesAccueil, 0, 3);
+// Alias pour $campagneC utilisé dans la vue
+$campagneC = $frontController;
+
 $currentYear = date('Y');
 $userId = $_SESSION['user_id'] ?? null;
 
@@ -41,6 +49,10 @@ if ($action) {
   // ParticipationController is an API endpoint; don't include/instantiate it here.
   // no instantiation: it's an API endpoint
   $adminController = new AdminController();
+
+  // Add FrontCampagneController for the homepage
+  require_once __DIR__ . '/../../Model/FrontCampagneController.php';
+  $frontController = new FrontCampagneController();
 
   switch ($action) {
     case 'offres':
@@ -344,7 +356,7 @@ if ($action) {
             <i class="fas fa-calendar-alt"></i>
             <span>Événements</span>
           </a>
-          <a href="#donations" class="nav-link">
+          <a href="listCampagnes.php" class="nav-link">
             <i class="fas fa-hand-holding-heart"></i>
             <span>Campagnes</span>
           </a>
@@ -384,14 +396,21 @@ if ($action) {
           conférences engagées, actions de solidarité et bien plus encore.</p>
 
         <div class="hero-cta">
-          <a class="btn primary" href="events-list.php">
-            <i class="fas fa-calendar-check"></i>
-            Voir le calendrier
-          </a>
-          <a class="btn secondary" href="my-participations.php">
-            <i class="fas fa-heart"></i>
-            Mes participations
-          </a>
+          <?php if ($userId): ?>
+            <a class="btn primary" href="events-list.php">
+              <i class="fas fa-calendar-check"></i>
+              Voir le calendrier
+            </a>
+            <a class="btn secondary" href="my-participations.php">
+              <i class="fas fa-heart"></i>
+              Mes participations
+            </a>
+          <?php else: ?>
+            <a class="btn primary" href="index.php?action=connexion">
+              <i class="fas fa-sign-in-alt"></i>
+              Se connecter pour découvrir
+            </a>
+          <?php endif; ?>
         </div>
 
         <div class="feature-list">
@@ -449,48 +468,60 @@ if ($action) {
 
     <!-- Opportunités: embedded list -->
     <?php
-    // Prepare offers data to embed the list template
-    require_once __DIR__ . '/../../Model/Offre.php';
-    require_once __DIR__ . '/../../Model/Candidature.php';
-    require_once __DIR__ . '/../../Model/UtilisateurClass.php';
+    if ($userId): // Only show offers if logged in
+      // Prepare offers data to embed the list template
+      require_once __DIR__ . '/../../Model/Offre.php';
+      require_once __DIR__ . '/../../Model/Candidature.php';
+      require_once __DIR__ . '/../../Model/UtilisateurClass.php';
 
-    $offreManager = new Offre();
-    $candidatureManager = new Candidature();
+      $offreManager = new Offre();
+      $candidatureManager = new Candidature();
 
-    $filters = [];
-    if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-      if (!empty($_GET['type_offre']))
-        $filters['type_offre'] = $_GET['type_offre'];
-      if (!empty($_GET['mode']))
-        $filters['mode'] = $_GET['mode'];
-      if (!empty($_GET['horaire']))
-        $filters['horaire'] = $_GET['horaire'];
-      if (isset($_GET['disability_friendly']))
-        $filters['disability_friendly'] = $_GET['disability_friendly'];
-      if (!empty($_GET['type_handicap']))
-        $filters['type_handicap'] = $_GET['type_handicap'];
-    }
+      $filters = [];
+      if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+        if (!empty($_GET['type_offre']))
+          $filters['type_offre'] = $_GET['type_offre'];
+        if (!empty($_GET['mode']))
+          $filters['mode'] = $_GET['mode'];
+        if (!empty($_GET['horaire']))
+          $filters['horaire'] = $_GET['horaire'];
+        if (isset($_GET['disability_friendly']))
+          $filters['disability_friendly'] = $_GET['disability_friendly'];
+        if (!empty($_GET['type_handicap']))
+          $filters['type_handicap'] = $_GET['type_handicap'];
+      }
 
-    $offres = $offreManager->getAll($filters, 6);
-    $candidaturesPlacees = $candidatureManager->getCandidaturesPlacees();
+      $offres = $offreManager->getAll($filters, 6);
+      $candidaturesPlacees = $candidatureManager->getCandidaturesPlacees();
 
-    // Use EMBEDDED mode to avoid duplicating header/footer
-    if (!defined('EMBEDDED'))
-      define('EMBEDDED', true);
-    require_once __DIR__ . '/offre/liste.php';
-    ?>
+      // Use EMBEDDED mode to avoid duplicating header/footer
+      if (!defined('EMBEDDED'))
+        define('EMBEDDED', true);
+      require_once __DIR__ . '/offre/liste.php';
+    else:
+      ?>
+      <section class="section" style="text-align: center; padding: 4rem 2rem; background: #f9f9f9;">
+        <i class="fas fa-briefcase" style="font-size: 3rem; color: var(--sage); margin-bottom: 1rem;"></i>
+        <h2>Opportunités Professionnelles</h2>
+        <p style="max-width: 600px; margin: 0 auto 1.5rem;">Connectez-vous pour accéder à nos offres d'emploi, stages et
+          formations exclusives.</p>
+        <a href="index.php?action=connexion" class="btn primary">Voir les opportunités</a>
+      </section>
+    <?php endif; ?>
 
     <!-- Events Section - Enhanced from second file -->
     <section id="events" class="section">
       <div class="section-header">
         <h2>Événements à venir</h2>
         <div style="display: flex; gap: 10px; align-items: center;">
-          <a href="events-list.php" class="btn ghost">
-            <i class="fas fa-calendar-check"></i> Voir le calendrier
-          </a>
-          <a href="my-participations.php" class="btn ghost">
-            <i class="fas fa-heart"></i> Mes participations
-          </a>
+          <?php if ($userId): ?>
+            <a href="events-list.php" class="btn ghost">
+              <i class="fas fa-calendar-check"></i> Voir le calendrier
+            </a>
+            <a href="my-participations.php" class="btn ghost">
+              <i class="fas fa-heart"></i> Mes participations
+            </a>
+          <?php endif; ?>
         </div>
       </div>
       <div class="timeline">
@@ -546,7 +577,7 @@ if ($action) {
                     <span class="text-muted participants-count"><?= $staticParticipationCount ?> participants inscrits</span>
                   <?php endif; ?>
                 <?php else: ?>
-                  <button class="btn btn-participer" disabled style="background: rgba(180,123,71,0.5); cursor: not-allowed;"
+                  <button class="btn btn-participer primary" onclick="window.location.href='index.php?action=connexion'"
                     title="Connectez-vous pour participer">
                     <i class="fas fa-user"></i> Se connecter
                   </button>
@@ -658,7 +689,12 @@ if ($action) {
                 </p>
                 <p class="card-excerpt"><?= htmlspecialchars(substr($event['description'], 0, 100)) ?>...</p>
                 <div class="card-actions">
-                  <a class="btn ghost" href="event/event-detail.php?id=<?= intval($event['id']) ?>">Détails</a>
+                  <?php if ($userId): ?>
+                    <a class="btn ghost" href="event/event-detail.php?id=<?= intval($event['id']) ?>">Détails</a>
+                  <?php else: ?>
+                    <span class="btn ghost disabled" style="opacity: 0.5; cursor: not-allowed;">Détails</span>
+                  <?php endif; ?>
+
                   <?php if ($userId): ?>
                     <?php if ($isFeaturedEventParticipating): ?>
                       <button class="btn primary" disabled style="background: #27ae60; cursor: default;">
@@ -669,9 +705,9 @@ if ($action) {
                         onclick="openDetailedParticipationModal(<?= $event['id'] ?>, <?= json_encode($userId) ?>)">Participer</button>
                     <?php endif; ?>
                   <?php else: ?>
-                    <button class="btn primary" disabled style="background: rgba(180,123,71,0.5); cursor: not-allowed;"
+                    <button class="btn primary" onclick="window.location.href='index.php?action=connexion'"
                       title="Connectez-vous pour participer">
-                      <i class="fas fa-user"></i> Participer
+                      <i class="fas fa-user"></i> Se connecter
                     </button>
                   <?php endif; ?>
                 </div>
@@ -697,41 +733,61 @@ if ($action) {
     <section id="donations" class="section">
       <div class="section-header">
         <h2>Campagnes de dons</h2>
-        <a href="#" class="section-link">
-          Voir toutes
-          <i class="fas fa-arrow-right"></i>
-        </a>
+        <?php if ($userId): ?>
+          <a href="listCampagnes.php" class="section-link">
+            Voir toutes
+            <i class="fas fa-arrow-right"></i>
+          </a>
+        <?php endif; ?>
       </div>
       <div class="cards-grid">
-        <article class="card">
-          <div class="card-body">
-            <h3>Matériel adapté pour écoles</h3>
-            <p class="text-muted">Cible: 8,000 TND · Collecté: 3,200 TND</p>
-            <div class="progress" aria-hidden="true">
-              <div class="progress-bar" style="width:40%"></div>
+        <?php if (!empty($campagnesAccueil)): ?>
+          <?php foreach ($campagnesAccueil as $campagne):
+            $progression = $campagneC->getProgression($campagne['Id_campagne']);
+            $jours_restants = max(0, floor((strtotime($campagne['date_fin']) - time()) / (60 * 60 * 24)));
+            ?>
+            <article class="card">
+              <div class="card-body">
+                <h3><?= htmlspecialchars($campagne['titre']) ?></h3>
+                <p class="text-muted">
+                  Cible: <?= number_format($campagne['objectif_montant'], 0) ?> TND ·
+                  Collecté: <?= number_format($campagne['montant_actuel'], 0) ?> TND
+                </p>
+                <div class="progress" aria-hidden="true">
+                  <div class="progress-bar" style="width:<?= min($progression, 100) ?>%"></div>
+                </div>
+                <p class="small text-muted mt-8"><?= number_format($progression, 1) ?>% collectés · <?= $jours_restants ?>
+                  jours restants</p>
+                <div class="card-actions mt-16">
+                  <?php if ($userId): ?>
+                    <a class="btn primary" href="DonView.php?id_campagne=<?= $campagne['Id_campagne'] ?>">
+                      Faire un don
+                    </a>
+                    <a class="btn ghost" href="listCampagnes.php">
+                      Partager
+                    </a>
+                  <?php else: ?>
+                    <a class="btn primary" href="index.php?action=connexion">
+                      Se connecter
+                    </a>
+                  <?php endif; ?>
+                </div>
+              </div>
+            </article>
+          <?php endforeach; ?>
+        <?php else: ?>
+          <article class="card">
+            <div class="card-body">
+              <h3>Aucune campagne active</h3>
+              <p class="text-muted">Revenez plus tard pour découvrir de nouvelles campagnes.</p>
+              <div class="card-actions mt-16">
+                <a class="btn primary" href="listCampagnes.php">
+                  Voir toutes les campagnes
+                </a>
+              </div>
             </div>
-            <p class="small text-muted mt-8">40% collectés · 28 jours restants</p>
-            <div class="card-actions mt-16">
-              <a class="btn primary" href="#">Faire un don</a>
-              <a class="btn ghost" href="#">Partager</a>
-            </div>
-          </div>
-        </article>
-
-        <article class="card">
-          <div class="card-body">
-            <h3>Formation aux outils numériques</h3>
-            <p class="text-muted">Cible: 5,000 TND · Collecté: 3,750 TND</p>
-            <div class="progress" aria-hidden="true">
-              <div class="progress-bar" style="width:75%"></div>
-            </div>
-            <p class="small text-muted mt-8">75% collectés · 15 jours restants</p>
-            <div class="card-actions mt-16">
-              <a class="btn primary" href="#">Faire un don</a>
-              <a class="btn ghost" href="#">Partager</a>
-            </div>
-          </div>
-        </article>
+          </article>
+        <?php endif; ?>
       </div>
     </section>
 
@@ -825,7 +881,7 @@ if ($action) {
               <a href="#home">Accueil</a>
               <a href="#opportunities">Opportunités</a>
               <a href="#events">Événements</a>
-              <a href="#donations">Campagnes</a>
+              <a href="listCampagnes.php">Campagnes</a>
               <a href="#resources">Ressources</a>
               <a href="#forum">Forum</a>
             </div>

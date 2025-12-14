@@ -130,8 +130,7 @@ if ($action) {
             <i class="fas fa-users"></i>
             <span>Utilisateurs</span>
           </a>
-          <a href="index.php?action=admin-dashboard"
-            class="sidebar-link <?= (isset($_GET['action']) && $_GET['action'] == 'admin-dashboard') ? 'active' : '' ?>">
+          <a href="index.php?action=admin-dashboard" class="sidebar-link">
             <i class="fas fa-briefcase"></i>
             <span>Opportunités</span>
           </a>
@@ -139,9 +138,41 @@ if ($action) {
             <i class="fas fa-calendar-alt"></i>
             <span>Événements</span>
           </a>
-          <a href="#campaigns" class="sidebar-link">
-            <i class="fas fa-hand-holding-heart"></i>
-            <span>Campagnes</span>
+
+          <!-- Campaigns Dropdown -->
+          <div class="sidebar-dropdown">
+            <a href="#" class="sidebar-link dropdown-toggle" aria-expanded="false">
+              <i class="fas fa-hand-holding-heart"></i>
+              <span>Campagnes</span>
+              <i class="fas fa-chevron-down dropdown-arrow"></i>
+            </a>
+            <div class="sidebar-submenu">
+              <a href="list-camp.php" class="submenu-link">
+                <i class="fas fa-list"></i>
+                <span>Toutes les campagnes</span>
+              </a>
+              <a href="addCampagne.php" class="submenu-link">
+                <i class="fas fa-plus"></i>
+                <span>Nouvelle campagne</span>
+              </a>
+              <a href="Calendar.php" class="submenu-link">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Calendrier</span>
+              </a>
+              <a href="stats_dashboard.php" class="submenu-link">
+                <i class="fas fa-chart-bar"></i>
+                <span>Statistiques</span>
+              </a>
+              <a href="referral.php" class="submenu-link">
+                <i class="fas fa-user-friends"></i>
+                <span>Parrainage</span>
+              </a>
+            </div>
+          </div>
+
+          <a href="list-don.php" class="sidebar-link">
+            <i class="fas fa-donate"></i>
+            <span>Dons</span>
           </a>
           <a href="#resources" class="sidebar-link">
             <i class="fas fa-book"></i>
