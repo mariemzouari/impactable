@@ -368,7 +368,7 @@ if ($action) {
             <i class="fas fa-comments"></i>
             <span>Forum</span>
           </a>
-          <a href="#reclamations" class="nav-link">
+          <a href="page_reclamation.php" class="nav-link">
             <i class="fas fa-comment-alt"></i>
             <span>Réclamations</span>
           </a>

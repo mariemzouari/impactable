@@ -186,7 +186,7 @@ if ($action) {
             <i class="fas fa-comments"></i>
             <span>Forum</span>
           </a>
-          <a href="#reclamations" class="sidebar-link">
+          <a href="reclamation_back.php" class="sidebar-link">
             <i class="fas fa-comment-alt"></i>
             <span>Réclamations</span>
           </a>

@@ -14,7 +14,7 @@ $donC = new DonController();
 $emailC = new EmailController();
 $recommandationC = new FrontRecommandationController();
 
-$id_campagne = $_GET['id_campagne'] ?? null;
+$id_campagne = $_GET['id_campagne'] ?? ($_POST['id_campagne'] ?? null); // Add POST fallback
 $campagne = null;
 
 if ($id_campagne) {
@@ -58,6 +58,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $message_erreur = "Vérification WhatsApp requise.";
         $afficher_etape_whatsapp = true;
 
+      } elseif (is_array($result) && isset($result['error'])) {
+        $message_erreur = $result['error']; // Display specific error from controller
       } elseif ($result) {
         $message_success = "Merci pour votre don de " . number_format($montant, 2) . " TND !";
 
@@ -79,7 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header('Location: listCampagnes.php?don_success=1');
         exit;
       } else {
-        $message_erreur = "Erreur lors de l'enregistrement du don.";
+        $message_erreur = "Erreur inconnue lors de l'enregistrement du don.";
       }
     }
   }

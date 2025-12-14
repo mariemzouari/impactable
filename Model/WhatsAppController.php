@@ -15,8 +15,8 @@ class WhatsAppController
     public function __construct()
     {
         // ⚠️ REMPLACEZ CES VALEURS PAR LES VÔTRES ⚠️
-        $this->accountSid = 'YOUR_ACCOUNT_SID'; // VOTRE Account SID
-        $this->authToken = 'YOUR_AUTH_TOKEN';    // VOTRE Auth Token
+        $this->accountSid = 'YOUR_TWILIO_SID'; // VOTRE Account SID
+        $this->authToken = 'YOUR_TWILIO_TOKEN';    // VOTRE Auth Token
 
         $this->client = new Client($this->accountSid, $this->authToken);
     }
